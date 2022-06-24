@@ -1,0 +1,109 @@
+.pro_layout {
+  width: 100%;
+  min-width: 1000px;
+  height: 100%;
+  display: flex;
+  overflow: hidden;
+
+  .pro_layout_menu {
+    min-width: 200px;
+    max-width: 20vw;
+    height: 100%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: 0.5s;
+
+    .pro_layout_menu_top {
+      width: 100%;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+
+      .pro_layout_menu_icon {
+        width: 100%;
+        height: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        img {
+          height: 100%;
+        }
+      }
+    }
+
+    :global {
+      .ant-menu {
+        width: 100% !important;
+        height: 100%;
+      }
+    }
+  }
+
+  .pro_layout_menu_small {
+    .pro_layout_menu();
+    min-width: 60px !important;
+    max-width: 60px !important;
+    width: 60px !important;
+  }
+
+  .pro_layout_content {
+    flex: 1;
+    height: 100%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+
+    .pro_layout_content_top {
+      width: 100%;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+
+      &::after {
+        position: absolute;
+        bottom: 0;
+        content: "";
+        width: 100%;
+        z-index: 1;
+        border-bottom: 1px solid #f0f0f0;
+      }
+    }
+
+    .pro_layout_content_page {
+      width: 100%;
+      padding: 20px;
+      background-color: var(--b-alpha-5);
+      height: calc(100% - 60px);
+    }
+  }
+}
+
+.pro_layout_search_box {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+}
+
+.pro_layout_user {
+  min-width: 130px;
+  max-width: 200px;
+  height: 100%;
+}
+
+:global{
+  .ant-btn-ghost{
+    border: none !important;
+    box-shadow: 2px 0px 3px var(--b-alpha-10);
+    margin-bottom: 0 !important;
+  }
+}

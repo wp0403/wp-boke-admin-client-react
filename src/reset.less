@@ -1,0 +1,34 @@
+@import './themeColor.less';
+
+// 全局导航样式
+.nav_active {
+  color: var(--txt-b-pure) !important;
+  background-color: var(--w-alpha-80);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+
+  a {
+    color: var(--txt-b-pure) !important;
+  }
+}
+
+.dark .nav_active {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+// 禁止选中
+#noselect {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Chrome/Safari/Opera */
+  -khtml-user-select: none;
+  /* Konqueror */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+  not supported by any browser */
+}
