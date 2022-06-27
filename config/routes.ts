@@ -4,7 +4,7 @@
  * @Author: 王鹏
  * @Date: 2022-01-22 13:20:17
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-06-20 16:41:40
+ * @LastEditTime: 2022-06-27 12:51:36
  */
 export default [
   {
@@ -51,12 +51,12 @@ export default [
             exact: true,
             component: './classify',
           },
+          {
+            path: '/classify/:id/details',
+            exact: true,
+            component: './classify-details',
+          },
         ],
-      },
-      {
-        path: '/classify/:id/details',
-        exact: true,
-        component: './classify-details',
       },
       {
         path: '/itinerary',
@@ -73,12 +73,12 @@ export default [
             exact: true,
             component: './itinerary',
           },
+          {
+            path: '/itinerary/:id/details',
+            exact: true,
+            component: './itinerary-details',
+          },
         ],
-      },
-      {
-        path: '/itinerary/:id/details',
-        exact: true,
-        component: './itinerary-details',
       },
       {
         path: '/projectLibrary',

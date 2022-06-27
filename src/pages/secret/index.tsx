@@ -4,11 +4,11 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 13:51:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-06-24 16:28:09
+ * @LastEditTime: 2022-06-27 09:58:38
  */
 import React, { useState, useEffect } from 'react';
 import { Link } from 'umi';
-import { Table, Image, Switch,message } from 'antd';
+import { Table, Image, Switch, message } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import { calcTableScrollWidth, formatDate } from '@/utils/dataUtils';
 import api from '@/api';
@@ -43,13 +43,15 @@ const Classify = () => {
   const [loading, setLoading] = useState<boolean>(false);
   // 是否置顶事件
   const changeSwitch = async (val, id) => {
-    await secret._changeSecretIsTop({ id, isTop: val }).then(({data}) => {
-        if(data.code ===200){
-            setList((v) => v.map(item => item.id === id ? {...item,isTop: val}:item));
-            message.success(data.msg);
-        }else{
-            message.error(data.msg);
-        }
+    await secret._changeSecretIsTop({ id, isTop: val }).then(({ data }) => {
+      if (data.code === 200) {
+        setList((v) =>
+          v.map((item) => (item.id === id ? { ...item, isTop: val } : item)),
+        );
+        message.success(data.msg);
+      } else {
+        message.error(data.msg);
+      }
     });
   };
   // 表格列

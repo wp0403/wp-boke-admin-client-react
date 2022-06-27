@@ -1,9 +1,12 @@
-import React from 'react';
+import React,{useState,useEffect} from 'react';
 
-const ClassifyDetails = () => {
+const ClassifyDetails = (props: any) => {
+    console.log(props);
+    
+
     return (
         <div>
-            
+            111eeee
         </div>
     );
 };

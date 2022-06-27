@@ -4,12 +4,13 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 13:51:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-06-24 13:49:28
+ * @LastEditTime: 2022-06-27 13:58:50
  */
 import React, { useState, useEffect } from 'react';
-import { Link } from 'umi';
-import { Table, Image } from 'antd';
-import type { ColumnsType } from 'antd/lib/table';
+import { Link, history } from 'umi';
+import { Table, Image, Tooltip, message, Switch } from 'antd';
+import type { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
+import type { FilterValue, SorterResult } from 'antd/lib/table/interface';
 import { calcTableScrollWidth, formatDate } from '@/utils/dataUtils';
 import api from '@/api';
 import style from './index.less';
@@ -33,18 +34,60 @@ interface DataType {
   content: string;
   storage_type: string;
   selected: string;
+  isDelete: boolean;
 }
 
-const Classify = () => {
+const Classify = (props: any) => {
+  // 是否精选事件
+  const changeSwitch = async (val, id) => {
+    await classify
+      ._changeClassifySelected({ id, selected: val })
+      .then(({ data }) => {
+        if (data.code === 200) {
+          setList((v) =>
+            v.map((item) =>
+              item.id === id ? { ...item, selected: val } : item,
+            ),
+          );
+          message.success(data.msg);
+        } else {
+          message.error(data.msg);
+        }
+      });
+  };
+  // 删除/恢复 博文事件
+  const delBowenObj = async (val, id) => {
+    await classify._delBowenList({ id, isDelete: !val }).then(({ data }) => {
+      if (data.code === 200) {
+        setList((v) =>
+          v
+            .map((item) =>
+              item.id === id ? { ...item, isDelete: !val } : item,
+            )
+            .filter((item) => (+type === 2 ? item.isDelete : !item.isDelete)),
+        );
+        message.success(data.msg);
+      } else {
+        message.error(data.msg);
+      }
+    });
+  };
   const columns: ColumnsType<DataType> = [
     {
       title: '标题',
       dataIndex: 'title',
       key: 'title',
       fixed: 'left',
-      render: (text) => (
+      render: (text, record) => (
         <div className={tableStyle.table_cell}>
-          <Link to="">{text}</Link>
+          <Tooltip placement="topLeft" title={text}>
+            <Link
+              style={{ cursor: 'pointer' }}
+              to={`/classify/${record.id}/details`}
+            >
+              {text}
+            </Link>
+          </Tooltip>
         </div>
       ),
     },
@@ -67,7 +110,13 @@ const Classify = () => {
       dataIndex: 'desc',
       key: 'desc',
       width: 300,
-      render: (text) => <div className={tableStyle.table_cell}>{text}</div>,
+      render: (text) => (
+        <div className={tableStyle.table_cell}>
+          <Tooltip placement="topLeft" title={text}>
+            {text}
+          </Tooltip>
+        </div>
+      ),
     },
     {
       title: '文档类型',
@@ -114,7 +163,11 @@ const Classify = () => {
       dataIndex: 'selected',
       key: 'selected',
       width: 100,
-      render: (text) => <div className={tableStyle.table_cell}>{text}</div>,
+      render: (text, record) => (
+        <div className={tableStyle.table_cell}>
+          <Switch checked={text} onChange={(v) => changeSwitch(v, record.id)} />
+        </div>
+      ),
     },
     {
       title: '作者',
@@ -124,41 +177,117 @@ const Classify = () => {
       render: (text) => <div className={tableStyle.table_cell}>{text}</div>,
     },
     {
+      title: '操作',
       dataIndex: 'operation',
       width: 120,
       fixed: 'right',
-      render: (text) => <div className={tableStyle.table_cell}>操作</div>,
+      render: (text, record) => (
+        <div className={tableStyle.table_cell}>
+          {+type !== 2 && <button>编辑</button>}
+          <Tooltip
+            placement="topRight"
+            title={`${+type === 2 ? '恢复后将放回原处' : '删除后将存入回收站'}`}
+          >
+            <button onClick={() => delBowenObj(record.isDelete, record.id)}>
+              {+type === 2 ? '恢复' : '删除'}
+            </button>
+          </Tooltip>
+          {+type === 2 && (
+            <Tooltip placement="topRight" title="点击删除将彻底删除该博文">
+              <button>删除</button>
+            </Tooltip>
+          )}
+        </div>
+      ),
     },
   ];
 
+  const { type } = props.location.query as any;
   const [list, setList] = useState<DataType[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(10);
+  const [total, setTotal] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
-
-  const getList = async () => {
+  // 请求列表数据事件
+  const getList = async (obj?) => {
     setLoading(true);
     await classify
-      ._getClassifyList({ params: { author: '' } })
+      ._getClassifyList({ params: { isDelete: +type === 2 ? 0 : 1 } })
       .then(({ data }) => {
-        setList(data.data);
+        if(data.code === 200){
+          setList(data.data);
+          setTotal(data.meta.total);
+        }
       })
       .finally(() => setLoading(false));
   };
+  // 表格的change事件
+  const handleTableChange = (
+    newPagination: TablePaginationConfig,
+    filters: Record<string, FilterValue>,
+    sorter: SorterResult<DataType>,
+  ) => {
+    getList({
+      sortField: sorter.field as string,
+      sortOrder: sorter.order as string,
+      pagination: newPagination,
+      ...filters,
+    });
+  };
+  // 跳转页面事件
+  const changePageType = () => {
+    if (+type === 2) {
+      history.replace('/classify/list');
+    } else {
+      history.replace('/classify/list?type=2');
+    }
+  };
 
+  // 初始化列表
   useEffect(() => {
     getList();
-  }, []);
+  }, [type]);
 
   return (
-    <Table
-      loading={loading}
-      columns={columns}
-      dataSource={list}
-      scroll={{
-        scrollToFirstRowOnChange: true,
-        x: calcTableScrollWidth(columns),
-        y: `calc(100vh - 220px)`,
-      }}
-    />
+    <div className={style.classify}>
+      <div className={style.headerBox}>
+        <div className={style.headerBox_left}>
+          <span className={style.page_title}>
+            博文{+type === 2 ? '回收站' : '列表页'}
+          </span>{' '}
+          <span className={style.page_total}>{total}</span>
+        </div>
+        <div className={style.headerBox_right}>
+          <div
+            className={
+              +type === 2
+                ? style.headerBox_right_btn1
+                : style.headerBox_right_btn
+            }
+            onClick={changePageType}
+          >
+            {+type === 2 ? '列表页' : '回收站'}
+          </div>
+        </div>
+      </div>
+      <Table
+        loading={loading}
+        columns={columns}
+        dataSource={list}
+        rowKey={'id'}
+        scroll={{
+          scrollToFirstRowOnChange: true,
+          x: calcTableScrollWidth(columns),
+          y: `calc(100vh - 280px)`,
+        }}
+        pagination={{
+          current: page,
+          pageSize: pageSize,
+          total: total,
+        }}
+        onChange={handleTableChange as any}
+      />
+    </div>
   );
 };
 

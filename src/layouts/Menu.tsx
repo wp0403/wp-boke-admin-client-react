@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-06 17:12:23
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-06-20 17:19:03
+ * @LastEditTime: 2022-06-27 11:44:38
  */
 import React, { useState, useEffect } from 'react';
 import {history} from 'umi'
@@ -79,6 +79,7 @@ const MenuComponent = (props: any) => {
 
         if (routeList[0] === pathnameList[0]) {
           setOpenKeys([item.path]);
+          setSelectedKeys([item.path]);
         }
 
         if (pathnameList.length > 1) {
