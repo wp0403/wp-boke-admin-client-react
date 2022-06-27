@@ -4,7 +4,7 @@
  * @Author: 王鹏
  * @Date: 2022-01-22 13:20:17
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-06-16 16:37:38
+ * @LastEditTime: 2022-06-27 16:39:06
  */
 /**
  * 在生产环境 代理是无法生效的，所以这里没有生产环境的配置
@@ -16,24 +16,24 @@
  */
 export default {
   dev: {
-    '/api/': {
+    '/adminApi/': {
       target: 'http://127.0.0.1:7002',
       changeOrigin: true,
-      pathRewrite: { '^/api': '' },
+      pathRewrite: { '^/adminApi': '' },
     },
   },
   test: {
-    '/api/': {
-      target: 'http://101.43.203.116/api/',
+    '/adminApi/': {
+      target: 'http://101.43.203.116/adminApi/',
       changeOrigin: true,
-      pathRewrite: { '^/api': '' },
+      pathRewrite: { '^/adminApi': '' },
     },
   },
   pre: {
-    '/api/': {
+    '/adminApi/': {
       target: 'http://localhost:7001/',
       changeOrigin: true,
-      pathRewrite: { '^/api': '' },
+      pathRewrite: { '^/adminApi': '' },
     },
   },
 } as any;
