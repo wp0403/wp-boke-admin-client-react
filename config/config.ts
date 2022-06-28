@@ -45,7 +45,7 @@ export default defineConfig({
     baseNavigator: true,
   },
   outputPath: '/admin',
-  base: '/admin',
+  // base: '/admin',
   antd: {},
   dva: {
     hmr: true,
