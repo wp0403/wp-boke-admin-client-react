@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-09 17:50:45
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-06-09 17:50:46
+ * @LastEditTime: 2022-06-30 17:34:33
  */
 /*
  * @Descripttion: 本地存储方法集
@@ -17,7 +17,6 @@
 // 获取本地存储
 export function localGet(key: string) {
   const value = window.localStorage.getItem(key) as any;
-
   try {
     return JSON.parse(value);
   } catch (error) {

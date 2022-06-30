@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-09 16:26:31
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-06-20 16:32:06
+ * @LastEditTime: 2022-06-30 17:27:34
  */
 import React, { useEffect, useState } from 'react';
 import {history} from 'umi'
@@ -12,6 +12,7 @@ import { useSize } from 'ahooks';
 import { Button, message } from 'antd';
 import api from '@/api';
 import {localSet} from '@/utils/local'
+import {initGlobalData} from '@/utils/globalDataUtils';
 import style from './index.less';
 
 const { login } = api;
@@ -92,6 +93,7 @@ const LayoutLogin = () => {
         if(code === 200){
           localSet('token',meta.token);
           localSet('auth',meta.auth);
+          localSet('dict',meta.dict);
           history.push('/');
         }else{
           message.error(data || msg);
