@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-01-18 11:05:40
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-06-30 18:09:42
+ * @LastEditTime: 2022-07-01 11:18:46
  */
 import { history } from 'umi';
 import { localGet } from '@/utils/local';
@@ -45,6 +45,22 @@ export const getDictObj = (type: string, id: number | string): any[] | any => {
   let dictObj: any = {};
   if (str) {
     dictObj = str[type]?.find((v: any) => +v.id === +id);
+  } else {
+    dictObj = null;
+  }
+  return dictObj;
+};
+// 根据一级字典的type，一级字典的id，二级字典的id获取二级字典对象
+export const getSubDictObj = (
+  type: string,
+  id: number | string,
+  subId: string,
+): any[] | any => {
+  const str = localGet('dict');
+  let dictObj: any = {};
+  if (str) {
+    dictObj = str[type]?.find((v: any) => +v.id === +id);
+    dictObj = dictObj?.children.find((v: any) => v.id === subId);
   } else {
     dictObj = null;
   }

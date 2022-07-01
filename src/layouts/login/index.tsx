@@ -4,15 +4,14 @@
  * @Author: WangPeng
  * @Date: 2022-06-09 16:26:31
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-06-30 17:27:34
+ * @LastEditTime: 2022-07-01 11:19:29
  */
 import React, { useEffect, useState } from 'react';
-import {history} from 'umi'
+import { history } from 'umi';
 import { useSize } from 'ahooks';
 import { Button, message } from 'antd';
 import api from '@/api';
-import {localSet} from '@/utils/local'
-import {initGlobalData} from '@/utils/globalDataUtils';
+import { localSet } from '@/utils/local';
 import style from './index.less';
 
 const { login } = api;
@@ -89,13 +88,13 @@ const LayoutLogin = () => {
         code,
       })
       .then((res) => {
-        const {code,data,msg,meta} = res.data;
-        if(code === 200){
-          localSet('token',meta.token);
-          localSet('auth',meta.auth);
-          localSet('dict',meta.dict);
+        const { code, data, msg, meta } = res.data;
+        if (code === 200) {
+          localSet('token', meta.token);
+          localSet('auth', meta.auth);
+          localSet('dict', meta.dict);
           history.push('/');
-        }else{
+        } else {
           message.error(data || msg);
         }
       })

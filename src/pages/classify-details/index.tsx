@@ -1,7 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Divider, Form, Input, Spin, Select } from 'antd';
-import { CopyOutlined } from '@ant-design/icons';
-import { getOnlyDictObj, getDictObj } from '@/utils/globalDataUtils';
+import React, { useState, useEffect, FC } from 'react';
+import {
+  Button,
+  Divider,
+  Form,
+  Input,
+  Spin,
+  Select,
+  Switch,
+  DatePicker,
+  Upload,
+} from 'antd';
+import moment from 'moment';
+import { CopyOutlined, UploadOutlined } from '@ant-design/icons';
+import {
+  getOnlyDictObj,
+  getDictObj,
+  getSubDictObj,
+} from '@/utils/globalDataUtils';
+import { formatDate } from '@/utils/dataUtils';
 import api from '@/api';
 import style from './index.less';
 
@@ -14,18 +30,25 @@ interface ClassifyObj {
   classify_id: string;
   classify_sub: string;
   classify_sub_id: string;
-  time_str: string;
-  last_edit_time: string;
+  time_str: any;
+  last_edit_time: any;
   desc: string;
+  selected: number;
+  isDelete: number;
 }
 
-const ClassifyDetails = (props: any) => {
+const ClassifyDetails: FC = (props: any) => {
   const id = props.location.pathname.split('/')[2];
 
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [classifyObj, setClassifyObj] = useState<ClassifyObj>({} as any);
+  const [classifyObj, setClassifyObj] = useState<ClassifyObj>({
+    time_str: null,
+    last_edit_time: null,
+  } as any);
+  const [classifySubList, setClassifySubList] = useState<any[]>([]);
   const [form] = Form.useForm();
+  const format = 'YYYY-MM-DD HH:mm:ss';
 
   const getObj = async () => {
     setLoading(true);
@@ -33,7 +56,23 @@ const ClassifyDetails = (props: any) => {
       ._getClassifyDetails({ params: { id } })
       .then(({ data }) => {
         if (data.code === 200) {
-          setClassifyObj(data.data);
+          const { time_str, last_edit_time } = data.data;
+
+          setClassifyObj({
+            ...data.data,
+            time_str: time_str ? moment(new Date(time_str), format) : null,
+            last_edit_time: last_edit_time
+              ? moment(new Date(last_edit_time), format)
+              : null,
+          });
+          setClassifySubList(
+            getDictObj('bowen_class_sub', data.data?.classify_id).children?.map(
+              (item) => ({
+                label: item.classDesc,
+                value: item.id,
+              }),
+            ),
+          );
           form.resetFields();
         }
       })
@@ -41,8 +80,8 @@ const ClassifyDetails = (props: any) => {
   };
 
   useEffect(() => {
-    getObj();
-  }, [id]);
+    !isEdit && getObj();
+  }, [id, isEdit]);
 
   const onFinish = (values: any) => {
     console.log('Success:', values);
@@ -50,6 +89,44 @@ const ClassifyDetails = (props: any) => {
 
   const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
+  };
+  // 一级类切换事件
+  const onClassifyChange = (value: string, option) => {
+    form.setFieldsValue({ classify_sub: '', classify_sub_id: '' });
+    setClassifySubList(
+      getDictObj('bowen_class_sub', value).children?.map((item) => ({
+        label: item.classDesc,
+        value: item.id,
+      })),
+    );
+  };
+  // 表单的字段值更新事件
+  const onValuesChange = (value) => {
+    console.log(value);
+
+    if ('classify_id' === Object.keys(value)[0]) {
+      const dictObj = getDictObj('bowen_class', Object.values(value)[0] as any);
+      setClassifyObj((data: ClassifyObj) => ({
+        ...data,
+        classify: dictObj.classDesc,
+      }));
+    }
+    if ('classify_sub_id' === Object.keys(value)[0]) {
+      const dictObj = getSubDictObj(
+        'bowen_class_sub',
+        classifyObj.classify_id,
+        Object.values(value)[0] as any,
+      );
+      setClassifyObj((data: ClassifyObj) => ({
+        ...data,
+        classify: dictObj.classDesc,
+      }));
+    }
+
+    setClassifyObj((data: ClassifyObj) => ({
+      ...data,
+      ...value,
+    }));
   };
 
   return (
@@ -64,10 +141,7 @@ const ClassifyDetails = (props: any) => {
             <Button
               type="primary"
               shape="round"
-              onClick={() => {
-                setIsEdit(!isEdit);
-                form.resetFields();
-              }}
+              onClick={() => setIsEdit(!isEdit)}
             >
               {isEdit ? '取消' : '编辑'}
             </Button>
@@ -91,6 +165,7 @@ const ClassifyDetails = (props: any) => {
           autoComplete="off"
           scrollToFirstError
           form={form}
+          onValuesChange={onValuesChange}
         >
           <Form.Item
             className={style.form_item}
@@ -114,7 +189,11 @@ const ClassifyDetails = (props: any) => {
             name="time_str"
             rules={[{ required: true }]}
           >
-            {isEdit ? <Input /> : classifyObj?.time_str}
+            {isEdit ? (
+              <DatePicker format={format} showTime />
+            ) : (
+              moment(classifyObj?.time_str).format(format)
+            )}
           </Form.Item>
           <Form.Item
             className={style.form_item}
@@ -122,12 +201,16 @@ const ClassifyDetails = (props: any) => {
             name="last_edit_time"
             rules={[{ required: true }]}
           >
-            {isEdit ? <Input /> : classifyObj?.last_edit_time}
+            {isEdit ? (
+              <DatePicker format={format} showTime />
+            ) : (
+              moment(classifyObj?.last_edit_time).format(format)
+            )}
           </Form.Item>
           <Form.Item
             className={style.form_item}
             label="一级类"
-            name="classify"
+            name="classify_id"
             rules={[{ required: true }]}
           >
             {isEdit ? (
@@ -136,6 +219,8 @@ const ClassifyDetails = (props: any) => {
                   label: item.classDesc,
                   value: item.id,
                 }))}
+                onChange={onClassifyChange}
+                defaultValue={classifyObj?.classify_id}
               />
             ) : (
               classifyObj?.classify
@@ -144,22 +229,32 @@ const ClassifyDetails = (props: any) => {
           <Form.Item
             className={style.form_item}
             label="二级类"
-            name="classify_sub"
+            name="classify_sub_id"
             rules={[{ required: true }]}
           >
             {isEdit ? (
-              <Select
-                options={getDictObj(
-                  'bowen_class_sub',
-                  classifyObj?.classify_id,
-                ).children?.map((item) => ({
-                  label: item.classDesc,
-                  value: item.id,
-                }))}
-              />
+              <Select options={classifySubList} />
             ) : (
               classifyObj?.classify_sub
             )}
+          </Form.Item>
+          <Form.Item
+            className={style.form_item}
+            label="是否精选博文"
+            name="selected"
+            rules={[{ required: true }]}
+            valuePropName={'checked'}
+          >
+            {isEdit ? <Switch /> : classifyObj?.selected ? 'Yes' : 'No'}
+          </Form.Item>
+          <Form.Item
+            className={style.form_item}
+            label="是否放入回收站"
+            name="isDelete"
+            rules={[{ required: true }]}
+            valuePropName={'checked'}
+          >
+            {isEdit ? <Switch /> : classifyObj?.isDelete ? 'Yes' : 'No'}
           </Form.Item>
           <Form.Item
             className={style.form_item_1}
@@ -168,6 +263,20 @@ const ClassifyDetails = (props: any) => {
             rules={[{ required: true }]}
           >
             {isEdit ? <Input.TextArea /> : classifyObj?.desc}
+          </Form.Item>
+          <Form.Item
+            className={style.form_item}
+            label="博文简介"
+            name="desc"
+            rules={[{ required: true }]}
+          >
+            {isEdit ? (
+              <Upload name="logo" action="/upload.do" listType="picture">
+                <Button icon={<UploadOutlined />}>Click to upload</Button>
+              </Upload>
+            ) : (
+              classifyObj?.desc
+            )}
           </Form.Item>
         </Form>
       </Spin>
