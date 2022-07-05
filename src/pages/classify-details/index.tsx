@@ -88,6 +88,7 @@ const ClassifyDetails: FC = (props: any) => {
   useEffect(() => {
     !isEdit && getObj();
     initCos();
+    isEdit && form.resetFields();
   }, [id, isEdit]);
 
   const onFinish = (values: any) => {
