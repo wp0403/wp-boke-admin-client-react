@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2021-12-27 15:32:24
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-06-09 17:39:32
+ * @LastEditTime: 2022-07-05 14:02:54
  */
 // 获取公网ip
 export const _getIp = {
@@ -21,5 +21,17 @@ export const _getLogin = {
 // 获取字典列表
 export const _getDictList = {
   url: '/adminApi/getDictList',
+  method: 'get',
+};
+
+// 获取cos的临时密钥
+export const _getCosKeyTemporary = {
+  url: '/adminApi/sts',
+  method: 'get',
+};
+
+// 获取cos的临时密钥
+export const _getCosKey = {
+  url: '/adminApi/stsCosKey',
   method: 'get',
 };

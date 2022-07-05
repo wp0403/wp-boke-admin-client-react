@@ -4,7 +4,7 @@
  * @Author: 王鹏
  * @Date: 2021-08-13 09:59:41
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-06-27 16:37:33
+ * @LastEditTime: 2022-07-05 17:58:45
  */
 //获取博文列表
 export const _getClassifyList = {
@@ -15,14 +15,20 @@ export const _getClassifyList = {
 export const _changeClassifySelected = {
   url: '/adminApi/changeClassifySelected',
   method: 'put',
-}
+};
 // 博文删除和恢复接口
 export const _delBowenList = {
   url: '/adminApi/delBowenList',
   method: 'put',
-}
+};
 //获取博文详情
 export const _getClassifyDetails = {
   url: '/adminApi/getClassifyDetails',
   method: 'get',
+};
+
+//编辑博文详情
+export const _putClassifyDetails = {
+  url: '/adminApi/putClassifyDetails',
+  method: 'put',
 };
