@@ -90,10 +90,6 @@ const ClassifyDetails: FC = (props: any) => {
     initCos();
   }, [id, isEdit]);
 
-  useEffect(() => {
-    getObj();
-  }, []);
-
   const onFinish = (values: any) => {
     classifyObj.time_str = moment(new Date(classifyObj?.time_str)).format(
       format,
