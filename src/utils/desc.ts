@@ -5,7 +5,7 @@ const metaDesc =
 // 字典列表
 export const bowen_class_sub = [
   {
-    id: 1,
+    id: '1',
     classDesc: '前端',
     children: [
       { id: '1_1', classDesc: 'html' },
@@ -25,7 +25,7 @@ export const bowen_class_sub = [
     ],
   },
   {
-    id: 2,
+    id: '2',
     classDesc: '后端',
     children: [
       { id: '2_1', classDesc: 'nodejs' },
@@ -39,7 +39,7 @@ export const bowen_class_sub = [
     ],
   },
   {
-    id: 3,
+    id: '3',
     classDesc: '其它学习资料',
     children: [
       { id: '3_1', classDesc: '数据库' },
@@ -48,12 +48,12 @@ export const bowen_class_sub = [
     ],
   },
   {
-    id: 4,
+    id: '4',
     classDesc: '花若盛开',
     children: [{ id: '4_1', classDesc: '文集' }],
   },
   {
-    id: 5,
+    id: '5',
     classDesc: '阳光自在',
     children: [{ id: '5_1', classDesc: '生活' }],
   },
@@ -61,23 +61,23 @@ export const bowen_class_sub = [
 
 // 仅一级分类
 export const bowen_class = [
-  { id: 1, classDesc: '前端' },
-  { id: 2, classDesc: '后端' },
-  { id: 3, classDesc: '其它学习资料' },
-  { id: 4, classDesc: '花若盛开' },
-  { id: 5, classDesc: '阳光自在' },
+  { id: '1', classDesc: '前端' },
+  { id: '2', classDesc: '后端' },
+  { id: '3', classDesc: '其它学习资料' },
+  { id: '4', classDesc: '花若盛开' },
+  { id: '5', classDesc: '阳光自在' },
 ];
 
 // 背景图片数据
 export const imgs = [
-  { id: 1, title: '墨韵', src: '/bgImg/bg00001.jpg' },
-  { id: 2, title: '墨韵', src: '/bgImg/bg00002.jpg' },
-  { id: 3, title: '墨韵', src: '/bgImg/bg00003.jpg' },
-  { id: 4, title: '墨韵', src: '/bgImg/bg00004.jpg' },
-  { id: 5, title: '墨韵', src: '/bgImg/bg00005.jpg' },
-  { id: 6, title: '墨韵', src: '/bgImg/bg00006.jpg' },
-  { id: 7, title: '墨韵', src: '/bgImg/bg00007.jpg' },
-  { id: 8, title: '墨韵', src: '/bgImg/bg00008.jpg' },
+  { id: '1', title: '墨韵', src: '/bgImg/bg00001.jpg' },
+  { id: '2', title: '墨韵', src: '/bgImg/bg00002.jpg' },
+  { id: '3', title: '墨韵', src: '/bgImg/bg00003.jpg' },
+  { id: '4', title: '墨韵', src: '/bgImg/bg00004.jpg' },
+  { id: '5', title: '墨韵', src: '/bgImg/bg00005.jpg' },
+  { id: '6', title: '墨韵', src: '/bgImg/bg00006.jpg' },
+  { id: '7', title: '墨韵', src: '/bgImg/bg00007.jpg' },
+  { id: '8', title: '墨韵', src: '/bgImg/bg00008.jpg' },
 ];
 
 // 树洞导语
@@ -89,49 +89,49 @@ export const secretGuide = `在吗？先生？我有好多事情想与你说，�
 
 // 天气
 export const weatherList = [
-  { id: 1, name: '晴', icon: 'icon-qingtian' },
-  { id: 2, name: '夜晚', icon: 'icon-yewan-qingtian' },
-  { id: 3, name: '阴', icon: 'icon-yin' },
-  { id: 4, name: '雾', icon: 'icon-wu' },
-  { id: 5, name: '霾', icon: 'icon-mai' },
-  { id: 6, name: '小雨', icon: 'icon-xiaoyu' },
-  { id: 7, name: '中雨', icon: 'icon-zhongyu' },
-  { id: 8, name: '大雨', icon: 'icon-dayu' },
-  { id: 9, name: '暴雨', icon: 'icon-baoyu' },
-  { id: 10, name: '大暴雨', icon: 'icon-dabaoyu' },
-  { id: 11, name: '阵雨', icon: 'icon-zhenyu' },
-  { id: 12, name: '雷阵雨', icon: 'icon-leizhenyu' },
-  { id: 13, name: '小雪', icon: 'icon-xiaoxue' },
-  { id: 14, name: '中雪', icon: 'icon-zhongxue' },
-  { id: 15, name: '大雪', icon: 'icon-daxue' },
-  { id: 16, name: '暴雪', icon: 'icon-baoxue' },
-  { id: 17, name: '刮风', icon: 'icon-guafeng' },
-  { id: 18, name: '大风', icon: 'icon-dafeng' },
-  { id: 19, name: '飓风', icon: 'icon-jufeng' },
-  { id: 20, name: '扬沙', icon: 'icon-yangsha' },
-  { id: 21, name: '沙尘暴', icon: 'icon-shachenbao' },
-  { id: 22, name: '无', icon: 'icon-wu1' },
+  { id: '1', name: '晴', icon: 'icon-qingtian' },
+  { id: '2', name: '夜晚', icon: 'icon-yewan-qingtian' },
+  { id: '3', name: '阴', icon: 'icon-yin' },
+  { id: '4', name: '雾', icon: 'icon-wu' },
+  { id: '5', name: '霾', icon: 'icon-mai' },
+  { id: '6', name: '小雨', icon: 'icon-xiaoyu' },
+  { id: '7', name: '中雨', icon: 'icon-zhongyu' },
+  { id: '8', name: '大雨', icon: 'icon-dayu' },
+  { id: '9', name: '暴雨', icon: 'icon-baoyu' },
+  { id: '10', name: '大暴雨', icon: 'icon-dabaoyu' },
+  { id: '11', name: '阵雨', icon: 'icon-zhenyu' },
+  { id: '12', name: '雷阵雨', icon: 'icon-leizhenyu' },
+  { id: '13', name: '小雪', icon: 'icon-xiaoxue' },
+  { id: '14', name: '中雪', icon: 'icon-zhongxue' },
+  { id: '15', name: '大雪', icon: 'icon-daxue' },
+  { id: '16', name: '暴雪', icon: 'icon-baoxue' },
+  { id: '17', name: '刮风', icon: 'icon-guafeng' },
+  { id: '18', name: '大风', icon: 'icon-dafeng' },
+  { id: '19', name: '飓风', icon: 'icon-jufeng' },
+  { id: '20', name: '扬沙', icon: 'icon-yangsha' },
+  { id: '21', name: '沙尘暴', icon: 'icon-shachenbao' },
+  { id: '22', name: '无', icon: 'icon-wu1' },
 ];
 
 // 心情
 export const moodList = [
-  { id: 1, name: '无感', icon: 'icon-buzhidao' },
-  { id: 2, name: '得意', icon: 'icon-deyi' },
-  { id: 3, name: '孤独', icon: 'icon-gudu' },
-  { id: 4, name: '充实', icon: 'icon-chongshi' },
-  { id: 5, name: '烦躁', icon: 'icon-fanzao' },
-  { id: 6, name: '暖心', icon: 'icon-nuanxin' },
-  { id: 7, name: '惊喜', icon: 'icon-jingxi' },
-  { id: 8, name: '开心', icon: 'icon-kaixin' },
-  { id: 9, name: '难过', icon: 'icon-nanguo' },
-  { id: 10, name: '梦境', icon: 'icon-mengjing' },
-  { id: 11, name: '疲惫', icon: 'icon-pibei' },
-  { id: 12, name: '迷茫', icon: 'icon-mimang' },
-  { id: 13, name: '尴尬', icon: 'icon-ganga' },
-  { id: 14, name: '努力', icon: 'icon-nuli' },
-  { id: 15, name: '平静', icon: 'icon-pingjing' },
-  { id: 16, name: '逃避', icon: 'icon-taobi' },
-  { id: 17, name: '委屈', icon: 'icon-weiqu' },
-  { id: 18, name: '生气', icon: 'icon-shengqi' },
-  { id: 19, name: '甜蜜', icon: 'icon-tianmi' },
+  { id: '1', name: '无感', icon: 'icon-buzhidao' },
+  { id: '2', name: '得意', icon: 'icon-deyi' },
+  { id: '3', name: '孤独', icon: 'icon-gudu' },
+  { id: '4', name: '充实', icon: 'icon-chongshi' },
+  { id: '5', name: '烦躁', icon: 'icon-fanzao' },
+  { id: '6', name: '暖心', icon: 'icon-nuanxin' },
+  { id: '7', name: '惊喜', icon: 'icon-jingxi' },
+  { id: '8', name: '开心', icon: 'icon-kaixin' },
+  { id: '9', name: '难过', icon: 'icon-nanguo' },
+  { id: '10', name: '梦境', icon: 'icon-mengjing' },
+  { id: '11', name: '疲惫', icon: 'icon-pibei' },
+  { id: '12', name: '迷茫', icon: 'icon-mimang' },
+  { id: '13', name: '尴尬', icon: 'icon-ganga' },
+  { id: '14', name: '努力', icon: 'icon-nuli' },
+  { id: '15', name: '平静', icon: 'icon-pingjing' },
+  { id: '16', name: '逃避', icon: 'icon-taobi' },
+  { id: '17', name: '委屈', icon: 'icon-weiqu' },
+  { id: '18', name: '生气', icon: 'icon-shengqi' },
+  { id: '19', name: '甜蜜', icon: 'icon-tianmi' },
 ];

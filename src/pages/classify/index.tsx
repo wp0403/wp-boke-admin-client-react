@@ -4,11 +4,20 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 13:51:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-06-27 13:58:50
+ * @LastEditTime: 2022-07-06 17:34:05
  */
 import React, { useState, useEffect } from 'react';
 import { Link, history } from 'umi';
-import { Table, Image, Tooltip, message, Switch } from 'antd';
+import {
+  Table,
+  Image,
+  Tooltip,
+  message,
+  Switch,
+  Button,
+  Popconfirm,
+} from 'antd';
+import { DeleteOutlined, RedoOutlined } from '@ant-design/icons';
 import type { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
 import type { FilterValue, SorterResult } from 'antd/lib/table/interface';
 import { calcTableScrollWidth, formatDate } from '@/utils/dataUtils';
@@ -182,20 +191,35 @@ const Classify = (props: any) => {
       width: 120,
       fixed: 'right',
       render: (text, record) => (
-        <div className={tableStyle.table_cell}>
-          {+type !== 2 && <button>编辑</button>}
-          <Tooltip
-            placement="topRight"
-            title={`${+type === 2 ? '恢复后将放回原处' : '删除后将存入回收站'}`}
-          >
-            <button onClick={() => delBowenObj(record.isDelete, record.id)}>
-              {+type === 2 ? '恢复' : '删除'}
-            </button>
-          </Tooltip>
-          {+type === 2 && (
-            <Tooltip placement="topRight" title="点击删除将彻底删除该博文">
-              <button>删除</button>
+        <div className={tableStyle.table_cell_flex}>
+          {+type === 2 ? (
+            <Tooltip placement="topRight" title="点击后将恢复到列表中">
+              <RedoOutlined
+                className={style.btn_huifu}
+                onClick={() => delBowenObj(record.isDelete, record.id)}
+              />
             </Tooltip>
+          ) : (
+            <Popconfirm
+              title="真的要删除吗？删除后将不能在网站查看。"
+              onConfirm={() => delBowenObj(record.isDelete, record.id)}
+              okText="确定"
+              cancelText="取消"
+              placement="topRight"
+            >
+              <DeleteOutlined className={style.btn_remove} />
+            </Popconfirm>
+          )}
+          {+type === 2 && (
+            <Popconfirm
+              title="将彻底删除该条数据，不可恢复，要继续吗？"
+              onConfirm={() => delBowenObj(record.isDelete, record.id)}
+              okText="确定"
+              cancelText="取消"
+              placement="topRight"
+            >
+              <DeleteOutlined className={style.btn_remove} />
+            </Popconfirm>
           )}
         </div>
       ),
@@ -214,7 +238,7 @@ const Classify = (props: any) => {
     await classify
       ._getClassifyList({ params: { isDelete: +type === 2 ? 0 : 1 } })
       .then(({ data }) => {
-        if(data.code === 200){
+        if (data.code === 200) {
           setList(data.data);
           setTotal(data.meta.total);
         }
@@ -258,16 +282,26 @@ const Classify = (props: any) => {
           <span className={style.page_total}>{total}</span>
         </div>
         <div className={style.headerBox_right}>
-          <div
+          <Button
+            type="primary"
+            shape="round"
+            className={style.headerBox_right_btn}
+            href="/classify/add-bowen"
+          >
+            新增博文
+          </Button>
+          <Button
+            type="primary"
+            shape="round"
+            onClick={changePageType}
             className={
               +type === 2
-                ? style.headerBox_right_btn1
-                : style.headerBox_right_btn
+                ? style.headerBox_right_btn
+                : style.headerBox_right_btn1
             }
-            onClick={changePageType}
           >
             {+type === 2 ? '列表页' : '回收站'}
-          </div>
+          </Button>
         </div>
       </div>
       <Table

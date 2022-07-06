@@ -4,7 +4,7 @@
  * @Author: 王鹏
  * @Date: 2022-01-22 13:20:17
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-06-27 12:51:36
+ * @LastEditTime: 2022-07-06 10:18:53
  */
 export default [
   {
@@ -55,6 +55,11 @@ export default [
             path: '/classify/:id/details',
             exact: true,
             component: './classify-details',
+          },
+          {
+            path: '/classify/add-bowen',
+            exact: true,
+            component: './classify-add',
           },
         ],
       },

@@ -1,18 +1,10 @@
 /*
- * @Descripttion: 
- * @version: 
- * @Author: WangPeng
- * @Date: 2022-06-09 17:50:45
- * @LastEditors: WangPeng
- * @LastEditTime: 2022-06-30 17:34:33
- */
-/*
  * @Descripttion: 本地存储方法集
  * @version:
  * @Author: WangPeng
  * @Date: 2022-04-06 10:45:51
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-04-28 22:42:13
+ * @LastEditTime: 2022-07-06 10:15:39
  */
 // 获取本地存储
 export function localGet(key: string) {

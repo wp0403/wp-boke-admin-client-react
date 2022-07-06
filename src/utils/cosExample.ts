@@ -15,7 +15,7 @@ const Region = 'ap-beijing'; /* 存储桶所在地域，必须字段 */
 let cos;
 
 const cosKeyObj = {} as any;
-
+// 获取对象储存的必须SecretId和SecretKey
 const getCosKey = async () => {
   await all._getCosKey().then(({ data }) => {
     cosKeyObj.SecretId = data?.data?.find(

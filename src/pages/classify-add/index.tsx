@@ -9,7 +9,6 @@ import {
   Switch,
   DatePicker,
   Upload,
-  Image,
   message,
 } from 'antd';
 import moment from 'moment';
@@ -29,7 +28,6 @@ const { classify, user } = api;
 interface ClassifyObj {
   title: string;
   author: string;
-  author_id: number;
   classify: string;
   classify_id: string;
   classify_sub: string;
@@ -44,53 +42,21 @@ interface ClassifyObj {
   content: string;
 }
 
-const ClassifyDetails: FC = (props: any) => {
-  const id = props.location.pathname.split('/')[2];
-
-  const [isEdit, setIsEdit] = useState<boolean>(false);
+const ClassifyDetails: FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [classifyObj, setClassifyObj] = useState<ClassifyObj>({
     time_str: null,
     last_edit_time: null,
+    selected: false,
+    isDelete: false,
   } as any);
   const [classifySubList, setClassifySubList] = useState<any[]>([]);
   const [form] = Form.useForm();
   const format = 'YYYY-MM-DD HH:mm:ss';
 
-  const getObj = async () => {
-    setLoading(true);
-    await classify
-      ._getClassifyDetails({ params: { id } })
-      .then(({ data }) => {
-        if (data.code === 200) {
-          const { time_str, last_edit_time } = data.data;
-
-          setClassifyObj({
-            ...data.data,
-            time_str: time_str ? moment(new Date(time_str), format) : null,
-            last_edit_time: last_edit_time
-              ? moment(new Date(last_edit_time), format)
-              : null,
-          });
-          setClassifySubList(
-            getDictObj('bowen_class_sub', data.data?.classify_id).children?.map(
-              (item) => ({
-                label: item.classDesc,
-                value: item.id,
-              }),
-            ),
-          );
-          form.resetFields();
-        }
-      })
-      .finally(() => setLoading(false));
-  };
-
   useEffect(() => {
-    !isEdit && getObj();
     initCos();
-    isEdit && form.resetFields();
-  }, [id, isEdit]);
+  }, []);
 
   const onFinish = (values: any) => {
     classifyObj.time_str = moment(new Date(classifyObj?.time_str)).format(
@@ -101,14 +67,13 @@ const ClassifyDetails: FC = (props: any) => {
     ).format(format);
     setLoading(true);
     classify
-      ._putClassifyDetails(classifyObj)
+      ._createClassifyDetails(classifyObj)
       .then(({ data }) => {
         if (data.code === 200) {
           message.success(data.msg);
         } else {
           message.error(data.msg);
         }
-        setIsEdit(false);
       })
       .finally(() => setLoading(false));
   };
@@ -124,8 +89,7 @@ const ClassifyDetails: FC = (props: any) => {
     );
   };
   // 表单的字段值更新事件
-  const onValuesChange = (value, option, keyName?) => {
-    if (!value) return;
+  const onValuesChange = (value) => {
     if ('classify_id' === Object.keys(value)[0]) {
       const dictObj = getDictObj('bowen_class', Object.values(value)[0] as any);
       setClassifyObj((data: ClassifyObj) => ({
@@ -149,14 +113,6 @@ const ClassifyDetails: FC = (props: any) => {
       setClassifyObj((data: ClassifyObj) => ({
         ...data,
         img: `https://${imgUrl}`,
-      }));
-      return;
-    }
-    if (typeof value !== 'object' && keyName === 'author_id') {
-      setClassifyObj((data: ClassifyObj) => ({
-        ...data,
-        [keyName]: value,
-        author: option?.name,
       }));
       return;
     }
@@ -199,24 +155,12 @@ const ClassifyDetails: FC = (props: any) => {
         <div className={style.header}>
           <div className={style.headerPageTitle}>
             <CopyOutlined style={{ paddingRight: '20px' }} />
-            博文详情页
+            新增博文页
           </div>
           <div className={style.headerBtnBox}>
-            <Button
-              type="primary"
-              shape="round"
-              onClick={() => setIsEdit(!isEdit)}
-            >
-              {isEdit ? '取消' : '编辑'}
-            </Button>
-            <Button
-              style={{ marginLeft: '10px' }}
-              type="primary"
-              danger
-              shape="round"
-            >
-              删除
-            </Button>
+            {/* <Button type="primary" shape="round">
+              按钮
+            </Button> */}
           </div>
         </div>
         <Divider />
@@ -236,34 +180,20 @@ const ClassifyDetails: FC = (props: any) => {
             name="title"
             rules={[{ required: true }]}
           >
-            {isEdit ? (
-              <Input />
-            ) : (
-              <div className={style.form_item_con}>{classifyObj?.title}</div>
-            )}
+            <Input placeholder="请输入博文标题" />
           </Form.Item>
           <Form.Item
             className={style.form_item}
             label="博文作者"
-            name="author_id"
+            name="author"
             rules={[{ required: true }]}
           >
-            {isEdit ? (
-              <SelectCom
-                optionItem={{ label: 'name', value: 'id' }}
-                fun={user._searchUserList}
-                placeholder="请输入作者"
-                showSearch={true}
-                defaultOptions={[
-                  { label: classifyObj?.author, value: classifyObj?.author_id },
-                ]}
-                defaultValue={[classifyObj?.author_id]}
-                onChange={onValuesChange}
-                keyName="author_id"
-              />
-            ) : (
-              <div className={style.form_item_con}>{classifyObj?.author}</div>
-            )}
+            <SelectCom
+              optionItem={{ label: 'name', value: 'id' }}
+              fun={user._searchUserList}
+              placeholder="请输入作者"
+              showSearch={true}
+            />
           </Form.Item>
           <Form.Item
             className={style.form_item}
@@ -271,13 +201,7 @@ const ClassifyDetails: FC = (props: any) => {
             name="time_str"
             rules={[{ required: true }]}
           >
-            {isEdit ? (
-              <DatePicker format={format} showTime />
-            ) : (
-              <div className={style.form_item_con}>
-                {moment(classifyObj?.time_str).format(format)}
-              </div>
-            )}
+            <DatePicker format={format} showTime />
           </Form.Item>
           <Form.Item
             className={style.form_item}
@@ -285,13 +209,7 @@ const ClassifyDetails: FC = (props: any) => {
             name="last_edit_time"
             rules={[{ required: true }]}
           >
-            {isEdit ? (
-              <DatePicker format={format} showTime />
-            ) : (
-              <div className={style.form_item_con}>
-                {moment(classifyObj?.last_edit_time).format(format)}
-              </div>
-            )}
+            <DatePicker format={format} showTime />
           </Form.Item>
           <Form.Item
             className={style.form_item}
@@ -299,18 +217,14 @@ const ClassifyDetails: FC = (props: any) => {
             name="classify_id"
             rules={[{ required: true }]}
           >
-            {isEdit ? (
-              <Select
-                options={getOnlyDictObj('bowen_class')?.map((item) => ({
-                  label: item.classDesc,
-                  value: item.id,
-                }))}
-                onChange={onClassifyChange}
-                defaultValue={classifyObj?.classify_id}
-              />
-            ) : (
-              <div className={style.form_item_con}>{classifyObj?.classify}</div>
-            )}
+            <Select
+              options={getOnlyDictObj('bowen_class')?.map((item) => ({
+                label: item.classDesc,
+                value: item.id,
+              }))}
+              placeholder="请选择一级分类"
+              onChange={onClassifyChange}
+            />
           </Form.Item>
           <Form.Item
             className={style.form_item}
@@ -318,13 +232,7 @@ const ClassifyDetails: FC = (props: any) => {
             name="classify_sub_id"
             rules={[{ required: true }]}
           >
-            {isEdit ? (
-              <Select options={classifySubList} />
-            ) : (
-              <div className={style.form_item_con}>
-                {classifyObj?.classify_sub}
-              </div>
-            )}
+            <Select placeholder="请选择二级分类" options={classifySubList} />
           </Form.Item>
           <Form.Item
             className={style.form_item}
@@ -333,13 +241,7 @@ const ClassifyDetails: FC = (props: any) => {
             rules={[{ required: true }]}
             valuePropName={'checked'}
           >
-            {isEdit ? (
-              <Switch />
-            ) : (
-              <div className={style.form_item_con}>
-                {classifyObj?.selected ? 'Yes' : 'No'}
-              </div>
-            )}
+            <Switch />
           </Form.Item>
           <Form.Item
             className={style.form_item}
@@ -348,13 +250,7 @@ const ClassifyDetails: FC = (props: any) => {
             rules={[{ required: true }]}
             valuePropName={'checked'}
           >
-            {isEdit ? (
-              <Switch />
-            ) : (
-              <div className={style.form_item_con}>
-                {classifyObj?.isDelete ? 'Yes' : 'No'}
-              </div>
-            )}
+            <Switch />
           </Form.Item>
           <Form.Item
             className={style.form_item}
@@ -362,27 +258,17 @@ const ClassifyDetails: FC = (props: any) => {
             name="img"
             rules={[{ required: true }]}
           >
-            {isEdit ? (
-              <Upload
-                name="file"
-                action="https://wp-1302605407.cos.ap-beijing.myqcloud.com"
-                listType="picture"
-                maxCount={1}
-                // beforeUpload={beforeUpload}
-                customRequest={customRequest}
-                onChange={onChangeUpload}
-              >
-                <Button icon={<UploadOutlined />}>点击上传图片</Button>
-              </Upload>
-            ) : (
-              <div className={style.form_item_con}>
-                <Image
-                  className={style.list_img}
-                  src={classifyObj?.img}
-                  alt={classifyObj?.title}
-                />
-              </div>
-            )}
+            <Upload
+              name="file"
+              action="https://wp-1302605407.cos.ap-beijing.myqcloud.com"
+              listType="picture"
+              maxCount={1}
+              // beforeUpload={beforeUpload}
+              customRequest={customRequest}
+              onChange={onChangeUpload}
+            >
+              <Button icon={<UploadOutlined />}>点击上传图片</Button>
+            </Upload>
           </Form.Item>
           <Form.Item
             className={style.form_item}
@@ -390,11 +276,7 @@ const ClassifyDetails: FC = (props: any) => {
             name="desc"
             rules={[{ required: true }]}
           >
-            {isEdit ? (
-              <Input.TextArea />
-            ) : (
-              <div className={style.form_item_con}>{classifyObj?.desc}</div>
-            )}
+            <Input.TextArea placeholder="请输入博文简介" />
           </Form.Item>
           <Form.Item
             className={style.form_item}
@@ -402,13 +284,7 @@ const ClassifyDetails: FC = (props: any) => {
             name="storage_type"
             rules={[{ required: true }]}
           >
-            {isEdit ? (
-              <Input />
-            ) : (
-              <div className={style.form_item_con}>
-                {classifyObj?.storage_type}
-              </div>
-            )}
+            <Input placeholder="请输入博文类型（目前只支持md和html格式）" />
           </Form.Item>
           <Form.Item
             className={style.form_item_1}
@@ -416,23 +292,15 @@ const ClassifyDetails: FC = (props: any) => {
             name="content"
             rules={[{ required: true }]}
           >
-            {isEdit ? (
-              <Input.TextArea />
-            ) : (
-              <div className={style.form_item_con}>{classifyObj?.content}</div>
-            )}
+            <Input.TextArea placeholder="请输入博文内容" />
           </Form.Item>
-          {isEdit ? (
-            <div className={style.form_btn}>
-              <Form.Item>
-                <Button type="primary" htmlType="submit">
-                  提交
-                </Button>
-              </Form.Item>
-            </div>
-          ) : (
-            ''
-          )}
+          <div className={style.form_btn}>
+            <Form.Item>
+              <Button type="primary" htmlType="submit">
+                提交
+              </Button>
+            </Form.Item>
+          </div>
         </Form>
       </Spin>
     </div>
