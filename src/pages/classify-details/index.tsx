@@ -371,6 +371,7 @@ const ClassifyDetails: FC = (props: any) => {
                 // beforeUpload={beforeUpload}
                 customRequest={customRequest}
                 onChange={onChangeUpload}
+                accept=".png,.jpg,.gif,.jpeg"
               >
                 <Button icon={<UploadOutlined />}>点击上传图片</Button>
               </Upload>

@@ -89,7 +89,8 @@ const ClassifyDetails: FC = () => {
     );
   };
   // 表单的字段值更新事件
-  const onValuesChange = (value) => {
+  const onValuesChange = (value, option, keyName?) => {
+    if (!value) return;
     if ('classify_id' === Object.keys(value)[0]) {
       const dictObj = getDictObj('bowen_class', Object.values(value)[0] as any);
       setClassifyObj((data: ClassifyObj) => ({
@@ -113,6 +114,14 @@ const ClassifyDetails: FC = () => {
       setClassifyObj((data: ClassifyObj) => ({
         ...data,
         img: `https://${imgUrl}`,
+      }));
+      return;
+    }
+    if (typeof value !== 'object' && keyName === 'author_id') {
+      setClassifyObj((data: ClassifyObj) => ({
+        ...data,
+        [keyName]: value,
+        author: option?.name,
       }));
       return;
     }
@@ -193,6 +202,8 @@ const ClassifyDetails: FC = () => {
               fun={user._searchUserList}
               placeholder="请输入作者"
               showSearch={true}
+              onChange={onChangeUpload}
+              keyName="author_id"
             />
           </Form.Item>
           <Form.Item
@@ -266,6 +277,7 @@ const ClassifyDetails: FC = () => {
               // beforeUpload={beforeUpload}
               customRequest={customRequest}
               onChange={onChangeUpload}
+              accept=".png,.jpg,.gif,.jpeg"
             >
               <Button icon={<UploadOutlined />}>点击上传图片</Button>
             </Upload>
