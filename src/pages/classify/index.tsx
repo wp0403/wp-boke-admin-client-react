@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 13:51:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-07-06 17:34:05
+ * @LastEditTime: 2022-07-07 10:51:41
  */
 import React, { useState, useEffect } from 'react';
 import { Link, history } from 'umi';
@@ -236,7 +236,9 @@ const Classify = (props: any) => {
   const getList = async (obj?) => {
     setLoading(true);
     await classify
-      ._getClassifyList({ params: { isDelete: +type === 2 ? 0 : 1 } })
+      ._getClassifyList({
+        params: { isDelete: +type === 2 ? 0 : 1, page, pageSize },
+      })
       .then(({ data }) => {
         if (data.code === 200) {
           setList(data.data);
@@ -247,16 +249,12 @@ const Classify = (props: any) => {
   };
   // 表格的change事件
   const handleTableChange = (
-    newPagination: TablePaginationConfig,
-    filters: Record<string, FilterValue>,
-    sorter: SorterResult<DataType>,
+    { current, pageSize },
+    selectedRows,
+    info: { type },
   ) => {
-    getList({
-      sortField: sorter.field as string,
-      sortOrder: sorter.order as string,
-      pagination: newPagination,
-      ...filters,
-    });
+    setPage(current);
+    setPageSize(pageSize);
   };
   // 跳转页面事件
   const changePageType = () => {
@@ -270,7 +268,7 @@ const Classify = (props: any) => {
   // 初始化列表
   useEffect(() => {
     getList();
-  }, [type]);
+  }, [type, page, pageSize]);
 
   return (
     <div className={style.classify}>

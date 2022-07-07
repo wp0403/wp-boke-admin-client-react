@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2021-12-27 15:32:24
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-07-05 14:02:54
+ * @LastEditTime: 2022-07-07 10:05:17
  */
 // 获取公网ip
 export const _getIp = {
@@ -30,7 +30,7 @@ export const _getCosKeyTemporary = {
   method: 'get',
 };
 
-// 获取cos的临时密钥
+// 获取cos的密钥
 export const _getCosKey = {
   url: '/adminApi/stsCosKey',
   method: 'get',
