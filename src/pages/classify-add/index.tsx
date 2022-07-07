@@ -200,7 +200,7 @@ const ClassifyDetails: FC = () => {
             <SelectCom
               optionItem={{ label: 'name', value: 'id' }}
               fun={user._searchUserList}
-              placeholder="请输入作者"
+              placeholder="请输入关键字搜索"
               showSearch={true}
               onChange={onChangeUpload}
               keyName="author_id"

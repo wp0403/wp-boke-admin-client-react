@@ -252,7 +252,7 @@ const ClassifyDetails: FC = (props: any) => {
               <SelectCom
                 optionItem={{ label: 'name', value: 'id' }}
                 fun={user._searchUserList}
-                placeholder="请输入作者"
+                placeholder="请输入关键字搜索"
                 showSearch={true}
                 defaultOptions={[
                   { label: classifyObj?.author, value: classifyObj?.author_id },
