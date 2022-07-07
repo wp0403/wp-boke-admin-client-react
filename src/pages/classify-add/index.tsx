@@ -1,4 +1,5 @@
 import React, { useState, useEffect, FC } from 'react';
+import { history } from 'umi';
 import {
   Button,
   Divider,
@@ -71,6 +72,7 @@ const ClassifyDetails: FC = () => {
       .then(({ data }) => {
         if (data.code === 200) {
           message.success(data.msg);
+          history.push(`/classify/${data.data}/details`);
         } else {
           message.error(data.msg);
         }
@@ -210,7 +212,7 @@ const ClassifyDetails: FC = () => {
             className={style.form_item}
             label="创建时间"
             name="time_str"
-            rules={[{ required: true }]}
+            // rules={[{ required: true }]}
           >
             <DatePicker format={format} showTime />
           </Form.Item>
@@ -218,7 +220,7 @@ const ClassifyDetails: FC = () => {
             className={style.form_item}
             label="最后修改时间"
             name="last_edit_time"
-            rules={[{ required: true }]}
+            // rules={[{ required: true }]}
           >
             <DatePicker format={format} showTime />
           </Form.Item>

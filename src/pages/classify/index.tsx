@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 13:51:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-07-07 17:18:45
+ * @LastEditTime: 2022-07-07 17:59:31
  */
 import React, { useState, useEffect } from 'react';
 import { Link, history } from 'umi';
@@ -91,6 +91,7 @@ const Classify = (props: any) => {
         <div className={tableStyle.table_cell}>
           <Tooltip placement="topLeft" title={text}>
             <Link
+              target="_blank"
               style={{ cursor: 'pointer' }}
               to={`/classify/${record.id}/details`}
             >

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, FC } from 'react';
+import { history } from 'umi';
 import {
   Button,
   Divider,
@@ -81,6 +82,9 @@ const ClassifyDetails: FC = (props: any) => {
             ),
           );
           form.resetFields();
+        } else {
+          message.error(data.msg);
+          history.push('/classify');
         }
       })
       .finally(() => setLoading(false));
