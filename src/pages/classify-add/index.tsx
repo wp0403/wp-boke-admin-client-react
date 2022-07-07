@@ -202,7 +202,7 @@ const ClassifyDetails: FC = () => {
               fun={user._searchUserList}
               placeholder="请输入关键字搜索"
               showSearch={true}
-              onChange={onChangeUpload}
+              onChange={onValuesChange}
               keyName="author_id"
             />
           </Form.Item>
