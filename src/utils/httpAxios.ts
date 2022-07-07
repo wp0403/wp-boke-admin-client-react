@@ -4,13 +4,13 @@
  * @Author: WangPeng
  * @Date: 2022-01-13 11:29:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-06-09 17:53:45
+ * @LastEditTime: 2022-07-07 15:11:49
  */
 
 import axios from 'axios';
 import { message } from 'antd';
-import {history} from 'umi';
-import { localGet } from "./local";
+import { history } from 'umi';
+import { localGet, localSet } from './local';
 
 const httpAxios = axios.create();
 
@@ -18,8 +18,8 @@ const httpAxios = axios.create();
 httpAxios.interceptors.request.use(
   function (config: any) {
     // 在发送请求之前做些什么
-    if (localGet("token")) {
-      config.headers['authorization'] = localGet("token"); // 让每个请求携带自定义token 请根据实际情况自行修改
+    if (localGet('token')) {
+      config.headers['authorization'] = localGet('token'); // 让每个请求携带自定义token 请根据实际情况自行修改
     }
     return config;
   },
@@ -33,6 +33,9 @@ httpAxios.interceptors.request.use(
 httpAxios.interceptors.response.use(
   function (response) {
     // 对响应数据做点什么
+    // 判断是否存在响应头authorization，存在则跟新token
+    response.headers['authorization'] &&
+      localSet('token', response.headers['authorization']);
     return response;
   },
   (err) => {

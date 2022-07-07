@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-09 16:26:31
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-07-04 18:01:34
+ * @LastEditTime: 2022-07-07 11:55:25
  */
 import React, { useEffect, useState } from 'react';
 import { history } from 'umi';
@@ -119,7 +119,9 @@ const LayoutLogin = () => {
           controls={false}
           muted
           loop
-          src="https://wp-1302605407.cos.ap-beijing.myqcloud.com/mp4/mp4-1.mp4"
+          src="https://wp-1302605407.cos.ap-beijing.myqcloud.com/mp4/mp4-3.mp4"
+          // src="https://wp-1302605407.cos.ap-beijing.myqcloud.com/mp4/mp4-2.mp4"
+          // src="https://wp-1302605407.cos.ap-beijing.myqcloud.com/mp4/mp4-1.mp4"
         />
       </div>
       <div
