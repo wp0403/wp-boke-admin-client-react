@@ -1,7 +1,8 @@
 import { createFromIconfontCN } from '@ant-design/icons';
 
 const SysIcon = createFromIconfontCN({
-  scriptUrl: '//at.alicdn.com/t/font_2977360_k9wjto9z74a.js',
+  scriptUrl:
+    '//wp-1302605407.cos.ap-beijing.myqcloud.com/font_2977360_nsfsg1logch/iconfont.js',
 });
 
 export default SysIcon;

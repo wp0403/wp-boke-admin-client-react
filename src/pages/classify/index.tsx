@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 13:51:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-07-08 14:38:45
+ * @LastEditTime: 2022-07-08 15:04:10
  */
 import React, { useState, useEffect } from 'react';
 import { Link, history } from 'umi';
@@ -124,7 +124,10 @@ const Classify = (props: any) => {
       width: 160,
       render: (text) => (
         <div className={tableStyle.table_cell}>
-          <SysIcon type={getDictObj('bowen_type', text)?.icon} />
+          <SysIcon
+            type={getDictObj('bowen_type', text)?.icon}
+            style={{ marginRight: '10px' }}
+          />
           {getDictObj('bowen_type', text)?.value}
         </div>
       ),
