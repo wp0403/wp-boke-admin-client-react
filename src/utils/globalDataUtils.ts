@@ -4,15 +4,17 @@
  * @Author: WangPeng
  * @Date: 2022-01-18 11:05:40
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-07-01 11:18:46
+ * @LastEditTime: 2022-07-08 13:48:26
  */
 import { history } from 'umi';
 import { localGet } from '@/utils/local';
 
 interface Dict {
-  id: string;
-  bowen_class: string;
-  bowen_class_sub: string;
+  bowen_class: any[];
+  bowen_class_sub: any[];
+  weather_list: any[];
+  mood_list: any[];
+  bowen_type: any[];
 }
 
 // 字典缓存

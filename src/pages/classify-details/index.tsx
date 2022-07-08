@@ -76,7 +76,7 @@ const ClassifyDetails: FC = (props: any) => {
           setClassifySubList(
             getDictObj('bowen_class_sub', data.data?.classify_id).children?.map(
               (item) => ({
-                label: item.classDesc,
+                label: item.value,
                 value: item.id,
               }),
             ),
@@ -122,7 +122,7 @@ const ClassifyDetails: FC = (props: any) => {
     form.setFieldsValue({ classify_sub: '', classify_sub_id: '' });
     setClassifySubList(
       getDictObj('bowen_class_sub', value).children?.map((item) => ({
-        label: item.classDesc,
+        label: item.value,
         value: item.id,
       })),
     );
@@ -134,7 +134,7 @@ const ClassifyDetails: FC = (props: any) => {
       const dictObj = getDictObj('bowen_class', Object.values(value)[0] as any);
       setClassifyObj((data: ClassifyObj) => ({
         ...data,
-        classify: dictObj.classDesc,
+        classify: dictObj.value,
       }));
     }
     if ('classify_sub_id' === Object.keys(value)[0]) {
@@ -145,7 +145,7 @@ const ClassifyDetails: FC = (props: any) => {
       );
       setClassifyObj((data: ClassifyObj) => ({
         ...data,
-        classify_sub: dictObj.classDesc,
+        classify_sub: dictObj.value,
       }));
     }
     if ('img' === Object.keys(value)[0]) {
@@ -306,7 +306,7 @@ const ClassifyDetails: FC = (props: any) => {
             {isEdit ? (
               <Select
                 options={getOnlyDictObj('bowen_class')?.map((item) => ({
-                  label: item.classDesc,
+                  label: item.value,
                   value: item.id,
                 }))}
                 onChange={onClassifyChange}
