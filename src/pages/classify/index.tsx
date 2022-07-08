@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 13:51:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-07-08 11:15:57
+ * @LastEditTime: 2022-07-08 14:38:45
  */
 import React, { useState, useEffect } from 'react';
 import { Link, history } from 'umi';
@@ -21,9 +21,11 @@ import { DeleteOutlined, RedoOutlined } from '@ant-design/icons';
 import type { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
 import type { FilterValue, SorterResult } from 'antd/lib/table/interface';
 import { calcTableScrollWidth, formatDate } from '@/utils/dataUtils';
+import { getDictObj } from '@/utils/globalDataUtils';
 import api from '@/api';
 import style from './index.less';
 import tableStyle from '@/table.less';
+import SysIcon from '@/components/SysIcon';
 
 const { classify } = api;
 
@@ -120,7 +122,12 @@ const Classify = (props: any) => {
       dataIndex: 'type',
       key: 'type',
       width: 160,
-      render: (text) => <div className={tableStyle.table_cell}>{text}</div>,
+      render: (text) => (
+        <div className={tableStyle.table_cell}>
+          <SysIcon type={getDictObj('bowen_type', text)?.icon} />
+          {getDictObj('bowen_type', text)?.value}
+        </div>
+      ),
     },
     {
       title: '内容简介',

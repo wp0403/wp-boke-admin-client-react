@@ -58,7 +58,7 @@ const ClassifyDetails: FC = () => {
   useEffect(() => {
     initCos();
   }, []);
-
+  // 提交表单
   const onFinish = (values: any) => {
     classifyObj.time_str = moment(new Date(classifyObj?.time_str)).format(
       format,
@@ -78,6 +78,16 @@ const ClassifyDetails: FC = () => {
         }
       })
       .finally(() => setLoading(false));
+  };
+  // 重置表单
+  const onReset = async () => {
+    await setClassifyObj({
+      time_str: null,
+      last_edit_time: null,
+      selected: 0,
+      isDelete: 0,
+    } as any);
+    await form.resetFields();
   };
 
   // 一级类切换事件
@@ -310,6 +320,13 @@ const ClassifyDetails: FC = () => {
           </Form.Item>
           <div className={style.form_btn}>
             <Form.Item>
+              <Button
+                htmlType="button"
+                onClick={onReset}
+                style={{ marginRight: '10px' }}
+              >
+                重置
+              </Button>
               <Button type="primary" htmlType="submit">
                 提交
               </Button>

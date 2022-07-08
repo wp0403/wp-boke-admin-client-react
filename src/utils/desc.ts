@@ -69,9 +69,9 @@ export const bowen_class = [
 ];
 
 export const bowen_type = [
-  { id: '1', value: '正常' },
-  { id: '2', value: '审核未通过' },
-  { id: '3', value: '审核中' },
+  { id: '1', value: '正常', icon: 'icon-form_icon_normal' },
+  { id: '2', value: '审核未通过', icon: 'icon-shenheweitongguo' },
+  { id: '3', value: '审核中', icon: 'icon-shenhezhong' },
 ];
 
 // 背景图片数据
