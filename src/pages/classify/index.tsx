@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 13:51:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-07-08 15:12:02
+ * @LastEditTime: 2022-07-08 18:09:57
  */
 import React, { useState, useEffect } from 'react';
 import { Link, history } from 'umi';
@@ -288,6 +288,7 @@ const Classify = (props: any) => {
   };
   // 跳转页面事件
   const changePageType = () => {
+    setPage(1);
     if (+type === 2) {
       history.replace('/classify/list');
     } else {
