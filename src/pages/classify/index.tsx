@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 13:51:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-07-07 17:59:31
+ * @LastEditTime: 2022-07-08 11:15:57
  */
 import React, { useState, useEffect } from 'react';
 import { Link, history } from 'umi';
@@ -112,6 +112,13 @@ const Classify = (props: any) => {
       title: '二级类',
       dataIndex: 'classify_sub',
       key: 'classify_sub_id',
+      width: 160,
+      render: (text) => <div className={tableStyle.table_cell}>{text}</div>,
+    },
+    {
+      title: '博文状态',
+      dataIndex: 'type',
+      key: 'type',
       width: 160,
       render: (text) => <div className={tableStyle.table_cell}>{text}</div>,
     },
