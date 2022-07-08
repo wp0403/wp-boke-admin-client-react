@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 13:51:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-07-08 15:04:10
+ * @LastEditTime: 2022-07-08 15:12:02
  */
 import React, { useState, useEffect } from 'react';
 import { Link, history } from 'umi';
@@ -128,7 +128,19 @@ const Classify = (props: any) => {
             type={getDictObj('bowen_type', text)?.icon}
             style={{ marginRight: '10px' }}
           />
-          {getDictObj('bowen_type', text)?.value}
+          <span
+            className={
+              text === 1
+                ? style.bowenType1
+                : text === 2
+                ? style.bowenType2
+                : text === 3
+                ? style.bowenType3
+                : ''
+            }
+          >
+            {getDictObj('bowen_type', text)?.value}
+          </span>
         </div>
       ),
     },
