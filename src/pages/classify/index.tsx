@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 13:51:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-07-08 18:09:57
+ * @LastEditTime: 2022-07-12 17:40:13
  */
 import React, { useState, useEffect } from 'react';
 import { Link, history } from 'umi';
@@ -17,7 +17,7 @@ import {
   Button,
   Popconfirm,
 } from 'antd';
-import { DeleteOutlined, RedoOutlined } from '@ant-design/icons';
+import { DeleteOutlined, UndoOutlined } from '@ant-design/icons';
 import type { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
 import type { FilterValue, SorterResult } from 'antd/lib/table/interface';
 import { calcTableScrollWidth, formatDate } from '@/utils/dataUtils';
@@ -78,6 +78,9 @@ const Classify = (props: any) => {
             .filter((item) => (+type === 2 ? item.isDelete : !item.isDelete)),
         );
         message.success(data.msg);
+        +type === 2
+          ? setTotal((v) => (val ? (v -= 1) : (v += 1)))
+          : setTotal((v) => (val ? (v += 1) : (v -= 1)));
       } else {
         message.error(data.msg);
       }
@@ -224,7 +227,7 @@ const Classify = (props: any) => {
         <div className={tableStyle.table_cell_flex}>
           {+type === 2 ? (
             <Tooltip placement="topRight" title="点击后将恢复到列表中">
-              <RedoOutlined
+              <UndoOutlined
                 className={style.btn_huifu}
                 onClick={() => delBowenObj(record.isDelete, record.id)}
               />

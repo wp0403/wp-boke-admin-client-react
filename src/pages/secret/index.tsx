@@ -4,38 +4,36 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 13:51:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-06-27 09:58:38
+ * @LastEditTime: 2022-07-12 18:23:24
  */
-import React, { useState, useEffect } from 'react';
-import { Link } from 'umi';
-import { Table, Image, Switch, message } from 'antd';
+import React, { useState, useEffect, useRef } from 'react';
+import { history } from 'umi';
+import { Table, Tooltip, Switch, message, Button, Popconfirm } from 'antd';
+import { EditOutlined, DeleteOutlined, UndoOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/lib/table';
 import { calcTableScrollWidth, formatDate } from '@/utils/dataUtils';
 import api from '@/api';
-import style from './index.less';
+import SysIcon from '@/components/SysIcon';
+import { getDictObj } from '@/utils/globalDataUtils';
+import SecretModal from './modal';
 import tableStyle from '@/table.less';
+import style from './index.less';
 
-const { secret } = api;
+const { secret, user } = api;
 
 interface DataType {
   id: string;
+  type: string;
   time_str: string;
-  last_edit_time: string;
-  img: string;
   author: string;
-  author_id: string;
-  classify: string;
-  classify_id: string;
-  classify_sub: string;
-  classify_sub_id: string;
+  authorId: string;
   title: string;
-  desc: string;
   content: string;
-  storage_type: string;
-  selected: string;
+  isDelete: boolean;
+  isTop: boolean;
 }
 
-const Classify = () => {
+const Classify = (props: any) => {
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
   const [total, setTotal] = useState<number>(0);
@@ -54,6 +52,72 @@ const Classify = () => {
       }
     });
   };
+  // 弹窗抛出的事件
+  const modalRef = useRef();
+
+  const { type } = props.location.query as any;
+
+  // 获取树洞列表
+  const getList = async () => {
+    setLoading(true);
+    await secret
+      ._getSecretList({
+        params: { isDelete: +type === 2 ? 0 : 1, author: '', page, pageSize },
+      })
+      .then(({ data }) => {
+        setList(data.data);
+        setTotal(data.meta.total);
+      })
+      .finally(() => setLoading(false));
+  };
+
+  // 表格筛选和分页事件
+  const changeTable = ({ current, pageSize }, selectedRows, info: { type }) => {
+    setPage(current);
+    setPageSize(pageSize);
+  };
+
+  // 跳转页面事件
+  const changePageType = () => {
+    setPage(1);
+    if (+type === 2) {
+      history.replace('/secret/list');
+    } else {
+      history.replace('/secret/list?type=2');
+    }
+  };
+
+  // 删除/恢复 博文事件
+  const delSecretObj = async (val, id) => {
+    await secret._delSecretList({ id, isDelete: !val }).then(({ data }) => {
+      if (data.code === 200) {
+        setList((v) =>
+          v
+            .map((item) =>
+              item.id === id ? { ...item, isDelete: !val } : item,
+            )
+            .filter((item) => (+type === 2 ? item.isDelete : !item.isDelete)),
+        );
+        +type === 2
+          ? setTotal((v) => (val ? (v -= 1) : (v += 1)))
+          : setTotal((v) => (val ? (v += 1) : (v -= 1)));
+        message.success(data.msg);
+      } else {
+        message.error(data.msg);
+      }
+    });
+  };
+  // 修改树洞详情
+  const editObj = (obj) => {
+    obj.id
+      ? setList((v) => v.map((item) => (item.id === obj.id ? obj : item)))
+      : getList();
+  };
+
+  useEffect(() => {
+    getList();
+  }, [page, pageSize, type]);
+
   // 表格列
   const columns: ColumnsType<DataType> = [
     {
@@ -68,7 +132,7 @@ const Classify = () => {
       title: '时间',
       dataIndex: 'time_str',
       key: 'time_str',
-      width: 180,
+      width: 200,
       render: (text) => (
         <div className={tableStyle.table_cell}>
           {formatDate(text, 'yyyy-MM-dd HH:ss:mm')}
@@ -79,13 +143,46 @@ const Classify = () => {
       title: '内容',
       dataIndex: 'content',
       key: 'content',
-      width: 280,
-      render: (text) => <div className={tableStyle.table_cell}>{text}</div>,
+      width: 500,
+      render: (text) => (
+        <div className={tableStyle.table_cell}>
+          <Tooltip placement="topLeft" title={text}>
+            {text}
+          </Tooltip>
+        </div>
+      ),
+    },
+    {
+      title: '状态',
+      dataIndex: 'secretType',
+      key: 'secretType',
+      width: 160,
+      render: (text) => (
+        <div className={tableStyle.table_cell}>
+          <SysIcon
+            type={getDictObj('bowen_type', text)?.icon}
+            style={{ marginRight: '10px' }}
+          />
+          <span
+            className={
+              text === 1
+                ? style.bowenType1
+                : text === 2
+                ? style.bowenType2
+                : text === 3
+                ? style.bowenType3
+                : ''
+            }
+          >
+            {getDictObj('bowen_type', text)?.value}
+          </span>
+        </div>
+      ),
     },
     {
       title: '作者',
       dataIndex: 'author',
-      key: 'author_id',
+      key: 'authorId',
       width: 120,
       render: (text) => <div className={tableStyle.table_cell}>{text}</div>,
     },
@@ -102,50 +199,105 @@ const Classify = () => {
     },
     {
       dataIndex: 'operation',
-      width: 120,
+      width: 100,
       fixed: 'right',
-      render: (text) => <div className={tableStyle.table_cell}>操作</div>,
+      render: (text, record) => (
+        <div className={tableStyle.table_cell}>
+          <Tooltip placement="left" title="编辑树洞信息">
+            <EditOutlined
+              className={style.btn1}
+              onClick={() => (modalRef.current as any)?.showModal(record)}
+            />
+          </Tooltip>
+          {+type === 2 ? (
+            <Tooltip placement="topRight" title="点击后将恢复到列表中">
+              <UndoOutlined
+                className={style.btn1}
+                onClick={() => delSecretObj(record.isDelete, record.id)}
+              />
+            </Tooltip>
+          ) : (
+            <Popconfirm
+              title="真的要删除吗？删除后将不能在网站查看。"
+              onConfirm={() => delSecretObj(record.isDelete, record.id)}
+              okText="确定"
+              cancelText="取消"
+              placement="topRight"
+            >
+              <DeleteOutlined className={style.btn} />
+            </Popconfirm>
+          )}
+          {+type === 2 && (
+            <Popconfirm
+              title="将彻底删除该条数据，不可恢复，要继续吗？"
+              onConfirm={() => delSecretObj(record.isDelete, record.id)}
+              okText="确定"
+              cancelText="取消"
+              placement="topRight"
+            >
+              <DeleteOutlined className={style.btn} />
+            </Popconfirm>
+          )}
+        </div>
+      ),
     },
   ];
 
-  const getList = async () => {
-    setLoading(true);
-    await secret
-      ._getSecretList({ params: { author: '', page, pageSize } })
-      .then(({ data }) => {
-        setList(data.data);
-        setTotal(data.meta.total);
-      })
-      .finally(() => setLoading(false));
-  };
-
-  const changeTable = ({ current, pageSize }, selectedRows, info: { type }) => {
-    setPage(current);
-    setPageSize(pageSize);
-  };
-
-  useEffect(() => {
-    getList();
-  }, [page, pageSize]);
-
   return (
-    <Table
-      loading={loading}
-      columns={columns}
-      dataSource={list}
-      rowKey={'id'}
-      scroll={{
-        scrollToFirstRowOnChange: true,
-        x: calcTableScrollWidth(columns),
-        y: `calc(100vh - 220px)`,
-      }}
-      pagination={{
-        current: page,
-        pageSize: pageSize,
-        total: total,
-      }}
-      onChange={changeTable as any}
-    />
+    <div className={style.secret}>
+      <div className={style.headerBox}>
+        <div className={style.headerBox_left}>
+          <span className={style.page_title}>
+            树洞先生{+type === 2 ? '回收站' : '列表页'}
+          </span>{' '}
+          <span className={style.page_total}>{total}</span>
+        </div>
+        <div className={style.headerBox_right}>
+          <Button
+            type="primary"
+            shape="round"
+            className={style.headerBox_right_btn}
+            onClick={() => (modalRef.current as any)?.showModal()}
+          >
+            新增树洞
+          </Button>
+          <Button
+            type="primary"
+            shape="round"
+            onClick={changePageType}
+            className={
+              +type === 2
+                ? style.headerBox_right_btn
+                : style.headerBox_right_btn1
+            }
+          >
+            {+type === 2 ? '列表页' : '回收站'}
+          </Button>
+        </div>
+      </div>
+      <Table
+        loading={loading}
+        columns={columns}
+        dataSource={list}
+        rowKey={'id'}
+        scroll={{
+          scrollToFirstRowOnChange: true,
+          x: calcTableScrollWidth(columns),
+          y: `calc(100vh - 280px)`,
+        }}
+        pagination={{
+          current: page,
+          pageSize: pageSize,
+          total: total,
+        }}
+        onChange={changeTable as any}
+      />
+      <SecretModal
+        callback={(ref) => (modalRef.current = ref)}
+        setLoading={setLoading}
+        editObj={editObj}
+      />
+    </div>
   );
 };
 
