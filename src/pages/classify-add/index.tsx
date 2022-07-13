@@ -65,11 +65,13 @@ const ClassifyDetails: FC = () => {
   }, []);
   // 提交表单
   const onFinish = (values: any) => {
-    classifyObj.time_str = moment(new Date(classifyObj?.time_str)).format(
-      format,
-    );
+    classifyObj.time_str = moment(
+      classifyObj?.time_str ? new Date(classifyObj?.time_str) : new Date(),
+    ).format(format);
     classifyObj.last_edit_time = moment(
-      new Date(classifyObj?.last_edit_time),
+      classifyObj?.last_edit_time
+        ? new Date(classifyObj?.last_edit_time)
+        : new Date(),
     ).format(format);
     setLoading(true);
     classify
