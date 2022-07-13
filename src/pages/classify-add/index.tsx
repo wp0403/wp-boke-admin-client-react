@@ -11,6 +11,8 @@ import {
   DatePicker,
   Upload,
   message,
+  Typography,
+  Tooltip,
 } from 'antd';
 import moment from 'moment';
 import { CopyOutlined, UploadOutlined } from '@ant-design/icons';
@@ -24,6 +26,7 @@ import { putCos, initCos } from '@/utils/cosExample';
 import api from '@/api';
 import style from './index.less';
 
+const { Paragraph } = Typography;
 const { classify, user } = api;
 
 interface ClassifyObj {
@@ -52,6 +55,7 @@ const ClassifyDetails: FC = () => {
     isDelete: false,
   } as any);
   const [classifySubList, setClassifySubList] = useState<any[]>([]);
+  const [copyImg, setCopyImg] = useState<string>('上传后显示图片地址');
   const [form] = Form.useForm();
   const format = 'YYYY-MM-DD HH:mm:ss';
 
@@ -163,12 +167,12 @@ const ClassifyDetails: FC = () => {
     });
   };
   // 上传的change函数
-  const onChangeUpload = (a) => {
-    // console.log(a);
+  const onChangeUpload = (val) => {
+    const imgUrl = val?.file?.response?.Location;
+    if (imgUrl) {
+      setCopyImg(`https://${imgUrl}`);
+    }
   };
-  // const beforeUpload = () => {
-
-  // };
 
   return (
     <div className={style.classifyDetails}>
@@ -288,7 +292,6 @@ const ClassifyDetails: FC = () => {
               maxCount={1}
               // beforeUpload={beforeUpload}
               customRequest={customRequest}
-              onChange={onChangeUpload}
               accept=".png,.jpg,.gif,.jpeg"
             >
               <Button icon={<UploadOutlined />}>点击上传图片</Button>
@@ -318,6 +321,25 @@ const ClassifyDetails: FC = () => {
           >
             <Input.TextArea placeholder="请输入博文内容" />
           </Form.Item>
+          <Divider />
+          <div className={style.uploadImg}>
+            <Tooltip title="用于在详情中插入图片" placement="topLeft">
+              <div className={style.uploadImgTitle}>上传图片并获取图片地址</div>
+            </Tooltip>
+            <Upload
+              name="file"
+              action="https://wp-1302605407.cos.ap-beijing.myqcloud.com"
+              listType="picture"
+              maxCount={1}
+              customRequest={customRequest}
+              onChange={onChangeUpload}
+              accept=".png,.jpg,.gif,.jpeg"
+            >
+              <Button icon={<UploadOutlined />}>点击上传图片</Button>
+            </Upload>
+            <Paragraph copyable>{copyImg}</Paragraph>
+          </div>
+          <Divider />
           <div className={style.form_btn}>
             <Form.Item>
               <Button
