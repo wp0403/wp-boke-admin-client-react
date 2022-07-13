@@ -18,6 +18,7 @@ import {
 import moment from 'moment';
 import { CopyOutlined, UploadOutlined } from '@ant-design/icons';
 import SelectCom from '@/components/SelectCom';
+import RanderMarkdown from '@/components/RanderMarkdown';
 import {
   getOnlyDictObj,
   getDictObj,
@@ -419,18 +420,33 @@ const ClassifyDetails: FC = (props: any) => {
               </div>
             )}
           </Form.Item>
-          <Form.Item
-            className={style.form_item_1}
-            label="博文内容"
-            name="content"
-            rules={[{ required: true }]}
-          >
-            {isEdit ? (
-              <Input.TextArea />
+          <div className={style.form_item_2}>
+            <Form.Item
+              className={isEdit ? style.form_item : style.form_item_1}
+              label="博文内容"
+              name="content"
+              rules={[{ required: true }]}
+            >
+              {isEdit ? (
+                <Input.TextArea className={style.textarea} />
+              ) : classifyObj?.storage_type === 'md' ? (
+                <div className={style.form_item_markdown}>
+                  <RanderMarkdown markdown={classifyObj?.content} />
+                </div>
+              ) : (
+                <div className={style.form_item_con}>
+                  {classifyObj?.content}
+                </div>
+              )}
+            </Form.Item>
+            {isEdit && classifyObj?.storage_type === 'md' ? (
+              <div className={style.form_item_markdown_1}>
+                <RanderMarkdown markdown={classifyObj?.content} />
+              </div>
             ) : (
-              <div className={style.form_item_con}>{classifyObj?.content}</div>
+              ''
             )}
-          </Form.Item>
+          </div>
           {isEdit ? (
             <>
               <Divider />

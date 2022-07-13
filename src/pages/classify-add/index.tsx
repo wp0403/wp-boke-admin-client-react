@@ -25,6 +25,7 @@ import {
 import { putCos, initCos } from '@/utils/cosExample';
 import api from '@/api';
 import style from './index.less';
+import RanderMarkdown from '@/components/RanderMarkdown';
 
 const { Paragraph } = Typography;
 const { classify, user } = api;
@@ -313,14 +314,30 @@ const ClassifyDetails: FC = () => {
           >
             <Input placeholder="请输入博文类型（目前只支持md和html格式）" />
           </Form.Item>
-          <Form.Item
-            className={style.form_item_1}
-            label="博文内容"
-            name="content"
-            rules={[{ required: true }]}
-          >
-            <Input.TextArea placeholder="请输入博文内容" />
-          </Form.Item>
+          <div className={style.form_item_2}>
+            <Form.Item
+              className={
+                classifyObj?.storage_type === 'md'
+                  ? style.form_item
+                  : style.form_item_1
+              }
+              label="博文内容"
+              name="content"
+              rules={[{ required: true }]}
+            >
+              <Input.TextArea
+                placeholder="请输入博文内容（支持md、txt、html）"
+                className={style.textarea}
+              />
+            </Form.Item>
+            {classifyObj?.storage_type === 'md' ? (
+              <div className={style.form_item_markdown_1}>
+                <RanderMarkdown markdown={classifyObj?.content} />
+              </div>
+            ) : (
+              ''
+            )}
+          </div>
           <Divider />
           <div className={style.uploadImg}>
             <Tooltip title="用于在详情中插入图片" placement="topLeft">
