@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 13:51:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-07-13 10:02:10
+ * @LastEditTime: 2022-07-13 10:04:47
  */
 import React, { useState, useEffect, useRef } from 'react';
 import { history } from 'umi';
@@ -199,7 +199,7 @@ const Classify = (props: any) => {
     },
     {
       dataIndex: 'operation',
-      width: 120,
+      width: 130,
       fixed: 'right',
       render: (text, record) => (
         <div className={tableStyle.table_cell}>
