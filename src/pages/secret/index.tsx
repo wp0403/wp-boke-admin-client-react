@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 13:51:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-07-13 10:06:21
+ * @LastEditTime: 2022-07-14 16:59:43
  */
 import React, { useState, useEffect, useRef } from 'react';
 import { history } from 'umi';
@@ -15,8 +15,9 @@ import { calcTableScrollWidth, formatDate } from '@/utils/dataUtils';
 import api from '@/api';
 import SysIcon from '@/components/SysIcon';
 import { getDictObj } from '@/utils/globalDataUtils';
-import SecretModal from './modal';
+import ToExamineModal from '@/components/ToExamineModal';
 import tableStyle from '@/table.less';
+import SecretModal from './modal';
 import style from './index.less';
 
 const { secret, user } = api;
@@ -31,6 +32,7 @@ interface DataType {
   content: string;
   isDelete: boolean;
   isTop: boolean;
+  secretType: number;
 }
 
 const Classify = (props: any) => {
@@ -54,6 +56,7 @@ const Classify = (props: any) => {
   };
   // 弹窗抛出的事件
   const modalRef = useRef();
+  const toExamineModal = useRef();
 
   const { type } = props.location.query as any;
 
@@ -160,7 +163,7 @@ const Classify = (props: any) => {
       render: (text) => (
         <div className={tableStyle.table_cell}>
           <SysIcon
-            type={getDictObj('bowen_type', text)?.icon}
+            type={getDictObj('toExamine_type', text)?.icon}
             style={{ marginRight: '10px' }}
           />
           <span
@@ -174,7 +177,7 @@ const Classify = (props: any) => {
                 : ''
             }
           >
-            {getDictObj('bowen_type', text)?.value}
+            {getDictObj('toExamine_type', text)?.value}
           </span>
         </div>
       ),
@@ -203,6 +206,20 @@ const Classify = (props: any) => {
       fixed: 'right',
       render: (text, record) => (
         <div className={tableStyle.table_cell}>
+          {+type !== 2 && (
+            <Tooltip placement="topRight" title="修改当前博文审核状态">
+              <SysIcon
+                type="icon-shenhe"
+                className={style.btn1}
+                onClick={() =>
+                  (toExamineModal.current as any)?.showModal({
+                    ...record,
+                    secretType: `${record.secretType}`,
+                  })
+                }
+              />
+            </Tooltip>
+          )}
           <Tooltip placement="left" title="编辑树洞信息">
             <EditOutlined
               className={style.btn1}
@@ -296,6 +313,11 @@ const Classify = (props: any) => {
         callback={(ref) => (modalRef.current = ref)}
         setLoading={setLoading}
         editObj={editObj}
+      />
+      <ToExamineModal
+        callback={(ref) => (toExamineModal.current = ref)}
+        setLoading={setLoading}
+        name="secretType"
       />
     </div>
   );

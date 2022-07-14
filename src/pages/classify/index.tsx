@@ -4,9 +4,9 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 13:51:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-07-12 17:40:13
+ * @LastEditTime: 2022-07-14 18:00:05
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, history } from 'umi';
 import {
   Table,
@@ -23,9 +23,10 @@ import type { FilterValue, SorterResult } from 'antd/lib/table/interface';
 import { calcTableScrollWidth, formatDate } from '@/utils/dataUtils';
 import { getDictObj } from '@/utils/globalDataUtils';
 import api from '@/api';
-import style from './index.less';
-import tableStyle from '@/table.less';
 import SysIcon from '@/components/SysIcon';
+import ToExamineModal from '@/components/ToExamineModal';
+import tableStyle from '@/table.less';
+import style from './index.less';
 
 const { classify } = api;
 
@@ -46,9 +47,12 @@ interface DataType {
   storage_type: string;
   selected: string;
   isDelete: boolean;
+  type: number;
 }
 
 const Classify = (props: any) => {
+  // 弹窗抛出的事件
+  const modalRef = useRef();
   // 是否精选事件
   const changeSwitch = async (val, id) => {
     await classify
@@ -86,6 +90,23 @@ const Classify = (props: any) => {
       }
     });
   };
+  // 修改博文审核状态
+  const changeToExamine = async (obj) => {
+    await classify._putClassifyToExamine(obj).then(({ data }) => {
+      if (data.code === 200) {
+        setList((v) =>
+          v.map((item) =>
+            item.id === obj.id ? { ...item, type: +obj.type } : item,
+          ),
+        );
+        (modalRef.current as any)?.handleCancel();
+        message.success(data.msg);
+      } else {
+        message.error(data.msg);
+      }
+    });
+  };
+
   const columns: ColumnsType<DataType> = [
     {
       title: '标题',
@@ -128,7 +149,7 @@ const Classify = (props: any) => {
       render: (text) => (
         <div className={tableStyle.table_cell}>
           <SysIcon
-            type={getDictObj('bowen_type', text)?.icon}
+            type={getDictObj('toExamine_type', text)?.icon}
             style={{ marginRight: '10px' }}
           />
           <span
@@ -142,7 +163,7 @@ const Classify = (props: any) => {
                 : ''
             }
           >
-            {getDictObj('bowen_type', text)?.value}
+            {getDictObj('toExamine_type', text)?.value}
           </span>
         </div>
       ),
@@ -225,6 +246,20 @@ const Classify = (props: any) => {
       fixed: 'right',
       render: (text, record) => (
         <div className={tableStyle.table_cell_flex}>
+          {+type !== 2 && (
+            <Tooltip placement="topRight" title="修改当前博文审核状态">
+              <SysIcon
+                type="icon-shenhe"
+                className={style.btn_huifu}
+                onClick={() =>
+                  (modalRef.current as any)?.showModal({
+                    ...record,
+                    type: `${record.type}`,
+                  })
+                }
+              />
+            </Tooltip>
+          )}
           {+type === 2 ? (
             <Tooltip placement="topRight" title="点击后将恢复到列表中">
               <UndoOutlined
@@ -352,6 +387,11 @@ const Classify = (props: any) => {
           total: total,
         }}
         onChange={handleTableChange as any}
+      />
+      <ToExamineModal
+        callback={(ref) => (modalRef.current = ref)}
+        name="type"
+        changeToExamine={changeToExamine}
       />
     </div>
   );

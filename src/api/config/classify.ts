@@ -4,7 +4,7 @@
  * @Author: 王鹏
  * @Date: 2021-08-13 09:59:41
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-07-06 10:50:44
+ * @LastEditTime: 2022-07-14 17:52:57
  */
 //获取博文列表
 export const _getClassifyList = {
@@ -37,4 +37,9 @@ export const _putClassifyDetails = {
 export const _createClassifyDetails = {
   url: '/adminApi/createClassifyDetails',
   method: 'post',
+};
+// 修改博文审核状态
+export const _putClassifyToExamine = {
+  url: '/adminApi/putClassifyToExamine',
+  method: 'put',
 };
