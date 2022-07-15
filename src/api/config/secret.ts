@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-01-21 15:29:33
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-07-12 18:15:21
+ * @LastEditTime: 2022-07-15 10:12:29
  */
 
 // 树洞列表接口
@@ -35,4 +35,10 @@ export const _putSecretDetails = {
 export const _createSecretDetails = {
   url: '/adminApi/createSecretDetails',
   method: 'post',
+};
+
+// 修改树洞审核状态
+export const _putSecretToExamine = {
+  url: '/adminApi/putSecretToExamine',
+  method: 'put',
 };

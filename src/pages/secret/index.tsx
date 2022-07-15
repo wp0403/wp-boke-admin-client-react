@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 13:51:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-07-14 16:59:43
+ * @LastEditTime: 2022-07-15 10:22:43
  */
 import React, { useState, useEffect, useRef } from 'react';
 import { history } from 'umi';
@@ -115,6 +115,24 @@ const Classify = (props: any) => {
     obj.id
       ? setList((v) => v.map((item) => (item.id === obj.id ? obj : item)))
       : getList();
+  };
+  // 修改树洞审核状态
+  const changeToExamine = async (obj) => {
+    await secret._putSecretToExamine(obj).then(({ data }) => {
+      if (data.code === 200) {
+        setList((v) =>
+          v.map((item) =>
+            item.id === obj.id
+              ? { ...item, secretType: +obj.secretType }
+              : item,
+          ),
+        );
+        (toExamineModal.current as any)?.handleCancel();
+        message.success(data.msg);
+      } else {
+        message.error(data.msg);
+      }
+    });
   };
 
   useEffect(() => {
@@ -316,8 +334,8 @@ const Classify = (props: any) => {
       />
       <ToExamineModal
         callback={(ref) => (toExamineModal.current = ref)}
-        setLoading={setLoading}
         name="secretType"
+        changeToExamine={changeToExamine}
       />
     </div>
   );
