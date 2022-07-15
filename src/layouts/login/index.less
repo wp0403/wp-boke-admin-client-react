@@ -23,7 +23,6 @@
     z-index: 1;
     width: 500px;
     height: 380px;
-    backdrop-filter: blur(6px);
     background-color: var(--b-alpha-20);
     border-radius: 20px;
     box-shadow: 0 0 10px 5px var(--b-alpha-20);
@@ -31,6 +30,7 @@
 
     &:hover {
       box-shadow: 0 0 0px 0px var(--b-alpha-20);
+      backdrop-filter: blur(10px);
     }
   }
 
@@ -101,7 +101,7 @@
       z-index: 1;
     }
 
-    input:focus+.tips {
+    input:focus + .tips {
       top: -10px;
       font-size: 12px;
     }
@@ -183,8 +183,7 @@
         padding-left: 10px;
       }
 
-
-      input:focus+.tips {
+      input:focus + .tips {
         top: -10px;
         font-size: 12px;
       }
