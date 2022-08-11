@@ -17,8 +17,8 @@
 export default {
   dev: {
     '/adminApi/': {
-      target: 'https://admin.wp-boke.work/adminApi',
-      // target: 'http://localhost:7002',
+      // target: 'https://admin.wp-boke.work/adminApi',
+      target: 'http://localhost:7002',
       changeOrigin: true,
       pathRewrite: { '^/adminApi': '' },
     },

@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-07-14 15:36:43
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-07-14 18:01:12
+ * @LastEditTime: 2022-08-11 15:19:50
  */
 import React, { useState, useEffect } from 'react';
 import { Modal, Form, Select } from 'antd';
@@ -14,13 +14,16 @@ import api from '@/api';
 const { secret, user } = api;
 
 interface Props {
+  title?: string; // 弹窗标题
+  label?: string; // 下拉列表标题
+  dictType?: string; // 字典type
   name: string; // 审核状态的key
   callback: Function; // 抛出给父元素的属性和事件
   changeToExamine: Function; // 父元素修改审核状态事件
 }
 
 const ToExamineModal = (props: Props) => {
-  const { name } = props;
+  const { name, title, label, dictType } = props;
   const [visible, setVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
   const [obj, setObj] = useState<any>({});
@@ -70,7 +73,7 @@ const ToExamineModal = (props: Props) => {
 
   return (
     <Modal
-      title="审核"
+      title={title || '审核'}
       visible={visible}
       onOk={handleOk}
       confirmLoading={confirmLoading}
@@ -85,12 +88,18 @@ const ToExamineModal = (props: Props) => {
         form={form}
         onValuesChange={onValuesChange}
       >
-        <Form.Item label="审核状态" name={name} rules={[{ required: true }]}>
+        <Form.Item
+          label={label || '审核状态'}
+          name={name}
+          rules={[{ required: true }]}
+        >
           <Select
-            options={getOnlyDictObj('toExamine_type')?.map((item) => ({
-              label: item.value,
-              value: item.id,
-            }))}
+            options={getOnlyDictObj(dictType || 'toExamine_type')?.map(
+              (item) => ({
+                label: item.value,
+                value: item.id,
+              }),
+            )}
           />
         </Form.Item>
       </Form>

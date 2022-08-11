@@ -31,7 +31,7 @@ import style from './index.less';
 const { classify } = api;
 
 interface DataType {
-  id: string;
+  id: number;
   time_str: string;
   last_edit_time: string;
   img: string;

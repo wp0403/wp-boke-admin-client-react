@@ -16,3 +16,8 @@ export const _postLogin = {
   url: '/adminApi/login',
   method: 'post',
 };
+// 登陆请求
+export const _postCreateUser = {
+  url: '/adminApi/createUser',
+  method: 'post',
+};

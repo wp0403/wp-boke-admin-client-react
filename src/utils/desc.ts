@@ -141,3 +141,10 @@ export const moodList = [
   { id: '18', value: '生气', icon: 'icon-shengqi' },
   { id: '19', value: '甜蜜', icon: 'icon-tianmi' },
 ];
+
+// 用户身份字典
+export const userIdentity = [
+  { id: '1', value: '普通来访者', icon: 'icon-guanliyuan' },
+  { id: '2', value: '管理员', icon: 'icon-guanliyuan2' },
+  { id: '3', value: '超级管理员', icon: 'icon-guanliyuan1' },
+];
