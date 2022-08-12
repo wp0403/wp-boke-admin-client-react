@@ -12,6 +12,10 @@ export default [
     component: '../layouts/login',
   },
   {
+    path: '/register',
+    component: '../layouts/login/register',
+  },
+  {
     path: '/',
     component: '../layouts/LayoutComponent',
     routes: [
@@ -133,6 +137,23 @@ export default [
             name: '时间轴列表',
             exact: true,
             component: './timeAxis',
+          },
+        ],
+      },
+      {
+        path: '/settings',
+        name: '设置',
+        icon: 'icon-a-shezhichilun',
+        routes: [
+          {
+            path: '/settings',
+            redirect: '/timeAxis/list',
+          },
+          {
+            path: '/settings/list',
+            name: '用户列表',
+            exact: true,
+            component: './settings-userList',
           },
         ],
       },

@@ -20,10 +20,12 @@ const { login } = api;
 const LayoutLogin = () => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [password1, setPassword1] = useState<string>('');
   const [code, setCode] = useState<string>('');
   const [warnObj, setWarnObj] = useState<any>({
     isUser: false,
     isPwd: false,
+    isPwd1: false,
     isCode: false,
   });
   const [isBtn, setIsBtn] = useState<boolean>(false);
@@ -59,6 +61,13 @@ const LayoutLogin = () => {
           isPwd: /^\w{6,8}$/gi.test(val),
         }));
         return;
+      case 'password1':
+        setPassword1(val);
+        setWarnObj((v) => ({
+          ...v,
+          isPwd1: password === val,
+        }));
+        return;
       case 'code':
         setCode(val);
         setWarnObj((v) => ({
@@ -77,13 +86,13 @@ const LayoutLogin = () => {
   };
   // 点击登录
   const signIn = async () => {
-    if (!isAgre) return message.warning('请阅读服务协议并同意后再继续登陆');
+    if (!isAgre) return message.warning('请阅读服务协议并同意后再继续注册');
     setIsBtn(true);
     if (Object.values(warnObj).some((v) => !v))
-      return message.error('请正确输入登陆信息');
+      return message.error('请正确输入注册信息');
     setLoading(true);
     await login
-      ._postLogin({
+      ._postCreateUser({
         username,
         password,
         code,
@@ -91,11 +100,8 @@ const LayoutLogin = () => {
       .then((res) => {
         const { code, data, msg, meta } = res.data;
         if (code === 200) {
-          localSet('token', meta.token);
-          localSet('auth', meta.auth);
-          localSet('dict', meta.dict);
-          history.push('/');
-          initCos();
+          message.success(msg);
+          history.push('/login');
         } else {
           message.error(data || msg);
         }
@@ -111,7 +117,7 @@ const LayoutLogin = () => {
   }, []);
 
   return (
-    <div className={style.login}>
+    <div className={style.register}>
       <div className={style.loginBg}>
         <video
           className={style.loginVideo}
@@ -129,7 +135,7 @@ const LayoutLogin = () => {
           (size?.width || 600) >= 600 ? style.loginFrom : style.loginFromM
         }
       >
-        <div className={style.title}>后台管理</div>
+        <div className={style.title}>注册账号</div>
         <div className={style.username}>
           <div className={style.label}>用户名</div>
           <div className={style.input}>
@@ -157,6 +163,20 @@ const LayoutLogin = () => {
             {!password && <div className={style.tips}>请输入6-8位密码</div>}
             {isBtn && !warnObj.isPwd && (
               <div className={style.warn_tips}>请输入6-8位登陆密码</div>
+            )}
+          </div>
+        </div>
+        <div className={style.password}>
+          <div className={style.label}>确认密码</div>
+          <div className={style.input}>
+            <input
+              type="password"
+              className={isBtn && !warnObj.isPwd1 ? style.warn_input : ''}
+              onChange={(e) => changeValue(e.target.value, 'password1')}
+            />
+            {!password1 && <div className={style.tips}>请再次输入密码</div>}
+            {isBtn && !warnObj.isPwd1 && (
+              <div className={style.warn_tips}>输入密码不一致</div>
             )}
           </div>
         </div>
@@ -193,9 +213,9 @@ const LayoutLogin = () => {
           <div className={style.agreementText}>我已阅读并同意“服务协议”</div>
         </div>
         <div className={style.btnBox}>
-          <Button onClick={() => history.push('/register')}>注册</Button>
+          <Button onClick={() => history.push('/login')}>登陆</Button>
           <Button loading={loading} onClick={signIn}>
-            登陆
+            提交
           </Button>
         </div>
       </div>
