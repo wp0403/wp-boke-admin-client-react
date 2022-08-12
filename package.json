@@ -31,6 +31,7 @@
     "postcss-flexbugs-fixes": "4.1.0",
     "postcss-loader": "3.0.0",
     "postcss-px-to-viewport": "0.0.3",
+    "rc-util": "^5.23.0",
     "react": "17.0.0",
     "react-dom": "17.x",
     "react-markdown": "^8.0.3",
