@@ -1,0 +1,81 @@
+@import '~antd/dist/antd.less'; // 引入官方提供的 less 样式入口文件
+
+.ant-form-item-control-input {
+  min-height: 32px;
+}
+
+// 分页器样式重置
+.ant-table-pagination {
+  margin: 20px 0 10px 0 !important;
+  padding: 10px !important;
+  background: var(--w-alpha) !important;
+  box-shadow: var(--ct-box-shadow);
+
+  .ant-pagination-prev,
+  .ant-pagination-next {
+    button {
+      background: transparent !important;
+      border: none !important;
+      border-radius: 50%;
+      overflow: hidden;
+
+      &:hover {
+        background: var(--ct-pagination-hover-bg) !important;
+        color: var(--b-alpha);
+      }
+    }
+  }
+
+  .ant-pagination-disabled {
+    color: var(--b-alpha-25) !important;
+    cursor: not-allowed;
+
+    button:hover {
+      color: var(--b-alpha-25) !important;
+    }
+  }
+
+  .ant-pagination-item {
+    background: transparent !important;
+    border: none !important;
+    margin: 0 10px;
+    border-radius: 50%;
+
+    &:hover {
+      background: var(--ct-pagination-hover-bg) !important;
+
+      a {
+        color: var(--theme-p-color) !important;
+      }
+    }
+  }
+
+  .ant-pagination-item-active {
+    a {
+      border-radius: 50%;
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 500;
+      background-color: var(--theme-p-color) !important;
+      color: var(--w-alpha) !important;
+
+      &:hover {
+        color: var(--w-alpha) !important;
+      }
+    }
+
+    a:focus {
+      box-shadow: var(--ct-pagination-focus-box-shadow) !important;
+    }
+  }
+}
+
+.ant-table {
+  background-color: var(--w-alpha);
+  box-shadow: var(--ct-box-shadow);
+}

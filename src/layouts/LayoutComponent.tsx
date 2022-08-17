@@ -9,7 +9,9 @@ import LayoutUser from '@/components/LayoutUser';
 import Menu from './Menu';
 import * as authorityUtils from '@/utils/authorityUtils';
 import { localGet } from '@/utils/local';
+import { getLayoutDom } from '@/utils/utils';
 import smallLogo from '../../public/favicon1.png';
+import bigLogoBai from '../../public/defaultGraph/weiguang_bai.png';
 import style from './index.less';
 
 const LayoutPage = (props: any) => {
@@ -26,6 +28,8 @@ const LayoutPage = (props: any) => {
   const [collapsed, setCollapsed] = useState((size?.width || 1000) > 1000);
   // 检查当前路由是否可以访问（或者有没有权限访问）
   const checkAuth = authorityUtils.matchingRoute(pathname, route) || '/404';
+  // 判断当前路由是否为首页路由
+  const isHome = authorityUtils.isRouteInclude(pathname, '/home');
   // 判断children是否为空
   const childrenRender: React.ReactNode =
     typeof children === 'undefined' ? null : children;
@@ -54,6 +58,10 @@ const LayoutPage = (props: any) => {
     setCollapsed((size?.width || 1000) <= 1000);
   }, [size?.width]);
 
+  useEffect(() => {
+    getLayoutDom();
+  }, []);
+
   return readPage ? (
     <div className={style.pro_layout}>
       <div
@@ -63,7 +71,11 @@ const LayoutPage = (props: any) => {
       >
         <div className={style.pro_layout_menu_top}>
           <div className={style.pro_layout_menu_icon}>
-            {collapsed ? <img src={smallLogo} alt="" /> : '后台管理'}
+            {collapsed ? (
+              <img src={smallLogo} alt="" />
+            ) : (
+              <img src={bigLogoBai} alt="" />
+            )}
           </div>
         </div>
         {/* 导航 */}
@@ -71,7 +83,14 @@ const LayoutPage = (props: any) => {
       </div>
       <div className={style.pro_layout_content}>
         {/* 全局搜索和用户登陆信息展示 */}
-        <div className={style.pro_layout_content_top}>
+        <div
+          className={
+            isHome
+              ? style.pro_layout_content_top_home
+              : style.pro_layout_content_top
+          }
+          id="layout_top"
+        >
           {/* 导航样式切换按钮 */}
           <Button
             type="ghost"
@@ -90,7 +109,12 @@ const LayoutPage = (props: any) => {
           </div>
         </div>
         {/* 导航对应页面展示 */}
-        <div className={style.pro_layout_content_page}>{Authorized()}</div>
+        <div
+          className={style.pro_layout_content_page}
+          id="pro_layout_content_page"
+        >
+          {Authorized()}
+        </div>
       </div>
     </div>
   ) : (

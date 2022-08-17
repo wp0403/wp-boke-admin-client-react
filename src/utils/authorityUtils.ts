@@ -4,13 +4,13 @@
  * @Author: WangPeng
  * @Date: 2022-01-13 11:29:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-06-20 16:34:20
+ * @LastEditTime: 2022-08-16 11:30:29
  */
 
 import { cloneDeep } from 'lodash';
 import type { Route } from '@/models/connect';
 import api from '@/api';
-import {localGet} from '@/utils/local'
+import { localGet } from '@/utils/local';
 
 const { all } = api;
 
@@ -114,4 +114,12 @@ export const matchingRoute: any = (pathname: string, route: Route) => {
       .map((item) => matchingRoute(pathname, item))
       .find((item) => item);
   }
+};
+
+/**
+ * 判断当前路由是否包含某个路由
+ */
+export const isRouteInclude: any = (pathname: string, seekRoute: string) => {
+  const reg = RegExp(seekRoute);
+  return reg.test(pathname);
 };

@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 13:51:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-07-15 10:22:43
+ * @LastEditTime: 2022-08-16 14:07:07
  */
 import React, { useState, useEffect, useRef } from 'react';
 import { history } from 'umi';
@@ -225,7 +225,7 @@ const Classify = (props: any) => {
       render: (text, record) => (
         <div className={tableStyle.table_cell}>
           {+type !== 2 && (
-            <Tooltip placement="topRight" title="修改当前博文审核状态">
+            <Tooltip placement="left" title="修改当前博文审核状态">
               <SysIcon
                 type="icon-shenhe"
                 className={style.btn1}
@@ -318,12 +318,13 @@ const Classify = (props: any) => {
         scroll={{
           scrollToFirstRowOnChange: true,
           x: calcTableScrollWidth(columns),
-          y: `calc(100vh - 280px)`,
+          y: `calc(100vh - 310px)`,
         }}
         pagination={{
           current: page,
           pageSize: pageSize,
           total: total,
+          showTitle: false,
         }}
         onChange={changeTable as any}
       />

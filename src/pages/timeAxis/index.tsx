@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 13:51:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-06-23 16:22:11
+ * @LastEditTime: 2022-08-15 14:58:37
  */
 import React, { useState, useEffect } from 'react';
 import { Link } from 'umi';
@@ -156,7 +156,7 @@ const Classify = () => {
       scroll={{
         scrollToFirstRowOnChange: true,
         x: calcTableScrollWidth(columns),
-        y: `calc(100vh - 220px)`,
+        y: `calc(100vh - 310px)`,
       }}
     />
   );

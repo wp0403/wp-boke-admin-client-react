@@ -1,0 +1,22 @@
+.calendarCom {
+  padding: 20px;
+  background: var(--w-alpha);
+  box-shadow: var(--ct-box-shadow);
+  display: flex;
+  flex-direction: column;
+  height: 500px;
+
+  :global {
+    .ant-picker-calendar {
+      height: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ant-picker-panel {
+      flex: 1;
+      overflow-y: auto;
+    }
+  }
+}

@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 13:51:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-07-14 18:00:05
+ * @LastEditTime: 2022-08-16 14:04:14
  */
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, history } from 'umi';
@@ -379,12 +379,13 @@ const Classify = (props: any) => {
         scroll={{
           scrollToFirstRowOnChange: true,
           x: calcTableScrollWidth(columns),
-          y: `calc(100vh - 280px)`,
+          y: `calc(100vh - 310px)`,
         }}
         pagination={{
           current: page,
           pageSize: pageSize,
           total: total,
+          showTitle: false,
         }}
         onChange={handleTableChange as any}
       />

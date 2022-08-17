@@ -1,19 +1,23 @@
 @import './themeColor.less';
 
 // 全局导航样式
-.nav_active {
-  color: var(--txt-b-pure) !important;
-  background-color: var(--w-alpha-80);
-  backdrop-filter: blur(8px);
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-
-  a {
-    color: var(--txt-b-pure) !important;
-  }
+.pro_layout_content_top_home {
+  width: 100%;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  background-color: var(--w-alpha-0);
+  transition: 0.5s;
 }
 
-.dark .nav_active {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+.pro_layout_content_top {
+  .pro_layout_content_top_home();
+  background-color: var(--w-alpha);
+  box-shadow: var(--ct-box-shadow);
+  z-index: 99;
+  position: relative;
 }
 
 // 禁止选中

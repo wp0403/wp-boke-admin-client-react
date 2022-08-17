@@ -4,16 +4,17 @@
  * @Author: WangPeng
  * @Date: 2022-01-27 12:05:05
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-01-27 12:30:06
+ * @LastEditTime: 2022-08-17 16:48:03
  */
 import React from 'react';
 import empty from '/public/defaultGraph/empty.svg';
 import styles from './index.less';
 
-const EmptyCard = () => {
+const EmptyCard = (props: any) => {
+  const { src } = props;
   return (
     <div className={styles.emptyCard}>
-      <img src={empty} alt="" />
+      <img src={src || empty} alt="" />
     </div>
   );
 };

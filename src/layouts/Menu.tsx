@@ -4,10 +4,10 @@
  * @Author: WangPeng
  * @Date: 2022-06-06 17:12:23
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-06-27 11:44:38
+ * @LastEditTime: 2022-08-15 11:20:12
  */
 import React, { useState, useEffect } from 'react';
-import {history} from 'umi'
+import { history } from 'umi';
 import { Menu } from 'antd';
 import { useSize } from 'ahooks';
 import type { MenuProps } from 'antd';
@@ -66,7 +66,12 @@ const MenuComponent = (props: any) => {
   const changeMenuList: any = (routerList: any[]) => {
     if (!Array.isArray(routerList)) return [];
     return routerList.map(({ path, name, icon = null, routes = null }) =>
-      getItem(name, path, icon && <SysIcon type={icon} />, routes && changeMenuList(routes)),
+      getItem(
+        name,
+        path,
+        icon && <SysIcon type={icon} />,
+        routes && changeMenuList(routes),
+      ),
     );
   };
   // 根据当前地址栏匹配路由高亮
@@ -98,7 +103,7 @@ const MenuComponent = (props: any) => {
   return (
     <Menu
       mode="inline"
-      openKeys={openKeys}
+      // openKeys={openKeys}
       selectedKeys={selectedKeys}
       onOpenChange={onOpenChange}
       onSelect={onSelect}

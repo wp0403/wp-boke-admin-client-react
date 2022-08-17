@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 13:51:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-06-24 13:53:18
+ * @LastEditTime: 2022-08-16 14:06:49
  */
 import React, { useState, useEffect } from 'react';
 import { Link } from 'umi';
@@ -174,6 +174,7 @@ const Classify = () => {
         current: page,
         pageSize: pageSize,
         total: total,
+        showTitle: false,
       }}
       onChange={changeTable as any}
     />

@@ -214,12 +214,13 @@ const SettingUser = () => {
         scroll={{
           scrollToFirstRowOnChange: true,
           x: calcTableScrollWidth(columns),
-          y: `calc(100vh - 280px)`,
+          y: `calc(100vh - 310px)`,
         }}
         pagination={{
           current: page,
           pageSize: pageSize,
           total: total,
+          showTitle: false,
         }}
         onChange={handleTableChange as any}
       />
