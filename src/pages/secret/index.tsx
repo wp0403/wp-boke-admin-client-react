@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 13:51:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-08-16 14:07:07
+ * @LastEditTime: 2022-08-18 10:27:50
  */
 import React, { useState, useEffect, useRef } from 'react';
 import { history } from 'umi';
@@ -187,11 +187,11 @@ const Classify = (props: any) => {
           <span
             className={
               text === 1
-                ? style.bowenType1
+                ? style.secretType1
                 : text === 2
-                ? style.bowenType2
+                ? style.secretType2
                 : text === 3
-                ? style.bowenType3
+                ? style.secretType3
                 : ''
             }
           >

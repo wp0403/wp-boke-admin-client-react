@@ -34,6 +34,13 @@ const SettingUser = () => {
       render: (text) => <div className={tableStyle.table_cell}>{text}</div>,
     },
     {
+      title: '昵称',
+      dataIndex: 'name',
+      key: 'name',
+      width: 200,
+      render: (text) => <div className={tableStyle.table_cell}>{text}</div>,
+    },
+    {
       title: '邮箱',
       dataIndex: 'email',
       key: 'email',

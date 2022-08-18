@@ -2,6 +2,9 @@ import React, { Fragment } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import remarkToc from 'remark-toc';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 // 设置高亮样式
 import { coy } from 'react-syntax-highlighter/dist/esm/styles/prism';
@@ -27,8 +30,8 @@ const RanderMarkdown = (props: any) => {
       <ReactMarkdown
         children={props.markdown}
         className="markdown_body"
-        remarkPlugins={[remarkGfm]}
-        rehypePlugins={[rehypeRaw]}
+        remarkPlugins={[remarkGfm, remarkMath, remarkToc]}
+        rehypePlugins={[rehypeRaw, rehypeKatex]}
         components={{
           code({ node, inline, className, children, ...props }) {
             const match = /language-(\w+)/.exec(className || '');
@@ -51,6 +54,9 @@ const RanderMarkdown = (props: any) => {
             return <img onClick={() => alertImg(src)} src={src} alt={alt} />;
           },
           a({ href, children }) {
+            if (RegExp('#').test(href || '')) {
+              return <a href={href}>{children}</a>;
+            }
             return (
               <a href={href} target="_blank">
                 {children}
