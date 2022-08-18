@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-06 10:12:01
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-08-17 17:32:21
+ * @LastEditTime: 2022-08-18 11:56:26
  */
 import React, { useState, useEffect } from 'react';
 import { Row, Col } from 'antd';
@@ -13,6 +13,7 @@ import DataCard from '@/components/DataCard';
 import type { DataCardProps } from '@/components/DataCard';
 import CalendarCom from '@/components/CalendarCom';
 import AffairCard from './components/AffairCard';
+import HotListCard from './components/HotListCard';
 import EchartsLine from './components/EchartsLine';
 import style from './index.less';
 
@@ -81,7 +82,7 @@ const Home = () => {
           <EchartsLine />
         </Col>
         <Col xs={24} md={12} xl={8}>
-          <CalendarCom />
+          <HotListCard loading={false} hotList={[]} />
         </Col>
         <Col xs={24} md={12} xl={12}>
           <CalendarCom />
