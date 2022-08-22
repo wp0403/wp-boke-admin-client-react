@@ -60,9 +60,6 @@ const ClassifyDetails: FC = () => {
   const [form] = Form.useForm();
   const format = 'YYYY-MM-DD HH:mm:ss';
 
-  useEffect(() => {
-    initCos();
-  }, []);
   // 提交表单
   const onFinish = (values: any) => {
     classifyObj.time_str = moment(
@@ -175,6 +172,10 @@ const ClassifyDetails: FC = () => {
     if (imgUrl) {
       setCopyImg(`https://${imgUrl}`);
     }
+  };
+  // 上传前
+  const beforeUpload = async () => {
+    await initCos();
   };
 
   return (
@@ -293,7 +294,7 @@ const ClassifyDetails: FC = () => {
               action="https://wp-1302605407.cos.ap-beijing.myqcloud.com"
               listType="picture"
               maxCount={1}
-              // beforeUpload={beforeUpload}
+              beforeUpload={beforeUpload}
               customRequest={customRequest}
               accept=".png,.jpg,.gif,.jpeg"
             >
@@ -350,6 +351,7 @@ const ClassifyDetails: FC = () => {
               action="https://wp-1302605407.cos.ap-beijing.myqcloud.com"
               listType="picture"
               maxCount={1}
+              beforeUpload={beforeUpload}
               customRequest={customRequest}
               onChange={onChangeUpload}
               accept=".png,.jpg,.gif,.jpeg"
