@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-09 16:26:31
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-07-07 11:55:25
+ * @LastEditTime: 2022-08-23 13:36:03
  */
 import React, { useEffect, useState } from 'react';
 import { history } from 'umi';
@@ -12,7 +12,6 @@ import { useSize } from 'ahooks';
 import { Button, message } from 'antd';
 import api from '@/api';
 import { localSet } from '@/utils/local';
-import { initCos } from '@/utils/cosExample';
 import style from './index.less';
 
 const { login } = api;
@@ -95,7 +94,6 @@ const LayoutLogin = () => {
           localSet('auth', meta.auth);
           localSet('dict', meta.dict);
           history.push('/');
-          initCos();
         } else {
           message.error(data || msg);
         }

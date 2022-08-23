@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-01-13 11:42:16
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-06-22 18:22:08
+ * @LastEditTime: 2022-08-23 16:24:24
  */
 import { message } from 'antd';
 import { cloneDeep } from 'lodash';
@@ -114,7 +114,9 @@ export const signInEmail = (email: string) => {
 export const distinctObjectMap = (arr: any[], type: string) => {
   const res = new Map();
   // 使用map记录下每个item的id，已存在的id将不会被筛选入内
-  return arr.filter((item: any) => !res.has(item[type]) && res.set(item[type], 1));
+  return arr.filter(
+    (item: any) => !res.has(item[type]) && res.set(item[type], 1),
+  );
 };
 
 // 计算方法，num为当前的数  rate为进率  digit为保留的小数位
@@ -123,7 +125,11 @@ export const calculation = (num: number, rate: number, digit: number) => {
 };
 
 // 对数据进行分类处理，arr为要分类的数据  type为以什么属性分类
-export const modifyData = (data: any[], type: string,isFlat: boolean = true) => {
+export const modifyData = (
+  data: any[],
+  type: string,
+  isFlat: boolean = true,
+) => {
   const newData = [] as any[];
   data.forEach((item, index) => {
     const ind = newData.findIndex((item1: any) => item1.type === item[type]);
@@ -135,7 +141,7 @@ export const modifyData = (data: any[], type: string,isFlat: boolean = true) => 
     }
   });
 
-  if(isFlat){
+  if (isFlat) {
     return newData.map((item) => item.list).flat(Infinity);
   }
 
@@ -188,39 +194,49 @@ export const groupingData = (data: any[], num: number) => {
 };
 
 // 格式化时间
-export const formatDate = (date: any, format: string) => {   
-  if (!date) return;   
-  if (!format) format = "yyyy-MM-dd";   
-  switch(typeof date) {   
-      case "string":   
-          date = new Date(date);   
-          break;   
-      case "number":   
-          date = new Date(date);   
-          break;   
-  }    
-  if (!(date instanceof Date)) return;   
-  var dict = {   
-      "yyyy": date.getFullYear(),   
-      "M": date.getMonth() + 1,   
-      "d": date.getDate(),   
-      "H": date.getHours(),   
-      "m": date.getMinutes(),   
-      "s": date.getSeconds(),   
-      "MM": ("" + (date.getMonth() + 101)).substr(1),   
-      "dd": ("" + (date.getDate() + 100)).substr(1),   
-      "HH": ("" + (date.getHours() + 100)).substr(1),   
-      "mm": ("" + (date.getMinutes() + 100)).substr(1),   
-      "ss": ("" + (date.getSeconds() + 100)).substr(1)   
-  };       
-  return format.replace(/(yyyy|MM?|dd?|HH?|ss?|mm?)/g, function() {   
-      return dict[arguments[0]];   
-  });                   
-}  
+export const formatDate = (date: any, format: string) => {
+  if (!date) return;
+  if (!format) format = 'yyyy-MM-dd';
+  switch (typeof date) {
+    case 'string':
+      date = new Date(date);
+      break;
+    case 'number':
+      date = new Date(date);
+      break;
+  }
+  if (!(date instanceof Date)) return;
+  var dict = {
+    yyyy: date.getFullYear(),
+    M: date.getMonth() + 1,
+    d: date.getDate(),
+    H: date.getHours(),
+    m: date.getMinutes(),
+    s: date.getSeconds(),
+    MM: ('' + (date.getMonth() + 101)).substr(1),
+    dd: ('' + (date.getDate() + 100)).substr(1),
+    HH: ('' + (date.getHours() + 100)).substr(1),
+    mm: ('' + (date.getMinutes() + 100)).substr(1),
+    ss: ('' + (date.getSeconds() + 100)).substr(1),
+  };
+  return format.replace(/(yyyy|MM?|dd?|HH?|ss?|mm?)/g, function () {
+    return dict[arguments[0]];
+  });
+};
 
 // 计算table表格宽度
 export const calcTableScrollWidth = (columns: any[]) => {
-  return columns.reduce((i,t) => {
-    return i += t.width || defaultTableWidth;
-  },0);
-}
+  return columns.reduce((i, t) => {
+    return (i += t.width || defaultTableWidth);
+  }, 0);
+};
+
+// 下载图片到本地
+export const downloadImg = (blob, filename) => {
+  const a = document.createElement('a'); // 创建一个a节点插入的document
+  a.href = window.URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  document.body.removeChild(a);
+  window.URL.revokeObjectURL(a.href);
+};

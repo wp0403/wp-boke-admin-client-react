@@ -4,7 +4,7 @@
  * @Author: 王鹏
  * @Date: 2022-01-22 13:20:17
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-08-15 15:30:14
+ * @LastEditTime: 2022-08-22 17:11:34
  */
 export default [
   {
@@ -150,10 +150,16 @@ export default [
             redirect: '/timeAxis/list',
           },
           {
-            path: '/settings/list',
+            path: '/settings/user-list',
             name: '用户列表',
             exact: true,
             component: './settings-userList',
+          },
+          {
+            path: '/settings/imgs-list',
+            name: '图片列表',
+            exact: true,
+            component: './settings-imgs',
           },
         ],
       },

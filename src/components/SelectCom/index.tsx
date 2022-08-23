@@ -65,7 +65,7 @@ const SelectCom = (props: Props) => {
   };
 
   useEffect(() => {
-    keyword && getList();
+    getList();
   }, [keyword]);
 
   return (

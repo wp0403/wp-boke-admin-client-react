@@ -24,7 +24,7 @@ import {
   getDictObj,
   getSubDictObj,
 } from '@/utils/globalDataUtils';
-import { putCos, initCos } from '@/utils/cosExample';
+import { putCos } from '@/utils/cosExample';
 import api from '@/api';
 import style from './index.less';
 
@@ -199,10 +199,6 @@ const ClassifyDetails: FC = (props: any) => {
     if (imgUrl) {
       setCopyImg(`https://${imgUrl}`);
     }
-  };
-
-  const beforeUpload = async () => {
-    await initCos();
   };
 
   return (
@@ -380,7 +376,6 @@ const ClassifyDetails: FC = (props: any) => {
                 action="https://wp-1302605407.cos.ap-beijing.myqcloud.com"
                 listType="picture"
                 maxCount={1}
-                beforeUpload={beforeUpload}
                 customRequest={customRequest}
                 onChange={onChangeUpload}
                 accept=".png,.jpg,.gif,.jpeg"
@@ -464,7 +459,6 @@ const ClassifyDetails: FC = (props: any) => {
                   action="https://wp-1302605407.cos.ap-beijing.myqcloud.com"
                   listType="picture"
                   maxCount={1}
-                  beforeUpload={beforeUpload}
                   customRequest={customRequest}
                   onChange={onChangeUpload}
                   accept=".png,.jpg,.gif,.jpeg"

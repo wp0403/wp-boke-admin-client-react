@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FC } from 'react';
+import React, { useState, FC } from 'react';
 import { history } from 'umi';
 import {
   Button,
@@ -22,7 +22,7 @@ import {
   getDictObj,
   getSubDictObj,
 } from '@/utils/globalDataUtils';
-import { putCos, initCos } from '@/utils/cosExample';
+import { putCos } from '@/utils/cosExample';
 import api from '@/api';
 import style from './index.less';
 import RanderMarkdown from '@/components/RanderMarkdown';
@@ -173,10 +173,6 @@ const ClassifyDetails: FC = () => {
       setCopyImg(`https://${imgUrl}`);
     }
   };
-  // 上传前
-  const beforeUpload = async () => {
-    await initCos();
-  };
 
   return (
     <div className={style.classifyDetails}>
@@ -294,7 +290,6 @@ const ClassifyDetails: FC = () => {
               action="https://wp-1302605407.cos.ap-beijing.myqcloud.com"
               listType="picture"
               maxCount={1}
-              beforeUpload={beforeUpload}
               customRequest={customRequest}
               accept=".png,.jpg,.gif,.jpeg"
             >
@@ -351,7 +346,6 @@ const ClassifyDetails: FC = () => {
               action="https://wp-1302605407.cos.ap-beijing.myqcloud.com"
               listType="picture"
               maxCount={1}
-              beforeUpload={beforeUpload}
               customRequest={customRequest}
               onChange={onChangeUpload}
               accept=".png,.jpg,.gif,.jpeg"
