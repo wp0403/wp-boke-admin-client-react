@@ -58,15 +58,10 @@ const SettingUser = () => {
       key: 'Key',
       render: (text) => (
         <div className={tableStyle.table_cell}>
-          <Tooltip
-            placement="topLeft"
-            title={`https://img-1302605407.cos.ap-beijing.myqcloud.com/${text}`}
-          >
-            <Paragraph
-              copyable
-              ellipsis
-            >{`https://img-1302605407.cos.ap-beijing.myqcloud.com/${text}`}</Paragraph>
-          </Tooltip>
+          <Paragraph
+            copyable
+            ellipsis
+          >{`https://img-1302605407.cos.ap-beijing.myqcloud.com/${text}`}</Paragraph>
         </div>
       ),
     },
@@ -89,6 +84,10 @@ const SettingUser = () => {
       dataIndex: 'LastModified',
       key: 'LastModified',
       width: 200,
+      defaultSortOrder: 'ascend',
+      sorter: (a: any, b: any) => {
+        return +new Date(b.LastModified) - +new Date(a.LastModified);
+      },
       render: (text) => (
         <div className={tableStyle.table_cell}>
           {formatDate(text, 'yyyy-MM-dd HH:ss:mm')}
