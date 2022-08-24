@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react';
+import { Image } from 'antd';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
@@ -51,7 +52,7 @@ const RanderMarkdown = (props: any) => {
             );
           },
           img({ src, alt }) {
-            return <img onClick={() => alertImg(src)} src={src} alt={alt} />;
+            return <Image src={src} alt={alt} />;
           },
           a({ href, children }) {
             if (RegExp('#').test(href || '')) {
