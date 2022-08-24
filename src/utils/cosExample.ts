@@ -94,7 +94,7 @@ export const getCosObj = (name, callback) => {
       Bucket /* 必须 */,
       Region /* 存储桶所在地域，必须字段 */,
       Key: name /* 必须 */,
-      QueryString: `watermark/3/type/1/image/aHR0cDovL2V4YW1wbGVzLTEyNTEwMDAwMDQucGljc2gubXlxY2xvdWQuY29tL3NodWl5aW4uanBn`, // 加水印
+      // QueryString: `watermark/3/type/1/image/aHR0cDovL2V4YW1wbGVzLTEyNTEwMDAwMDQucGljc2gubXlxY2xvdWQuY29tL3NodWl5aW4uanBn`, // 加水印
       DataType: 'blob',
     },
     function (err, data) {
