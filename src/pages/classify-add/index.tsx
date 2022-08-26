@@ -44,6 +44,7 @@ interface ClassifyObj {
   isDelete: number;
   img: string;
   storage_type: string;
+  storage_desc: string;
   content: string;
 }
 
@@ -138,6 +139,15 @@ const ClassifyDetails: FC = () => {
         ...data,
         [keyName]: value,
         author: option?.name,
+      }));
+      return;
+    }
+    if ('storage_type' === Object.keys(value)[0]) {
+      const dictObj = getDictObj('bowen_type', Object.values(value)[0] as any);
+      setClassifyObj((data: ClassifyObj) => ({
+        ...data,
+        ...value,
+        storage_desc: dictObj.value,
       }));
       return;
     }
@@ -265,7 +275,6 @@ const ClassifyDetails: FC = () => {
             className={style.form_item}
             label="是否精选博文"
             name="selected"
-            rules={[{ required: true }]}
             valuePropName={'checked'}
           >
             <Switch />
@@ -274,7 +283,6 @@ const ClassifyDetails: FC = () => {
             className={style.form_item}
             label="是否放入回收站"
             name="isDelete"
-            rules={[{ required: true }]}
             valuePropName={'checked'}
           >
             <Switch />
@@ -310,12 +318,18 @@ const ClassifyDetails: FC = () => {
             name="storage_type"
             rules={[{ required: true }]}
           >
-            <Input placeholder="请输入博文类型（目前只支持md和html格式）" />
+            <Select
+              options={getOnlyDictObj('bowen_type')?.map((item) => ({
+                label: item.value,
+                value: item.id,
+              }))}
+              placeholder="请选择文档类型（提倡markdown）"
+            />
           </Form.Item>
           <div className={style.form_item_2}>
             <Form.Item
               className={
-                classifyObj?.storage_type === 'md'
+                classifyObj?.storage_type === '1'
                   ? style.form_item
                   : style.form_item_1
               }
@@ -324,11 +338,11 @@ const ClassifyDetails: FC = () => {
               rules={[{ required: true }]}
             >
               <Input.TextArea
-                placeholder="请输入博文内容（支持md、txt、html）"
+                placeholder="请输入博文内容（支持Markdown、HTML、TEXT）"
                 className={style.textarea}
               />
             </Form.Item>
-            {classifyObj?.storage_type === 'md' ? (
+            {classifyObj?.storage_type === '1' ? (
               <div className={style.form_item_markdown_1}>
                 <RanderMarkdown markdown={classifyObj?.content} />
               </div>

@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 13:51:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-08-16 14:04:14
+ * @LastEditTime: 2022-08-26 10:24:02
  */
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, history } from 'umi';
@@ -85,6 +85,18 @@ const Classify = (props: any) => {
         +type === 2
           ? setTotal((v) => (val ? (v -= 1) : (v += 1)))
           : setTotal((v) => (val ? (v += 1) : (v -= 1)));
+      } else {
+        message.error(data.msg);
+      }
+    });
+  };
+  // 彻底删除删除
+  const deleteBowenObj = async (id) => {
+    await classify._deleteClassifyDetails({ id }).then(({ data }) => {
+      if (data.code === 200) {
+        setList((v) => v.filter((item) => item.id !== id));
+        message.success(data.msg);
+        setTotal((v) => (v -= 1));
       } else {
         message.error(data.msg);
       }
@@ -183,9 +195,9 @@ const Classify = (props: any) => {
     },
     {
       title: '文档类型',
-      dataIndex: 'storage_type',
+      dataIndex: 'storage_desc',
       key: 'storage_type',
-      width: 100,
+      width: 120,
       render: (text) => <div className={tableStyle.table_cell}>{text}</div>,
     },
     {
@@ -281,7 +293,7 @@ const Classify = (props: any) => {
           {+type === 2 && (
             <Popconfirm
               title="将彻底删除该条数据，不可恢复，要继续吗？"
-              onConfirm={() => delBowenObj(record.isDelete, record.id)}
+              onConfirm={() => deleteBowenObj(record.id)}
               okText="确定"
               cancelText="取消"
               placement="topRight"

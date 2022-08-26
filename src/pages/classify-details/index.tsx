@@ -14,6 +14,7 @@ import {
   message,
   Typography,
   Tooltip,
+  Popconfirm,
 } from 'antd';
 import moment from 'moment';
 import { CopyOutlined, UploadOutlined } from '@ant-design/icons';
@@ -32,6 +33,7 @@ const { Paragraph } = Typography;
 const { classify, user } = api;
 
 interface ClassifyObj {
+  id: number;
   title: string;
   author: string;
   author_id: number;
@@ -46,6 +48,7 @@ interface ClassifyObj {
   isDelete: number;
   img: string;
   storage_type: string;
+  storage_desc: string;
   content: string;
 }
 
@@ -63,6 +66,7 @@ const ClassifyDetails: FC = (props: any) => {
   const [form] = Form.useForm();
   const format = 'YYYY-MM-DD HH:mm:ss';
 
+  // 获取详情信息
   const getObj = async () => {
     setLoading(true);
     await classify
@@ -93,6 +97,18 @@ const ClassifyDetails: FC = (props: any) => {
         }
       })
       .finally(() => setLoading(false));
+  };
+
+  // 彻底删除删除
+  const deleteBowenObj = async (id) => {
+    await classify._deleteClassifyDetails({ id }).then(({ data }) => {
+      if (data.code === 200) {
+        message.success(data.msg);
+        history.push('/classify');
+      } else {
+        message.error(data.msg);
+      }
+    });
   };
 
   useEffect(() => {
@@ -160,6 +176,15 @@ const ClassifyDetails: FC = (props: any) => {
       }));
       return;
     }
+    if ('storage_type' === Object.keys(value)[0]) {
+      const dictObj = getDictObj('bowen_type', Object.values(value)[0] as any);
+      setClassifyObj((data: ClassifyObj) => ({
+        ...data,
+        ...value,
+        storage_desc: dictObj.value,
+      }));
+      return;
+    }
     if (typeof value !== 'object' && keyName === 'author_id') {
       setClassifyObj((data: ClassifyObj) => ({
         ...data,
@@ -217,14 +242,22 @@ const ClassifyDetails: FC = (props: any) => {
             >
               {isEdit ? '取消' : '编辑'}
             </Button>
-            <Button
-              style={{ marginLeft: '10px' }}
-              type="primary"
-              danger
-              shape="round"
+            <Popconfirm
+              title="将彻底删除该条数据，不可恢复，要继续吗？"
+              onConfirm={() => deleteBowenObj(classifyObj.id)}
+              okText="确定"
+              cancelText="取消"
+              placement="topRight"
             >
-              删除
-            </Button>
+              <Button
+                style={{ marginLeft: '10px' }}
+                type="primary"
+                danger
+                shape="round"
+              >
+                删除
+              </Button>
+            </Popconfirm>
           </div>
         </div>
         <Divider />
@@ -338,7 +371,6 @@ const ClassifyDetails: FC = (props: any) => {
             className={style.form_item}
             label="是否精选博文"
             name="selected"
-            rules={[{ required: true }]}
             valuePropName={'checked'}
           >
             {isEdit ? (
@@ -353,7 +385,6 @@ const ClassifyDetails: FC = (props: any) => {
             className={style.form_item}
             label="是否放入回收站"
             name="isDelete"
-            rules={[{ required: true }]}
             valuePropName={'checked'}
           >
             {isEdit ? (
@@ -411,10 +442,16 @@ const ClassifyDetails: FC = (props: any) => {
             rules={[{ required: true }]}
           >
             {isEdit ? (
-              <Input />
+              <Select
+                options={getOnlyDictObj('bowen_type')?.map((item) => ({
+                  label: item.value,
+                  value: item.id,
+                }))}
+                placeholder="请选择文档类型（提倡markdown）"
+              />
             ) : (
               <div className={style.form_item_con}>
-                {classifyObj?.storage_type}
+                {classifyObj?.storage_desc}
               </div>
             )}
           </Form.Item>
@@ -427,7 +464,7 @@ const ClassifyDetails: FC = (props: any) => {
             >
               {isEdit ? (
                 <Input.TextArea className={style.textarea} />
-              ) : classifyObj?.storage_type === 'md' ? (
+              ) : classifyObj?.storage_type === '1' ? (
                 <div className={style.form_item_markdown}>
                   <RanderMarkdown markdown={classifyObj?.content} />
                 </div>
@@ -437,7 +474,7 @@ const ClassifyDetails: FC = (props: any) => {
                 </div>
               )}
             </Form.Item>
-            {isEdit && classifyObj?.storage_type === 'md' ? (
+            {isEdit && classifyObj?.storage_type === '1' ? (
               <div className={style.form_item_markdown_1}>
                 <RanderMarkdown markdown={classifyObj?.content} />
               </div>
