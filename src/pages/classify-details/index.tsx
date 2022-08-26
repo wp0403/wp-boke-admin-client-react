@@ -120,9 +120,7 @@ const ClassifyDetails: FC = (props: any) => {
     classifyObj.time_str = moment(new Date(classifyObj?.time_str)).format(
       format,
     );
-    classifyObj.last_edit_time = moment(
-      new Date(classifyObj?.last_edit_time),
-    ).format(format);
+    classifyObj.last_edit_time = moment(new Date()).format(format);
     setLoading(true);
     classify
       ._putClassifyDetails(classifyObj)
