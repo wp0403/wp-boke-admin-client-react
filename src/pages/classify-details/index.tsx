@@ -53,7 +53,7 @@ interface ClassifyObj {
 }
 
 const ClassifyDetails: FC = (props: any) => {
-  const id = props.location.pathname.split('/')[2];
+  const { id } = props.match.params;
 
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -455,7 +455,11 @@ const ClassifyDetails: FC = (props: any) => {
           </Form.Item>
           <div className={style.form_item_2}>
             <Form.Item
-              className={isEdit ? style.form_item : style.form_item_1}
+              className={`${
+                isEdit && classifyObj?.storage_type === '1'
+                  ? style.form_item
+                  : style.form_item_1
+              } ${style.form_item_noBottom}`}
               label="博文内容"
               name="content"
               rules={[{ required: true }]}

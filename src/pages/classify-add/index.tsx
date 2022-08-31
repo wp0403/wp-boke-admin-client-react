@@ -328,11 +328,11 @@ const ClassifyDetails: FC = () => {
           </Form.Item>
           <div className={style.form_item_2}>
             <Form.Item
-              className={
+              className={`${
                 classifyObj?.storage_type === '1'
                   ? style.form_item
                   : style.form_item_1
-              }
+              } ${style.form_item_noBottom}`}
               label="博文内容"
               name="content"
               rules={[{ required: true }]}

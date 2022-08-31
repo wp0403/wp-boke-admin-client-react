@@ -4,7 +4,7 @@
  * @Author: 王鹏
  * @Date: 2022-01-22 13:20:17
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-08-22 17:11:34
+ * @LastEditTime: 2022-08-29 10:14:27
  */
 export default [
   {
@@ -154,6 +154,11 @@ export default [
             name: '用户列表',
             exact: true,
             component: './settings-userList',
+          },
+          {
+            path: '/settings/user-details/:id',
+            exact: true,
+            component: './user-details',
           },
           {
             path: '/settings/imgs-list',

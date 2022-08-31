@@ -216,18 +216,20 @@ const SettingUser = () => {
           </Upload>
         </div>
       </div>
-      <Table
-        loading={loading}
-        columns={columns}
-        dataSource={list}
-        rowKey={'Key'}
-        scroll={{
-          scrollToFirstRowOnChange: true,
-          x: calcTableScrollWidth(columns),
-          y: `calc(100vh - 310px)`,
-        }}
-        pagination={false}
-      />
+      <Image.PreviewGroup>
+        <Table
+          loading={loading}
+          columns={columns}
+          dataSource={list}
+          rowKey={'Key'}
+          scroll={{
+            scrollToFirstRowOnChange: true,
+            x: calcTableScrollWidth(columns),
+            y: `calc(100vh - 310px)`,
+          }}
+          pagination={false}
+        />
+      </Image.PreviewGroup>
       <div className={style.footerBox}>
         <div
           className={isTruncated ? style.loadBox : style.loadBox1}

@@ -1,4 +1,4 @@
-.classifyDetails {
+.user_details {
   padding: 20px;
   overflow-y: auto;
   overflow-x: hidden;
@@ -44,6 +44,24 @@
   display: flex;
 }
 
+.list_img {
+  width: 100%;
+  height: auto;
+  max-height: 300px;
+  object-fit: cover;
+}
+
+.form_item_con {
+  padding: 5px 0 !important;
+}
+
+.form_item_markdown {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 40px;
+  border: var(--b-alpha-15) 3px solid;
+}
+
 .form_btn {
   width: 100%;
   display: flex;
@@ -78,14 +96,17 @@
   height: 400px !important;
 }
 
-.form_item_markdown {
-  max-height: 400px;
-  overflow-y: auto;
-  padding: 40px;
-  border: var(--b-alpha-15) 3px solid;
-}
-
 .form_item_markdown_1 {
   .form_item_markdown();
   width: 50%;
+}
+
+.sub_title {
+  display: flex;
+  width: 100%;
+  height: 40px;
+  font-size: 16px;
+  font-weight: 500;
+  align-items: center;
+  padding-bottom: 20px;
 }

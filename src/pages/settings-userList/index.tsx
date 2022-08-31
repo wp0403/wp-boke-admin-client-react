@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Table, Button, message, Tooltip } from 'antd';
+import { Link } from 'umi';
 import type { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
 import { calcTableScrollWidth, formatDate } from '@/utils/dataUtils';
 import SysIcon from '@/components/SysIcon';
@@ -31,7 +32,17 @@ const SettingUser = () => {
       key: 'username',
       fixed: 'left',
       width: 160,
-      render: (text) => <div className={tableStyle.table_cell}>{text}</div>,
+      render: (text, record) => (
+        <div className={tableStyle.table_cell}>
+          <Link
+            target="_blank"
+            style={{ cursor: 'pointer' }}
+            to={`/settings/user-details/${record.id}`}
+          >
+            {text}
+          </Link>
+        </div>
+      ),
     },
     {
       title: '昵称',
