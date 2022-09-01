@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-07-06 11:54:44
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-08-31 18:00:34
+ * @LastEditTime: 2022-09-01 11:33:40
  */
 // 根据关键字获取用户列表
 export const _searchUserList = {
@@ -33,5 +33,5 @@ export const _getUserDetails = {
 // 更新用户信息
 export const _putUserDetails = {
   url: '/adminApi/putUserDetails',
-  method: 'get',
+  method: 'put',
 };

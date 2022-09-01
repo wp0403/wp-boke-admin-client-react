@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-08-29 10:06:54
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-08-31 18:11:06
+ * @LastEditTime: 2022-09-01 11:52:28
  */
 import React, { useState, useEffect } from 'react';
 import { message, Spin, Form, Button, Divider, Input } from 'antd';
@@ -42,7 +42,6 @@ const UserDetails = (props: any) => {
   // 用户信息
   const [userObj, setUserObj] = useState<User>({} as User);
   const [loading, setLodaing] = useState<boolean>(false);
-
   const [isEdit, setIsEdit] = useState<boolean>(false);
 
   const [form] = Form.useForm();
@@ -64,10 +63,24 @@ const UserDetails = (props: any) => {
 
   // 表单的字段值更新事件
   const onValuesChange = (value, option, keyName?) => {
-    console.log(value, option, keyName);
+    setUserObj(option);
   };
   // 表单提交事件
-  const onFinish = (values: any) => {};
+  const onFinish = async (values: any) => {
+    setLodaing(true);
+    await user
+      ._putUserDetails({ ...values, id })
+      .then(({ data }) => {
+        if (data.code === 200) {
+          getUserDetails();
+          setIsEdit(false);
+          message.success(data.msg);
+        } else {
+          message.error(data.msg);
+        }
+      })
+      .finally(() => setLodaing(false));
+  };
 
   useEffect(() => {
     !isEdit && getUserDetails();
