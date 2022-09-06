@@ -2,7 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Table, Button, message, Tooltip } from 'antd';
 import { Link } from 'umi';
 import type { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
-import { calcTableScrollWidth, formatDate } from '@/utils/dataUtils';
+import {
+  calcTableScrollWidth,
+  formatDate,
+  IncludeHttp,
+} from '@/utils/dataUtils';
 import SysIcon from '@/components/SysIcon';
 import ToExamineModal from '@/components/ToExamineModal';
 import { getDictObj } from '@/utils/globalDataUtils';
@@ -70,7 +74,17 @@ const SettingUser = () => {
       dataIndex: 'website',
       key: 'website',
       width: 260,
-      render: (text) => <div className={tableStyle.table_cell}>{text}</div>,
+      render: (text) => (
+        <div className={tableStyle.table_cell}>
+          <a
+            target="_blank"
+            style={{ cursor: 'pointer' }}
+            href={IncludeHttp(text) ? text : `http://${text}`}
+          >
+            {text}
+          </a>
+        </div>
+      ),
     },
     {
       title: '状态',

@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 13:51:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-08-26 10:24:02
+ * @LastEditTime: 2022-09-04 19:04:14
  */
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, history } from 'umi';
@@ -90,7 +90,7 @@ const Classify = (props: any) => {
       }
     });
   };
-  // 彻底删除删除
+  // 彻底删除博文
   const deleteBowenObj = async (id) => {
     await classify._deleteClassifyDetails({ id }).then(({ data }) => {
       if (data.code === 200) {

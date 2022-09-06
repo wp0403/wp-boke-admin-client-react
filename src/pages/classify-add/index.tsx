@@ -24,11 +24,12 @@ import {
 } from '@/utils/globalDataUtils';
 import { putCos } from '@/utils/cosExample';
 import api from '@/api';
-import style from './index.less';
 import RanderMarkdown from '@/components/RanderMarkdown';
+import { calculation, formatDate } from '@/utils/dataUtils';
+import style from './index.less';
 
 const { Paragraph } = Typography;
-const { classify, user } = api;
+const { classify, user, resources } = api;
 
 interface ClassifyObj {
   title: string;
@@ -177,10 +178,26 @@ const ClassifyDetails: FC = () => {
     });
   };
   // 上传的change函数
-  const onChangeUpload = (val) => {
-    const imgUrl = val?.file?.response?.Location;
-    if (imgUrl) {
-      setCopyImg(`https://${imgUrl}`);
+  const onChangeUpload = async ({ file }, isCopy = false) => {
+    if (file.status === 'done' && file.response.statusCode === 200) {
+      const imgUrl = file?.response?.Location;
+      if (isCopy && imgUrl) {
+        setCopyImg(`https://${imgUrl}`);
+      }
+      const obj = {
+        name: file.name,
+        url: `https://img-1302605407.cos.ap-beijing.myqcloud.com/${file.name}`,
+        updateTime: formatDate(file.lastModified, 'yyyy-MM-dd HH:ss:mm'),
+        create_time: formatDate(new Date(), 'yyyy-MM-dd HH:ss:mm'),
+        size: `${calculation(file.size, 1024 * 1024, 3)}MB`,
+      };
+      await resources
+        ._putImg(obj)
+        .then(({ data }) => {
+          if (data.code === 200) {
+          }
+        })
+        .finally(() => {});
     }
   };
 
@@ -299,6 +316,7 @@ const ClassifyDetails: FC = () => {
               listType="picture"
               maxCount={1}
               customRequest={customRequest}
+              onChange={onChangeUpload}
               accept=".png,.jpg,.gif,.jpeg"
             >
               <Button icon={<UploadOutlined />}>点击上传图片</Button>
@@ -361,7 +379,7 @@ const ClassifyDetails: FC = () => {
               listType="picture"
               maxCount={1}
               customRequest={customRequest}
-              onChange={onChangeUpload}
+              onChange={(v) => onChangeUpload(v, true)}
               accept=".png,.jpg,.gif,.jpeg"
             >
               <Button icon={<UploadOutlined />}>点击上传图片</Button>

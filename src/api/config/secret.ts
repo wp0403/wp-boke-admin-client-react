@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-01-21 15:29:33
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-07-15 10:12:29
+ * @LastEditTime: 2022-09-04 19:03:05
  */
 
 // 树洞列表接口
@@ -41,4 +41,10 @@ export const _createSecretDetails = {
 export const _putSecretToExamine = {
   url: '/adminApi/putSecretToExamine',
   method: 'put',
+};
+
+//删除树洞
+export const _deleteSecretDetails = {
+  url: '/adminApi/deleteSecretDetails',
+  method: 'delete',
 };

@@ -4,83 +4,130 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 13:51:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-08-15 14:58:37
+ * @LastEditTime: 2022-09-05 16:06:21
  */
-import React, { useState, useEffect } from 'react';
-import { Link } from 'umi';
-import { Table, Image } from 'antd';
+import React, { useState, useEffect, useRef } from 'react';
+import { Table, Tooltip, message, Button, Popconfirm } from 'antd';
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/lib/table';
 import { calcTableScrollWidth, formatDate } from '@/utils/dataUtils';
 import api from '@/api';
-import style from './index.less';
+import SysIcon from '@/components/SysIcon';
+import { getDictObj } from '@/utils/globalDataUtils';
+import ToExamineModal from '@/components/ToExamineModal';
 import tableStyle from '@/table.less';
+import SecretModal from './modal';
+import style from './index.less';
 
-const { classify } = api;
+const { timeAxis } = api;
 
 interface DataType {
   id: string;
-  time_str: string;
-  last_edit_time: string;
-  img: string;
-  author: string;
-  author_id: string;
-  classify: string;
-  classify_id: string;
-  classify_sub: string;
-  classify_sub_id: string;
+  type: number;
+  create_time: string;
+  update_time: string;
   title: string;
-  desc: string;
   content: string;
-  storage_type: string;
-  selected: string;
 }
 
-const Classify = () => {
+const Classify = (props: any) => {
+  const [page, setPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(10);
+  const [total, setTotal] = useState<number>(0);
+  const [list, setList] = useState<DataType[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  // 弹窗抛出的事件
+  const modalRef = useRef();
+  const toExamineModal = useRef();
+
+  // 获取树洞列表
+  const getList = async () => {
+    setLoading(true);
+    await timeAxis
+      ._getTimeAxisList({
+        params: { page, pageSize },
+      })
+      .then(({ data }) => {
+        setList(data.data);
+        setTotal(data.meta.total);
+      })
+      .finally(() => setLoading(false));
+  };
+
+  // 表格筛选和分页事件
+  const changeTable = ({ current, pageSize }, selectedRows, info: { type }) => {
+    setPage(current);
+    setPageSize(pageSize);
+  };
+
+  // 删除
+  const deleteTimeAxisObj = async (id) => {
+    await timeAxis._deleteTimeAxisDetails({ id }).then(({ data }) => {
+      if (data.code === 200) {
+        setList((v) => v.filter((item) => item.id !== id));
+        message.success(data.msg);
+        setTotal((v) => (v -= 1));
+      } else {
+        message.error(data.msg);
+      }
+    });
+  };
+
+  // 修改审核状态
+  const changeToExamine = async (obj) => {
+    await timeAxis._putTimeAxisToExamine(obj).then(({ data }) => {
+      if (data.code === 200) {
+        setList((v) =>
+          v.map((item) =>
+            item.id === obj.id ? { ...item, type: +obj.type } : item,
+          ),
+        );
+        (toExamineModal.current as any)?.handleCancel();
+        message.success(data.msg);
+      } else {
+        message.error(data.msg);
+      }
+    });
+  };
+
+  useEffect(() => {
+    getList();
+  }, [page, pageSize]);
+
+  // 表格列
   const columns: ColumnsType<DataType> = [
     {
       title: '标题',
       dataIndex: 'title',
       key: 'title',
-      fixed: 'left',
+      width: 100,
       render: (text) => (
         <div className={tableStyle.table_cell}>
-          <Link to="">{text}</Link>
+          <Tooltip placement="topLeft" title={text}>
+            {text}
+          </Tooltip>
         </div>
       ),
     },
     {
-      title: '一级类',
-      dataIndex: 'classify',
-      key: 'classify_id',
-      width: 160,
-      render: (text) => <div className={tableStyle.table_cell}>{text}</div>,
-    },
-    {
-      title: '二级类',
-      dataIndex: 'classify_sub',
-      key: 'classify_sub_id',
-      width: 160,
-      render: (text) => <div className={tableStyle.table_cell}>{text}</div>,
-    },
-    {
-      title: '内容简介',
-      dataIndex: 'desc',
-      key: 'desc',
+      title: '内容',
+      dataIndex: 'content',
+      key: 'content',
       width: 300,
-      render: (text) => <div className={tableStyle.table_cell}>{text}</div>,
+      render: (text) => (
+        <div className={tableStyle.table_cell}>
+          <Tooltip placement="topLeft" title={text}>
+            {text}
+          </Tooltip>
+        </div>
+      ),
     },
     {
-      title: '文档类型',
-      dataIndex: 'storage_type',
-      key: 'storage_type',
-      width: 100,
-      render: (text) => <div className={tableStyle.table_cell}>{text}</div>,
-    },
-    {
-      title: '发布时间',
-      dataIndex: 'time_str',
-      key: 'time_str',
-      width: 220,
+      title: '创建时间',
+      dataIndex: 'create_time',
+      key: 'create_time',
+      width: 200,
       render: (text) => (
         <div className={tableStyle.table_cell}>
           {formatDate(text, 'yyyy-MM-dd HH:ss:mm')}
@@ -89,9 +136,9 @@ const Classify = () => {
     },
     {
       title: '最后修改时间',
-      dataIndex: 'last_edit_time',
-      key: 'last_edit_time',
-      width: 220,
+      dataIndex: 'update_time',
+      key: 'update_time',
+      width: 200,
       render: (text) => (
         <div className={tableStyle.table_cell}>
           {formatDate(text, 'yyyy-MM-dd HH:ss:mm')}
@@ -99,66 +146,117 @@ const Classify = () => {
       ),
     },
     {
-      title: '列表图片',
-      dataIndex: 'img',
-      key: 'img',
-      width: 100,
+      title: '状态',
+      dataIndex: 'type',
+      key: 'type',
+      width: 160,
       render: (text) => (
         <div className={tableStyle.table_cell}>
-          <Image className={style.img_list} width={200} src={text} />
+          <SysIcon
+            type={getDictObj('toExamine_type', text)?.icon}
+            style={{ marginRight: '10px' }}
+          />
+          <span
+            className={
+              text === 1
+                ? style.secretType1
+                : text === 2
+                ? style.secretType2
+                : text === 3
+                ? style.secretType3
+                : ''
+            }
+          >
+            {getDictObj('toExamine_type', text)?.value}
+          </span>
         </div>
       ),
     },
     {
-      title: '是否精选',
-      dataIndex: 'selected',
-      key: 'selected',
-      width: 100,
-      render: (text) => <div className={tableStyle.table_cell}>{text}</div>,
-    },
-    {
-      title: '作者',
-      dataIndex: 'author',
-      key: 'author_id',
-      width: 120,
-      render: (text) => <div className={tableStyle.table_cell}>{text}</div>,
-    },
-    {
       dataIndex: 'operation',
-      width: 120,
+      width: 140,
       fixed: 'right',
-      render: (text) => <div className={tableStyle.table_cell}>操作</div>,
+      render: (text, record) => (
+        <div className={tableStyle.table_cell}>
+          <Tooltip placement="left" title="修改审核状态">
+            <SysIcon
+              type="icon-shenhe"
+              className={style.btn1}
+              onClick={() =>
+                (toExamineModal.current as any)?.showModal({
+                  ...record,
+                  secretType: `${record.type}`,
+                })
+              }
+            />
+          </Tooltip>
+          <Tooltip placement="left" title="编辑树洞信息">
+            <EditOutlined
+              className={style.btn1}
+              onClick={() => (modalRef.current as any)?.showModal(record)}
+            />
+          </Tooltip>
+          <Popconfirm
+            title="将彻底删除该条数据，不可恢复，要继续吗？"
+            onConfirm={() => deleteTimeAxisObj(record.id)}
+            okText="确定"
+            cancelText="取消"
+            placement="topRight"
+          >
+            <DeleteOutlined className={style.btn} />
+          </Popconfirm>
+        </div>
+      ),
     },
   ];
 
-  const [list, setList] = useState<DataType[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-
-  const getList = async () => {
-    setLoading(true);
-    await classify
-      ._getClassifyList({ params: { author: '' } })
-      .then(({ data }) => {
-        setList(data.data);
-      })
-      .finally(() => setLoading(false));
-  };
-
-  useEffect(() => {
-    getList();
-  }, []);
-
   return (
-    <Table
-      loading={loading}
-      columns={columns}
-      dataSource={list}
-      scroll={{
-        scrollToFirstRowOnChange: true,
-        x: calcTableScrollWidth(columns),
-        y: `calc(100vh - 310px)`,
-      }}
-    />
+    <div className={style.secret}>
+      <div className={style.headerBox}>
+        <div className={style.headerBox_left}>
+          <span className={style.page_title}>网站时间轴</span>{' '}
+          <span className={style.page_total}>{total}</span>
+        </div>
+        <div className={style.headerBox_right}>
+          <Button
+            type="primary"
+            shape="round"
+            className={style.headerBox_right_btn}
+            onClick={() => (modalRef.current as any)?.showModal()}
+          >
+            新增网站事件
+          </Button>
+        </div>
+      </div>
+      <Table
+        loading={loading}
+        columns={columns}
+        dataSource={list}
+        rowKey={'id'}
+        scroll={{
+          scrollToFirstRowOnChange: true,
+          x: calcTableScrollWidth(columns),
+          y: `calc(100vh - 310px)`,
+        }}
+        pagination={{
+          current: page,
+          pageSize: pageSize,
+          total: total,
+          showTitle: false,
+        }}
+        onChange={changeTable as any}
+      />
+      <SecretModal
+        callback={(ref) => (modalRef.current = ref)}
+        setLoading={setLoading}
+        update={getList}
+      />
+      <ToExamineModal
+        callback={(ref) => (toExamineModal.current = ref)}
+        name="type"
+        changeToExamine={changeToExamine}
+      />
+    </div>
   );
 };
 

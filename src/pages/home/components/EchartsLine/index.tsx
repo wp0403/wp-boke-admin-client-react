@@ -4,17 +4,11 @@
  * @Author: WangPeng
  * @Date: 2022-08-17 17:19:35
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-08-17 17:47:51
+ * @LastEditTime: 2022-09-02 18:10:50
  */
 import React, { useEffect, useRef } from 'react';
-import * as echarts from 'echarts/core';
-import { GridComponent } from 'echarts/components';
-import { LineChart } from 'echarts/charts';
-import { UniversalTransition } from 'echarts/features';
-import { CanvasRenderer } from 'echarts/renderers';
+import * as echarts from 'echarts';
 import style from './index.less';
-
-echarts.use([GridComponent, LineChart, CanvasRenderer, UniversalTransition]);
 
 const EchartsLine = (props: any) => {
   const dom = useRef<any>();
@@ -22,7 +16,7 @@ const EchartsLine = (props: any) => {
   const init = () => {
     const option = {
       title: {
-        text: 'Stacked Area Chart',
+        text: '',
       },
       tooltip: {
         trigger: 'axis',
@@ -34,13 +28,11 @@ const EchartsLine = (props: any) => {
         },
       },
       legend: {
-        data: ['Email', 'Union Ads', 'Video Ads', 'Direct', 'Search Engine'],
+        data: ['Email', 'Union', 'Video', 'Direct', 'Search'],
+        itemGap: 30,
+        top: '10px',
       },
-      toolbox: {
-        feature: {
-          saveAsImage: {},
-        },
-      },
+      toolbox: {},
       grid: {
         left: '3%',
         right: '4%',
@@ -71,7 +63,7 @@ const EchartsLine = (props: any) => {
           data: [120, 132, 101, 134, 90, 230, 210],
         },
         {
-          name: 'Union Ads',
+          name: 'Union',
           type: 'line',
           stack: 'Total',
           areaStyle: {},
@@ -81,7 +73,7 @@ const EchartsLine = (props: any) => {
           data: [220, 182, 191, 234, 290, 330, 310],
         },
         {
-          name: 'Video Ads',
+          name: 'Video',
           type: 'line',
           stack: 'Total',
           areaStyle: {},
@@ -101,7 +93,7 @@ const EchartsLine = (props: any) => {
           data: [320, 332, 301, 334, 390, 330, 320],
         },
         {
-          name: 'Search Engine',
+          name: 'Search',
           type: 'line',
           stack: 'Total',
           label: {

@@ -2,38 +2,42 @@
  * @Descripttion:
  * @version:
  * @Author: WangPeng
+ * @Date: 2022-09-05 13:58:49
+ * @LastEditors: WangPeng
+ * @LastEditTime: 2022-09-05 16:03:13
+ */
+/*
+ * @Descripttion:
+ * @version:
+ * @Author: WangPeng
  * @Date: 2022-07-12 16:02:34
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-09-05 14:11:49
+ * @LastEditTime: 2022-07-12 18:21:22
  */
 import React, { useState, useEffect } from 'react';
-import { Switch, message, Modal, Form, Input, DatePicker } from 'antd';
+import { message, Modal, Form, Input, DatePicker } from 'antd';
 import moment from 'moment';
-import SelectCom from '@/components/SelectCom';
 import api from '@/api';
 
-const { secret, user } = api;
+const { timeAxis } = api;
 
 interface DataType {
   id: string;
-  type: string;
-  time_str: any;
-  author: string;
-  authorId: string;
+  type: number;
+  create_time: string | any;
+  update_time: string | any;
   title: string;
   content: string;
-  isDelete: boolean;
-  isTop: boolean;
 }
 
 const ModalCom = (props: any) => {
   const format = 'YYYY-MM-DD HH:mm:ss';
   const [visible, setVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const [title, setTitle] = useState<string>('添加树洞');
-  const [secretObj, setSecretObj] = useState<DataType>({
-    time_str: moment(new Date(), format),
-    isTop: false,
+  const [title, setTitle] = useState<string>('添加事件');
+  const [timeAxisObj, settimeAxisObj] = useState<DataType>({
+    create_time: moment(new Date(), format),
+    update_time: moment(new Date(), format),
   } as DataType);
   const [form] = Form.useForm();
 
@@ -41,16 +45,17 @@ const ModalCom = (props: any) => {
   const showModal = (obj?) => {
     setVisible(true);
     obj
-      ? (setSecretObj({
+      ? (settimeAxisObj({
           ...obj,
-          time_str: moment(new Date(obj.time_str), format),
+          create_time: moment(new Date(obj.create_time), format),
+          update_time: moment(new Date(obj.update_time), format),
         }),
-        setTitle('编辑树洞'))
-      : (setSecretObj({
-          time_str: moment(new Date(), format),
-          isTop: false,
+        setTitle('编辑事件'))
+      : (settimeAxisObj({
+          create_time: moment(new Date(), format),
+          update_time: moment(new Date(), format),
         } as any),
-        setTitle('添加树洞'));
+        setTitle('添加事件'));
   };
 
   // 弹窗确认事件
@@ -66,16 +71,19 @@ const ModalCom = (props: any) => {
 
   // 表单提交时间
   const onFinish = (values: any) => {
-    secretObj.time_str = moment(new Date(secretObj?.time_str)).format(format);
+    timeAxisObj.create_time = moment(new Date(timeAxisObj?.create_time)).format(
+      format,
+    );
+    timeAxisObj.update_time = moment(new Date()).format(format);
     props.setLoading(true);
-    const apiName = secretObj.id
-      ? secret._putSecretDetails
-      : secret._createSecretDetails;
-    apiName(secretObj)
+    const apiName = timeAxisObj.id
+      ? timeAxis._putTimeAxisDetails
+      : timeAxis._createTimeAxisDetails;
+    apiName(timeAxisObj)
       .then(({ data }) => {
         if (data.code === 200) {
           message.success(data.msg);
-          props.editObj(secretObj);
+          props.update();
           setVisible(false);
           setConfirmLoading(false);
         } else {
@@ -89,14 +97,14 @@ const ModalCom = (props: any) => {
   const onValuesChange = (value, option, keyName?) => {
     if (!value) return;
     if (typeof value !== 'object' && keyName === 'authorId') {
-      setSecretObj((data: DataType) => ({
+      settimeAxisObj((data: DataType) => ({
         ...data,
         [keyName]: value,
         author: option?.name,
       }));
       return;
     }
-    setSecretObj((data: DataType) => ({
+    settimeAxisObj((data: DataType) => ({
       ...data,
       ...value,
     }));
@@ -109,7 +117,7 @@ const ModalCom = (props: any) => {
 
   useEffect(() => {
     form.resetFields();
-  }, [secretObj.id]);
+  }, [timeAxisObj.id]);
 
   return (
     <Modal
@@ -121,51 +129,32 @@ const ModalCom = (props: any) => {
     >
       <Form
         name="basic"
-        initialValues={secretObj}
+        initialValues={timeAxisObj}
         onFinish={onFinish}
         autoComplete="off"
         scrollToFirstError
         form={form}
         onValuesChange={onValuesChange}
       >
-        <Form.Item
-          label="博文作者"
-          name="authorId"
-          rules={[{ required: true }]}
-        >
-          <SelectCom
-            optionItem={{ label: 'name', value: 'id' }}
-            fun={user._searchUserList}
-            placeholder="请输入关键字搜索"
-            showSearch={true}
-            defaultOptions={[
-              { label: secretObj?.author, value: secretObj?.authorId },
-            ]}
-            defaultValue={secretObj?.authorId ? [secretObj?.authorId] : null}
-            onChange={onValuesChange}
-            keyName="authorId"
-          />
+        <Form.Item label="标题" name="title" rules={[{ required: true }]}>
+          <Input placeholder="请输入标题" />
+        </Form.Item>
+        <Form.Item label="内容" name="content" rules={[{ required: true }]}>
+          <Input.TextArea placeholder="请输入内容" />
         </Form.Item>
         <Form.Item
           label="创建时间"
-          name="time_str"
+          name="create_time"
           rules={[{ required: true }]}
         >
           <DatePicker format={format} showTime />
         </Form.Item>
-        <Form.Item label="类型" name="type" rules={[{ required: true }]}>
-          <Input placeholder="请输入类型" />
-        </Form.Item>
         <Form.Item
-          label="是否置顶"
-          name="isTop"
+          label="修改时间"
+          name="update_time"
           rules={[{ required: true }]}
-          valuePropName={'checked'}
         >
-          <Switch />
-        </Form.Item>
-        <Form.Item label="内容" name="content" rules={[{ required: true }]}>
-          <Input.TextArea placeholder="请输入内容" />
+          <DatePicker format={format} showTime />
         </Form.Item>
       </Form>
     </Modal>

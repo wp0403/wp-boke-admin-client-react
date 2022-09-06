@@ -1,5 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Table, Button, Tooltip, Typography, Image, Upload } from 'antd';
+import { useGetState } from 'ahooks';
+import {
+  Table,
+  Button,
+  Tooltip,
+  Typography,
+  Image,
+  message,
+  Upload,
+} from 'antd';
+import { SyncOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/lib/table';
 import {
   calcTableScrollWidth,
@@ -7,13 +17,15 @@ import {
   calculation,
   downloadImg,
 } from '@/utils/dataUtils';
-import { getCosObj, putCos } from '@/utils/cosExample';
+import { getCosList, getCosObj, putCos } from '@/utils/cosExample';
 import SysIcon from '@/components/SysIcon';
+import { jsonToExcel } from '@/utils/dataUtils';
 import api from '@/api';
 import tableStyle from '@/table.less';
 import style from './index.less';
 
 const { resources } = api;
+
 const { Paragraph } = Typography;
 
 interface DataType {
@@ -32,8 +44,8 @@ const SettingUser = () => {
   const columns: ColumnsType<DataType> = [
     {
       title: '图片名',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'Key',
+      key: 'Key',
       width: 160,
       render: (text) => (
         <div className={tableStyle.table_cell}>
@@ -45,43 +57,40 @@ const SettingUser = () => {
     },
     {
       title: '图片地址',
-      dataIndex: 'url',
-      key: 'url',
+      dataIndex: 'Key',
+      key: 'Key',
       render: (text) => (
         <div className={tableStyle.table_cell}>
-          <Paragraph copyable ellipsis>
-            {text}
-          </Paragraph>
+          <Paragraph
+            copyable
+            ellipsis
+          >{`https://img-1302605407.cos.ap-beijing.myqcloud.com/${text}`}</Paragraph>
         </div>
       ),
     },
     {
       title: '图片预览',
-      dataIndex: 'url',
-      key: 'url',
+      dataIndex: 'Key',
+      key: 'Key',
       width: 100,
       render: (text) => (
         <div className={tableStyle.table_cell}>
-          <Image className={style.img_list} src={text} />
-        </div>
-      ),
-    },
-    {
-      title: '上传时间',
-      dataIndex: 'create_time',
-      key: 'create_time',
-      width: 200,
-      render: (text) => (
-        <div className={tableStyle.table_cell}>
-          {formatDate(text, 'yyyy-MM-dd HH:ss:mm')}
+          <Image
+            className={style.img_list}
+            src={`https://img-1302605407.cos.ap-beijing.myqcloud.com/${text}`}
+          />
         </div>
       ),
     },
     {
       title: '最后修改时间',
-      dataIndex: 'updateTime',
-      key: 'updateTime',
+      dataIndex: 'LastModified',
+      key: 'LastModified',
       width: 200,
+      defaultSortOrder: 'ascend',
+      sorter: (a: any, b: any) => {
+        return +new Date(b.LastModified) - +new Date(a.LastModified);
+      },
       render: (text) => (
         <div className={tableStyle.table_cell}>
           {formatDate(text, 'yyyy-MM-dd HH:ss:mm')}
@@ -90,10 +99,14 @@ const SettingUser = () => {
     },
     {
       title: '大小',
-      dataIndex: 'size',
-      key: 'size',
+      dataIndex: 'Size',
+      key: 'Size',
       width: 120,
-      render: (text) => <div className={tableStyle.table_cell}>{text}</div>,
+      render: (text) => (
+        <div className={tableStyle.table_cell}>
+          {calculation(text, 1024 * 1024, 3)}MB
+        </div>
+      ),
     },
     {
       title: '操作',
@@ -106,8 +119,8 @@ const SettingUser = () => {
               type="icon-xiazai"
               className={style.btn_huifu}
               onClick={() =>
-                getCosObj(record.name, (val) => {
-                  downloadImg(val, record.name);
+                getCosObj(record.Key, (val) => {
+                  downloadImg(val, record.Key);
                 })
               }
             />
@@ -117,26 +130,32 @@ const SettingUser = () => {
     },
   ];
   const [loading, setLoading] = useState<boolean>(false);
-  const [list, setList] = useState<any[]>([]);
-  const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(10);
-  const [total, setTotal] = useState<number>(0);
-  const [uploading, setUploading] = useState<boolean>(false);
+  const [params, setParams] = useState<any>({});
+  const [isTruncated, setIsTruncated] = useState<boolean>(true);
+  const [next, setNext, getNext] = useGetState<string>('');
+  const [list, setList, getList] = useGetState<any[]>([]);
 
   // 请求列表数据事件
   const getLists = async () => {
     setLoading(true);
-    await resources
-      ._getImgList({
-        params: { page, pageSize },
-      })
-      .then(({ data }) => {
-        if (data.code === 200) {
-          setList(data.data);
-          setTotal(data.meta.total);
-        }
-      })
-      .finally(() => setLoading(false));
+    getCosList(
+      (data) => {
+        setLoading(false);
+        getNext()
+          ? setList([...getList(), ...data.Contents])
+          : setList(data.Contents);
+        setIsTruncated(data.IsTruncated === 'true' ? true : false);
+        data.NextMarker && setNext(data.NextMarker || '');
+      },
+      { MaxKeys: 1000, ...params } as any,
+    );
+  };
+
+  // 继续加载
+  const loadImgs = () => {
+    setParams({
+      Marker: next,
+    });
   };
 
   // 自定义上传
@@ -160,46 +179,24 @@ const SettingUser = () => {
     });
   };
 
-  const onChangeUpload = async ({ file }) => {
-    const obj = {
-      name: file.name,
-      url: `https://img-1302605407.cos.ap-beijing.myqcloud.com/${file.name}`,
-      updateTime: formatDate(file.lastModified, 'yyyy-MM-dd HH:ss:mm'),
-      create_time: formatDate(new Date(), 'yyyy-MM-dd HH:ss:mm'),
-      size: `${calculation(file.size, 1024 * 1024, 3)}MB`,
-    };
-    setUploading(true);
-    await resources
-      ._putImg(obj)
-      .then(({ data }) => {
-        if (data.code === 200) {
-          setPage(1);
-        }
-      })
-      .finally(() => setUploading(false));
-  };
-
-  // 表格的change事件
-  const handleTableChange = (
-    { current, pageSize },
-    selectedRows,
-    info: { type },
-  ) => {
-    setPage(current);
-    setPageSize(pageSize);
+  const onChangeUpload = () => {
+    setParams({});
+    setNext('');
+    setIsTruncated(true);
+    setList([]);
   };
 
   // 初始化列表
   useEffect(() => {
-    !uploading && getLists();
-  }, [page, pageSize, uploading]);
+    getLists();
+  }, [params]);
 
   return (
     <div className={style.settingUser}>
       <div className={style.headerBox}>
         <div className={style.headerBox_left}>
           <span className={style.page_title}>图片列表</span>{' '}
-          <span className={style.page_total}>{total}</span>
+          <span className={style.page_total}>{list.length}</span>
         </div>
         <div className={style.headerBox_right}>
           <Upload
@@ -216,7 +213,6 @@ const SettingUser = () => {
               type="primary"
               shape="round"
               className={style.headerBox_right_btn}
-              loading={uploading}
             >
               上传图片
             </Button>
@@ -228,21 +224,31 @@ const SettingUser = () => {
           loading={loading}
           columns={columns}
           dataSource={list}
-          rowKey={'id'}
+          rowKey={'Key'}
           scroll={{
             scrollToFirstRowOnChange: true,
             x: calcTableScrollWidth(columns),
             y: `calc(100vh - 310px)`,
           }}
-          pagination={{
-            current: page,
-            pageSize: pageSize,
-            total: total,
-            showTitle: false,
-          }}
-          onChange={handleTableChange as any}
+          pagination={false}
         />
       </Image.PreviewGroup>
+      <div className={style.footerBox}>
+        <div
+          className={isTruncated ? style.loadBox : style.loadBox1}
+          onClick={
+            isTruncated
+              ? loadImgs
+              : () => {
+                  setNext('');
+                  next && message.warning('数据已全部加载');
+                }
+          }
+        >
+          <SyncOutlined spin={loading} />
+          <div className={style.loadText}>加载更多</div>
+        </div>
+      </div>
     </div>
   );
 };

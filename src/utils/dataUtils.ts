@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-01-13 11:42:16
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-08-23 16:24:24
+ * @LastEditTime: 2022-09-05 18:10:30
  */
 import { message } from 'antd';
 import { cloneDeep } from 'lodash';
@@ -239,4 +239,35 @@ export const downloadImg = (blob, filename) => {
   a.click();
   document.body.removeChild(a);
   window.URL.revokeObjectURL(a.href);
+};
+
+// 判断路径是否包含https或http  true包含 false不包含
+export const IncludeHttp = (url: string) => {
+  const reg = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/;
+  return reg.test(url);
+};
+
+/**
+ * 导出 json 数据为 Excle 表格
+ * @param {json} data 要导出的 json 数据
+ * @param {String} head 表头, 可选 参数示例：'名字,邮箱,电话'
+ * @param {*} name 导出的文件名, 可选
+ */
+export const jsonToExcel = (data, head, name = '导出的文件名') => {
+  let str = head ? head + '\n' : '';
+  data.forEach((item) => {
+    // 拼接json数据, 增加 \t 为了不让表格显示科学计数法或者其他格式
+    for (let key in item) {
+      str = `${str + item[key] + '\t'},`;
+    }
+    str += '\n';
+  });
+  // encodeURIComponent解决中文乱码
+  const uri = 'data:text/csv;charset=utf-8,\ufeff' + encodeURIComponent(str);
+  // 通过创建a标签实现
+  const link = document.createElement('a');
+  link.href = uri;
+  // 对下载的文件命名
+  link.download = `${name + '.csv'}`;
+  link.click();
 };

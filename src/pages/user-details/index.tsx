@@ -4,11 +4,12 @@
  * @Author: WangPeng
  * @Date: 2022-08-29 10:06:54
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-09-01 11:52:28
+ * @LastEditTime: 2022-09-05 17:42:25
  */
 import React, { useState, useEffect } from 'react';
 import { message, Spin, Form, Button, Divider, Input } from 'antd';
 import api from '@/api';
+import { IncludeHttp } from '@/utils/dataUtils';
 import style from './index.less';
 import SysIcon from '@/components/SysIcon';
 
@@ -161,7 +162,11 @@ const UserDetails = (props: any) => {
             ) : userObj?.website ? (
               <a
                 className={style.form_item_con}
-                href={userObj?.website}
+                href={
+                  IncludeHttp(userObj?.website)
+                    ? userObj?.website
+                    : `http://${userObj?.website}`
+                }
                 target="_block"
               >
                 {userObj?.website}
@@ -181,7 +186,11 @@ const UserDetails = (props: any) => {
             ) : userObj?.github ? (
               <a
                 className={style.form_item_con}
-                href={userObj?.github}
+                href={
+                  IncludeHttp(userObj?.github)
+                    ? userObj?.github
+                    : `http://${userObj?.github}`
+                }
                 target="_block"
               >
                 {userObj?.github}

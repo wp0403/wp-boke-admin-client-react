@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 13:51:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-08-18 10:27:50
+ * @LastEditTime: 2022-09-04 19:06:55
  */
 import React, { useState, useEffect, useRef } from 'react';
 import { history } from 'umi';
@@ -105,6 +105,18 @@ const Classify = (props: any) => {
           ? setTotal((v) => (val ? (v -= 1) : (v += 1)))
           : setTotal((v) => (val ? (v += 1) : (v -= 1)));
         message.success(data.msg);
+      } else {
+        message.error(data.msg);
+      }
+    });
+  };
+  // 彻底删除树洞
+  const deleteSecretObj = async (id) => {
+    await secret._deleteSecretDetails({ id }).then(({ data }) => {
+      if (data.code === 200) {
+        setList((v) => v.filter((item) => item.id !== id));
+        message.success(data.msg);
+        setTotal((v) => (v -= 1));
       } else {
         message.error(data.msg);
       }
@@ -265,7 +277,7 @@ const Classify = (props: any) => {
           {+type === 2 && (
             <Popconfirm
               title="将彻底删除该条数据，不可恢复，要继续吗？"
-              onConfirm={() => delSecretObj(record.isDelete, record.id)}
+              onConfirm={() => deleteSecretObj(record.id)}
               okText="确定"
               cancelText="取消"
               placement="topRight"
