@@ -97,7 +97,17 @@ const SettingUser = () => {
             type={getDictObj('user_state', text)?.icon}
             style={{ marginRight: '10px' }}
           />
-          <span className={style.bowenType3}>
+          <span
+            className={
+              text === 1
+                ? style.bowenType1
+                : text === 2
+                ? style.bowenType2
+                : text === 0
+                ? style.bowenType3
+                : ''
+            }
+          >
             {getDictObj('user_state', text)?.value}
           </span>
         </div>

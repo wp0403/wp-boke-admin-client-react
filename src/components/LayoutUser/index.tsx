@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 11:11:37
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-09-08 13:33:50
+ * @LastEditTime: 2022-09-08 14:06:16
  */
 import React, { useState, useEffect } from 'react';
 import { history, Link } from 'umi';
@@ -57,11 +57,7 @@ const LayoutUser = () => {
         {
           key: '3',
           label: (
-            <Link
-              target="_blank"
-              rel="noopener noreferrer"
-              to="https://www.aliyun.com"
-            >
+            <Link target="_blank" rel="noopener noreferrer" to="/">
               <SysIcon className={style.menuIcon} type="icon-a-shezhichilun" />
               设置
             </Link>

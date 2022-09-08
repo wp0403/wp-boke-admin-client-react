@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-08-29 10:06:54
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-09-08 12:23:11
+ * @LastEditTime: 2022-09-08 13:53:56
  */
 import React, { useState, useEffect } from 'react';
 import {
@@ -17,6 +17,7 @@ import {
   Upload,
   Image,
 } from 'antd';
+import moment from 'moment';
 import { UploadOutlined } from '@ant-design/icons';
 import api from '@/api';
 import SysIcon from '@/components/SysIcon';
@@ -90,6 +91,7 @@ const UserDetails = (props: any) => {
   const onFinish = async (values: any) => {
     const newValues = { ...values, img: imgUrl };
     setLodaing(true);
+    newValues.last_edit_time = moment(new Date()).format(format);
     await user
       ._putUserDetails({ ...newValues, id })
       .then(({ data }) => {
@@ -301,7 +303,7 @@ const UserDetails = (props: any) => {
             )}
           </Form.Item>
           <Form.Item
-            className={`${style.form_item} ${style.form_item_noBottom}`}
+            className={style.form_item}
             label="手机号"
             name="phone"
             rules={[{ required: true }]}
@@ -312,7 +314,11 @@ const UserDetails = (props: any) => {
               <div className={style.form_item_con}>{userObj?.phone || '-'}</div>
             )}
           </Form.Item>
-          <Form.Item className={style.form_item} label="用户头像" name="img">
+          <Form.Item
+            className={`${style.form_item} ${style.form_item_noBottom}`}
+            label="用户头像"
+            name="img"
+          >
             {isEdit ? (
               <Upload
                 name="file"
