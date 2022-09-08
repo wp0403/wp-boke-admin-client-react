@@ -4,15 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-09-05 13:58:49
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-09-05 16:03:13
- */
-/*
- * @Descripttion:
- * @version:
- * @Author: WangPeng
- * @Date: 2022-07-12 16:02:34
- * @LastEditors: WangPeng
- * @LastEditTime: 2022-07-12 18:21:22
+ * @LastEditTime: 2022-09-08 15:14:07
  */
 import React, { useState, useEffect } from 'react';
 import { message, Modal, Form, Input, DatePicker } from 'antd';
