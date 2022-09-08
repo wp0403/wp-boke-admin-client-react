@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-01-13 11:29:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-08-16 11:30:29
+ * @LastEditTime: 2022-09-08 14:25:59
  */
 
 import { cloneDeep } from 'lodash';
@@ -122,4 +122,12 @@ export const matchingRoute: any = (pathname: string, route: Route) => {
 export const isRouteInclude: any = (pathname: string, seekRoute: string) => {
   const reg = RegExp(seekRoute);
   return reg.test(pathname);
+};
+
+/**
+ * 判断当前用户是否拥有某个权限
+ */
+export const isAuth: any = (authName: string) => {
+  const authList = localGet('auth');
+  return authList.some((item) => item.authName === authName);
 };

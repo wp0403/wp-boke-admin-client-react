@@ -29,6 +29,8 @@ import { calculation, formatDate } from '@/utils/dataUtils';
 import { putCos } from '@/utils/cosExample';
 import api from '@/api';
 import style from './index.less';
+import { isAuth } from '@/utils/authorityUtils';
+import { localGet } from '@/utils/local';
 
 const { Paragraph } = Typography;
 const { classify, user, resources } = api;
@@ -250,13 +252,16 @@ const ClassifyDetails: FC = (props: any) => {
             博文详情页
           </div>
           <div className={style.headerBtnBox}>
-            <Button
-              type="primary"
-              shape="round"
-              onClick={() => setIsEdit(!isEdit)}
-            >
-              {isEdit ? '取消' : '编辑'}
-            </Button>
+            {(isAuth('edit@classify') ||
+              +localGet('user')?.id === +classifyObj?.author_id) && (
+              <Button
+                type="primary"
+                shape="round"
+                onClick={() => setIsEdit(!isEdit)}
+              >
+                {isEdit ? '取消' : '编辑'}
+              </Button>
+            )}
             <Popconfirm
               title="将彻底删除该条数据，不可恢复，要继续吗？"
               onConfirm={() => deleteBowenObj(classifyObj.id)}

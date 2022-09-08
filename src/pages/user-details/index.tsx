@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-08-29 10:06:54
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-09-08 13:53:56
+ * @LastEditTime: 2022-09-08 14:31:11
  */
 import React, { useState, useEffect } from 'react';
 import {
@@ -21,6 +21,7 @@ import moment from 'moment';
 import { UploadOutlined } from '@ant-design/icons';
 import api from '@/api';
 import SysIcon from '@/components/SysIcon';
+import { isAuth } from '@/utils/authorityUtils';
 import { localSet, localGet } from '@/utils/local';
 import { calculation, formatDate, IncludeHttp } from '@/utils/dataUtils';
 import { putCos } from '@/utils/cosExample';
@@ -162,13 +163,15 @@ const UserDetails = (props: any) => {
             用户详情页
           </div>
           <div className={style.headerBtnBox}>
-            <Button
-              type="primary"
-              shape="round"
-              onClick={() => setIsEdit(!isEdit)}
-            >
-              {isEdit ? '取消' : '编辑'}
-            </Button>
+            {(isAuth('edit@user') || +localGet('user')?.id === +id) && (
+              <Button
+                type="primary"
+                shape="round"
+                onClick={() => setIsEdit(!isEdit)}
+              >
+                {isEdit ? '取消' : '编辑'}
+              </Button>
+            )}
             <Button
               style={{ marginLeft: '10px' }}
               type="primary"
