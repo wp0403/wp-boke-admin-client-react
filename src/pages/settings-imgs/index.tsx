@@ -101,7 +101,7 @@ const SettingUser = () => {
       width: 120,
       render: (text, record: any) => (
         <div className={tableStyle.table_cell_flex}>
-          <Tooltip placement="left" title="下载图片">
+          <Tooltip placement="topRight" title="下载图片" arrowPointAtCenter>
             <SysIcon
               type="icon-xiazai"
               className={style.btn_huifu}

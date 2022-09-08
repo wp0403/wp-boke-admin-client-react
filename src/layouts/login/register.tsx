@@ -4,15 +4,13 @@
  * @Author: WangPeng
  * @Date: 2022-06-09 16:26:31
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-07-07 11:55:25
+ * @LastEditTime: 2022-09-08 10:46:14
  */
 import React, { useEffect, useState } from 'react';
 import { history } from 'umi';
 import { useSize } from 'ahooks';
 import { Button, message } from 'antd';
 import api from '@/api';
-import { localSet } from '@/utils/local';
-import { initCos } from '@/utils/cosExample';
 import style from './index.less';
 
 const { login } = api;
@@ -51,7 +49,7 @@ const LayoutLogin = () => {
         setUsername(val);
         setWarnObj((v) => ({
           ...v,
-          isUser: /^\S{5,}$/gi.test(val),
+          isUser: /^\S{5,10}$/gi.test(val),
         }));
         return;
       case 'password':
@@ -148,7 +146,7 @@ const LayoutLogin = () => {
               <div className={style.tips}>请输入用户名、手机或邮箱</div>
             )}
             {isBtn && !warnObj.isUser && (
-              <div className={style.warn_tips}>请输入至少5位登陆用户名</div>
+              <div className={style.warn_tips}>请输入5-10位登陆用户名</div>
             )}
           </div>
         </div>

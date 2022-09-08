@@ -2,11 +2,7 @@
  * 腾讯云对象储存实例
  */
 import COS from 'cos-js-sdk-v5';
-import type {
-  GetBucketParams,
-  GetObjectParams,
-  GetAuthorizationOptions,
-} from 'cos-js-sdk-v5';
+import type { GetBucketParams } from 'cos-js-sdk-v5';
 import api from '@/api';
 
 const { all } = api;
@@ -63,9 +59,9 @@ export const putCos = ({
       ContentType: '',
       onProgress,
       onTaskReady: onSuccess,
-      onTaskStart: (TaskInfo) => {
-        console.log(TaskInfo);
-      },
+      // onTaskStart: (TaskInfo) => {
+      //   console.log(TaskInfo);
+      // },
     },
     function (err, data) {
       err ? onError(err) : onSuccess(data);

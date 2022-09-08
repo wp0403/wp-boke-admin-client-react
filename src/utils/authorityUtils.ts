@@ -8,7 +8,7 @@
  */
 
 import { cloneDeep } from 'lodash';
-import type { Route } from '@/models/connect';
+import type { Route } from '@/types/connect';
 import api from '@/api';
 import { localGet } from '@/utils/local';
 

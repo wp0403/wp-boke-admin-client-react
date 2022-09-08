@@ -55,7 +55,7 @@ const LayoutPage = (props: any) => {
   };
   // 监听页面宽度设置导航样式
   useEffect(() => {
-    setCollapsed((size?.width || 1000) <= 1000);
+    setCollapsed((size?.width || 1200) <= 1200);
   }, [size?.width]);
 
   useEffect(() => {

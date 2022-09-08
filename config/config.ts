@@ -92,20 +92,6 @@ export default defineConfig({
   // manifest: {
   //   basePath: '/',
   // },
-  // 单位转化配置
-  // extraPostCSSPlugins: [
-  //   require('postcss-flexbugs-fixes'),
-  //   require('postcss-px-to-viewport')({
-  //     viewportWidth: 750, // 视窗的宽度，对应的是我们设计稿的宽度，一般是750
-  //     unitPrecision: 5, // 指定`px`转换为视窗单位值的小数位数（很多时候无法整除）
-  //     viewportUnit: 'vh', // 指定需要转换成的视窗单位，建议使用vw
-  //     selectorBlackList: [], // 指定不转换为视窗单位的类，可以自定义，可以无限添加,建议定义一至两个通用的类名
-  //     minPixelValue: 1, // 小于或等于`1px`不转换为视窗单位，你也可以设置为你想要的值
-  //     mediaQuery: false, // 允许在媒体查询中转换`px`
-  //   }),
-  // ],
-  // 配置额外的 babel 插件。
-  // extraBabelPlugins: ['babel-plugin-react-require'],
   /**
    * 配置favicon图标
    */
@@ -115,14 +101,4 @@ export default defineConfig({
   // esbuild: {},
   // 使用 webpack 5 代替 webpack 4 进行构建。
   // webpack5: {},
-  // 配置是否开启服务端渲染，配置如下：
-  // 由于我的博客有太多交互的地方，所以对于ssr不太友好暂时不采用
-  // ssr: {
-  // 更多配置
-  // forceInitial: false,
-  // removeWindowInitialProps: false
-  // devServerRender: false,
-  // mode: 'string',
-  // staticMarkup: false,
-  // },
 });

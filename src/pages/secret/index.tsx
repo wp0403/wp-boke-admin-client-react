@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 13:51:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-09-04 19:06:55
+ * @LastEditTime: 2022-09-08 12:37:57
  */
 import React, { useState, useEffect, useRef } from 'react';
 import { history } from 'umi';
@@ -237,7 +237,11 @@ const Classify = (props: any) => {
       render: (text, record) => (
         <div className={tableStyle.table_cell}>
           {+type !== 2 && (
-            <Tooltip placement="left" title="修改当前博文审核状态">
+            <Tooltip
+              placement="topRight"
+              arrowPointAtCenter
+              title="修改当前博文审核状态"
+            >
               <SysIcon
                 type="icon-shenhe"
                 className={style.btn1}
@@ -250,14 +254,18 @@ const Classify = (props: any) => {
               />
             </Tooltip>
           )}
-          <Tooltip placement="left" title="编辑树洞信息">
+          <Tooltip placement="topRight" arrowPointAtCenter title="编辑树洞信息">
             <EditOutlined
               className={style.btn1}
               onClick={() => (modalRef.current as any)?.showModal(record)}
             />
           </Tooltip>
           {+type === 2 ? (
-            <Tooltip placement="topRight" title="点击后将恢复到列表中">
+            <Tooltip
+              placement="topRight"
+              arrowPointAtCenter
+              title="点击后将恢复到列表中"
+            >
               <UndoOutlined
                 className={style.btn1}
                 onClick={() => delSecretObj(record.isDelete, record.id)}
@@ -270,6 +278,7 @@ const Classify = (props: any) => {
               okText="确定"
               cancelText="取消"
               placement="topRight"
+              arrowPointAtCenter
             >
               <DeleteOutlined className={style.btn} />
             </Popconfirm>
@@ -281,6 +290,7 @@ const Classify = (props: any) => {
               okText="确定"
               cancelText="取消"
               placement="topRight"
+              arrowPointAtCenter
             >
               <DeleteOutlined className={style.btn} />
             </Popconfirm>

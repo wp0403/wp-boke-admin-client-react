@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 13:51:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-09-05 16:06:21
+ * @LastEditTime: 2022-09-08 12:39:29
  */
 import React, { useState, useEffect, useRef } from 'react';
 import { Table, Tooltip, message, Button, Popconfirm } from 'antd';
@@ -178,7 +178,7 @@ const Classify = (props: any) => {
       fixed: 'right',
       render: (text, record) => (
         <div className={tableStyle.table_cell}>
-          <Tooltip placement="left" title="修改审核状态">
+          <Tooltip placement="topRight" title="修改审核状态" arrowPointAtCenter>
             <SysIcon
               type="icon-shenhe"
               className={style.btn1}
@@ -190,7 +190,7 @@ const Classify = (props: any) => {
               }
             />
           </Tooltip>
-          <Tooltip placement="left" title="编辑树洞信息">
+          <Tooltip placement="topRight" title="编辑树洞信息" arrowPointAtCenter>
             <EditOutlined
               className={style.btn1}
               onClick={() => (modalRef.current as any)?.showModal(record)}
@@ -202,6 +202,7 @@ const Classify = (props: any) => {
             okText="确定"
             cancelText="取消"
             placement="topRight"
+            arrowPointAtCenter
           >
             <DeleteOutlined className={style.btn} />
           </Popconfirm>

@@ -259,7 +259,11 @@ const Classify = (props: any) => {
       render: (text, record) => (
         <div className={tableStyle.table_cell_flex}>
           {+type !== 2 && (
-            <Tooltip placement="topRight" title="修改当前博文审核状态">
+            <Tooltip
+              placement="topRight"
+              arrowPointAtCenter
+              title="修改当前博文审核状态"
+            >
               <SysIcon
                 type="icon-shenhe"
                 className={style.btn_huifu}
@@ -273,7 +277,11 @@ const Classify = (props: any) => {
             </Tooltip>
           )}
           {+type === 2 ? (
-            <Tooltip placement="topRight" title="点击后将恢复到列表中">
+            <Tooltip
+              placement="topRight"
+              arrowPointAtCenter
+              title="点击后将恢复到列表中"
+            >
               <UndoOutlined
                 className={style.btn_huifu}
                 onClick={() => delBowenObj(record.isDelete, record.id)}
@@ -286,6 +294,7 @@ const Classify = (props: any) => {
               okText="确定"
               cancelText="取消"
               placement="topRight"
+              arrowPointAtCenter
             >
               <DeleteOutlined className={style.btn_remove} />
             </Popconfirm>
@@ -297,6 +306,7 @@ const Classify = (props: any) => {
               okText="确定"
               cancelText="取消"
               placement="topRight"
+              arrowPointAtCenter
             >
               <DeleteOutlined className={style.btn_remove} />
             </Popconfirm>

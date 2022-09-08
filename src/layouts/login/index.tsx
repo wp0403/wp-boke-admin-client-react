@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-09 16:26:31
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-08-23 13:36:03
+ * @LastEditTime: 2022-09-08 10:38:27
  */
 import React, { useEffect, useState } from 'react';
 import { history } from 'umi';
@@ -93,6 +93,7 @@ const LayoutLogin = () => {
           localSet('token', meta.token);
           localSet('auth', meta.auth);
           localSet('dict', meta.dict);
+          localSet('user', data);
           history.push('/');
         } else {
           message.error(data || msg);

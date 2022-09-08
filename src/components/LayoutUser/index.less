@@ -1,15 +1,84 @@
 .layoutUser {
-  min-width: 130px;
-  max-width: 200px;
   height: 60px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 10px;
+  margin-right: 10px;
 }
 
-.tuichu {
-  font-size: 24px;
-  margin: 0 10px;
+.userPopover {
+  top: 50px !important;
+
+  :global {
+    .ant-dropdown-menu-item-disabled {
+      cursor: default !important;
+      color: var(--b-alpha);
+
+      &:hover {
+        cursor: default !important;
+      }
+    }
+
+    .ant-dropdown-menu-item:not(.ant-dropdown-menu-item-disabled) {
+      transition: 0.3s;
+
+      &:hover {
+        color: var(--w-alpha);
+        background-color: var(--p-alpha-80);
+
+        a {
+          color: var(--w-alpha);
+        }
+      }
+    }
+
+    a {
+      text-decoration: none;
+      color: var(--b-alpha-80);
+    }
+  }
+}
+
+.notice {
+  font-size: 20px;
+  margin: 0 20px;
   cursor: pointer;
+}
+
+.userBox {
+  display: flex;
+  align-items: center;
+}
+
+.userBox1 {
+  .userBox();
+
+  .userObj {
+    height: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-left: 10px;
+
+    .name {
+      font-weight: bold;
+      font-size: 14px;
+      line-height: 22px;
+    }
+
+    .email {
+      font-size: 12px;
+      color: var(--b-alpha-50);
+    }
+  }
+}
+
+.username {
+  margin-left: 10px;
+  color: var(--b-alpha-80);
+}
+
+.menuIcon {
+  margin-right: 10px;
 }

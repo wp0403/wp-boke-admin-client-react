@@ -4,9 +4,8 @@
  * @Author: WangPeng
  * @Date: 2022-01-18 11:05:40
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-07-08 13:48:26
+ * @LastEditTime: 2022-09-08 10:51:40
  */
-import { history } from 'umi';
 import { localGet } from '@/utils/local';
 
 interface Dict {

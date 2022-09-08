@@ -4,16 +4,28 @@
  * @Author: WangPeng
  * @Date: 2022-08-29 10:06:54
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-09-05 17:42:25
+ * @LastEditTime: 2022-09-08 12:23:11
  */
 import React, { useState, useEffect } from 'react';
-import { message, Spin, Form, Button, Divider, Input } from 'antd';
+import {
+  message,
+  Spin,
+  Form,
+  Button,
+  Divider,
+  Input,
+  Upload,
+  Image,
+} from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
 import api from '@/api';
-import { IncludeHttp } from '@/utils/dataUtils';
-import style from './index.less';
 import SysIcon from '@/components/SysIcon';
+import { localSet, localGet } from '@/utils/local';
+import { calculation, formatDate, IncludeHttp } from '@/utils/dataUtils';
+import { putCos } from '@/utils/cosExample';
+import style from './index.less';
 
-const { user } = api;
+const { user, resources } = api;
 
 interface User {
   id: number;
@@ -35,6 +47,7 @@ interface User {
   aboutTags: string;
   secret_guide: string;
   about_page: string;
+  img: string;
 }
 
 const UserDetails = (props: any) => {
@@ -44,6 +57,7 @@ const UserDetails = (props: any) => {
   const [userObj, setUserObj] = useState<User>({} as User);
   const [loading, setLodaing] = useState<boolean>(false);
   const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [imgUrl, setImgUrl] = useState<string>('');
 
   const [form] = Form.useForm();
   const format = 'YYYY-MM-DD HH:mm:ss';
@@ -55,6 +69,8 @@ const UserDetails = (props: any) => {
       .then(({ data }) => {
         if (data.code === 200) {
           setUserObj(data.data);
+          if (localGet('user')?.id === data.data.id)
+            localSet('user', data.data);
         } else {
           message.error(data.msg);
         }
@@ -64,13 +80,18 @@ const UserDetails = (props: any) => {
 
   // 表单的字段值更新事件
   const onValuesChange = (value, option, keyName?) => {
+    if ('img' === Object.keys(value)[0]) {
+      const imgUrl = value['img']?.file?.response?.Location;
+      setImgUrl(`https://${imgUrl}`);
+    }
     setUserObj(option);
   };
   // 表单提交事件
   const onFinish = async (values: any) => {
+    const newValues = { ...values, img: imgUrl };
     setLodaing(true);
     await user
-      ._putUserDetails({ ...values, id })
+      ._putUserDetails({ ...newValues, id })
       .then(({ data }) => {
         if (data.code === 200) {
           getUserDetails();
@@ -81,6 +102,48 @@ const UserDetails = (props: any) => {
         }
       })
       .finally(() => setLodaing(false));
+  };
+
+  // 自定义上传
+  const customRequest = (options: any) => {
+    const {
+      action,
+      data,
+      file,
+      filename,
+      headers,
+      onProgress,
+      onSuccess,
+      onError,
+    } = options;
+    // 调用腾讯云cos上传方法
+    putCos({
+      file,
+      onProgress,
+      onSuccess,
+      onError,
+    });
+  };
+
+  // 上传的change函数
+  const onChangeUpload = async ({ file }) => {
+    if (file.status === 'done' && file.response.statusCode === 200) {
+      const imgUrl = file?.response?.Location;
+      const obj = {
+        name: file.name,
+        url: `https://img-1302605407.cos.ap-beijing.myqcloud.com/${file.name}`,
+        updateTime: formatDate(file.lastModified, 'yyyy-MM-dd HH:ss:mm'),
+        create_time: formatDate(new Date(), 'yyyy-MM-dd HH:ss:mm'),
+        size: `${calculation(file.size, 1024 * 1024, 3)}MB`,
+      };
+      await resources
+        ._putImg(obj)
+        .then(({ data }) => {
+          if (data.code === 200) {
+          }
+        })
+        .finally(() => {});
+    }
   };
 
   useEffect(() => {
@@ -247,6 +310,29 @@ const UserDetails = (props: any) => {
               <Input placeholder="请输入手机号" />
             ) : (
               <div className={style.form_item_con}>{userObj?.phone || '-'}</div>
+            )}
+          </Form.Item>
+          <Form.Item className={style.form_item} label="用户头像" name="img">
+            {isEdit ? (
+              <Upload
+                name="file"
+                action="https://wp-1302605407.cos.ap-beijing.myqcloud.com"
+                listType="picture"
+                maxCount={1}
+                customRequest={customRequest}
+                onChange={onChangeUpload}
+                accept=".png,.jpg,.gif,.jpeg"
+              >
+                <Button icon={<UploadOutlined />}>点击上传图片</Button>
+              </Upload>
+            ) : (
+              <div className={style.form_item_con}>
+                <Image
+                  className={style.list_img}
+                  src={userObj?.img}
+                  alt={userObj?.title}
+                />
+              </div>
             )}
           </Form.Item>
           <Divider />

@@ -150,7 +150,11 @@ const SettingUser = () => {
       fixed: 'right',
       render: (text, record) => (
         <div className={tableStyle.table_cell_flex}>
-          <Tooltip placement="topRight" title="修改当前用户状态">
+          <Tooltip
+            placement="topRight"
+            title="修改当前用户状态"
+            arrowPointAtCenter
+          >
             <SysIcon
               type="icon-jurassic_edit-user"
               className={style.btn_huifu}
