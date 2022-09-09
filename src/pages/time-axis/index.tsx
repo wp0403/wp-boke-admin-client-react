@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 13:51:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-09-08 12:39:29
+ * @LastEditTime: 2022-09-08 17:39:24
  */
 import React, { useState, useEffect, useRef } from 'react';
 import { Table, Tooltip, message, Button, Popconfirm } from 'antd';
@@ -185,7 +185,7 @@ const Classify = (props: any) => {
               onClick={() =>
                 (toExamineModal.current as any)?.showModal({
                   ...record,
-                  secretType: `${record.type}`,
+                  type: `${record.type}`,
                 })
               }
             />

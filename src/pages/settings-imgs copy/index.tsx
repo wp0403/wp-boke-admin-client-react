@@ -1,3 +1,6 @@
+/**
+ * 此图片列表为直接请求资源服务器拿到的，对于数据管理来说不太方便，故而弃用
+ */
 import React, { useState, useEffect, useRef } from 'react';
 import { useGetState } from 'ahooks';
 import {

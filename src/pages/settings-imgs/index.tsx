@@ -128,7 +128,7 @@ const SettingUser = () => {
     setLoading(true);
     await resources
       ._getImgList({
-        params: { page, pageSize },
+        params: { page, page_size: pageSize },
       })
       .then(({ data }) => {
         if (data.code === 200) {

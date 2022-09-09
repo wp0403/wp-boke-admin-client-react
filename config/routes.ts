@@ -4,7 +4,7 @@
  * @Author: 王鹏
  * @Date: 2022-01-22 13:20:17
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-08-29 10:14:27
+ * @LastEditTime: 2022-09-08 17:36:11
  */
 export default [
   {
@@ -124,19 +124,19 @@ export default [
         ],
       },
       {
-        path: '/timeAxis',
+        path: '/time-axis',
         name: '时间轴',
         icon: 'icon-a-shijianzuijin',
         routes: [
           {
-            path: '/timeAxis',
-            redirect: '/timeAxis/list',
+            path: '/time-axis',
+            redirect: '/time-axis/list',
           },
           {
-            path: '/timeAxis/list',
+            path: '/time-axis/list',
             name: '时间轴列表',
             exact: true,
-            component: './timeAxis',
+            component: './time-axis',
           },
         ],
       },
