@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 13:51:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-08-16 14:06:49
+ * @LastEditTime: 2022-09-09 15:03:20
  */
 import React, { useState, useEffect } from 'react';
 import { Link } from 'umi';
@@ -12,8 +12,8 @@ import { Table, Image } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import { calcTableScrollWidth, formatDate } from '@/utils/dataUtils';
 import api from '@/api';
-import style from './index.less';
 import tableStyle from '@/table.less';
+import style from './index.less';
 
 const { itinerary } = api;
 
