@@ -1,34 +1,39 @@
-/*
- * @Descripttion:
- * @version:
- * @Author: WangPeng
- * @Date: 2022-06-08 14:00:31
- * @LastEditors: WangPeng
- * @LastEditTime: 2022-09-13 11:07:17
- */
-import React, { useState, useEffect, useRef } from 'react';
-import { Link, history } from 'umi';
+import React, { useState, useEffect, FC } from 'react';
+import { history } from 'umi';
 import {
-  Table,
-  Image,
-  Tooltip,
-  message,
-  Switch,
   Button,
+  Divider,
+  Form,
+  Input,
+  Spin,
+  Select,
+  Switch,
+  DatePicker,
+  Upload,
+  Image,
+  message,
+  Typography,
+  Tooltip,
   Popconfirm,
 } from 'antd';
-import { DeleteOutlined, UndoOutlined } from '@ant-design/icons';
-import type { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
-import type { FilterValue, SorterResult } from 'antd/lib/table/interface';
-import { calcTableScrollWidth, formatDate } from '@/utils/dataUtils';
-import { getDictObj } from '@/utils/globalDataUtils';
+import moment from 'moment';
+import { CopyOutlined, UploadOutlined } from '@ant-design/icons';
+import SelectCom from '@/components/SelectCom';
+import RanderMarkdown from '@/components/RanderMarkdown';
+import {
+  getOnlyDictObj,
+  getDictObj,
+  getSubDictObj,
+} from '@/utils/globalDataUtils';
+import { calculation, formatDate } from '@/utils/dataUtils';
+import { putCos } from '@/utils/cosExample';
 import api from '@/api';
-import SysIcon from '@/components/SysIcon';
-import ToExamineModal from '@/components/ToExamineModal';
-import tableStyle from '@/table.less';
 import style from './index.less';
+import { isAuth } from '@/utils/authorityUtils';
+import { localGet } from '@/utils/local';
 
-const { classify } = api;
+const { Paragraph } = Typography;
+const { itinerary, resources, user } = api;
 
 interface DataType {
   id: string;
@@ -43,376 +48,478 @@ interface DataType {
   imgs: string[];
   isDelete: boolean;
   type: number;
+  author: string;
+  author_id: string;
 }
 
-const Classify = (props: any) => {
-  // 弹窗抛出的事件
-  const modalRef = useRef();
-  // 是否精选事件
-  const changeSwitch = async (val, id) => {
-    await classify
-      ._changeClassifySelected({ id, selected: val })
+const ItineraryDetails: FC = (props: any) => {
+  const { id } = props.match.params;
+
+  const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [itineraryObj, setItineraryObj] = useState<DataType>({
+    timeData: null,
+    last_edit_time: null,
+  } as any);
+  const [copyImg, setCopyImg] = useState<string>('上传后显示图片地址');
+  const [form] = Form.useForm();
+  const format = 'YYYY-MM-DD HH:mm:ss';
+
+  // 获取详情信息
+  const getObj = async () => {
+    setLoading(true);
+    await itinerary
+      ._getClassifyDetails({ params: { id } })
       .then(({ data }) => {
         if (data.code === 200) {
-          setList((v) =>
-            v.map((item) =>
-              item.id === id ? { ...item, selected: val } : item,
-            ),
-          );
-          message.success(data.msg);
+          const { timeData, last_edit_time } = data.data;
+
+          setItineraryObj({
+            ...data.data,
+            timeData: timeData ? moment(new Date(timeData), format) : null,
+            last_edit_time: last_edit_time
+              ? moment(new Date(last_edit_time), format)
+              : null,
+          });
+          form.resetFields();
         } else {
           message.error(data.msg);
-        }
-      });
-  };
-  // 删除/恢复 博文事件
-  const delBowenObj = async (val, id) => {
-    await classify._delBowenList({ id, isDelete: !val }).then(({ data }) => {
-      if (data.code === 200) {
-        setList((v) =>
-          v
-            .map((item) =>
-              item.id === id ? { ...item, isDelete: !val } : item,
-            )
-            .filter((item) => (+type === 2 ? item.isDelete : !item.isDelete)),
-        );
-        message.success(data.msg);
-        +type === 2
-          ? setTotal((v) => (val ? (v -= 1) : (v += 1)))
-          : setTotal((v) => (val ? (v += 1) : (v -= 1)));
-      } else {
-        message.error(data.msg);
-      }
-    });
-  };
-  // 彻底删除博文
-  const deleteBowenObj = async (id) => {
-    await classify._deleteClassifyDetails({ id }).then(({ data }) => {
-      if (data.code === 200) {
-        setList((v) => v.filter((item) => item.id !== id));
-        message.success(data.msg);
-        setTotal((v) => (v -= 1));
-      } else {
-        message.error(data.msg);
-      }
-    });
-  };
-  // 修改博文审核状态
-  const changeToExamine = async (obj) => {
-    await classify._putClassifyToExamine(obj).then(({ data }) => {
-      if (data.code === 200) {
-        setList((v) =>
-          v.map((item) =>
-            item.id === obj.id ? { ...item, type: +obj.type } : item,
-          ),
-        );
-        (modalRef.current as any)?.handleCancel();
-        message.success(data.msg);
-      } else {
-        message.error(data.msg);
-      }
-    });
-  };
-
-  const columns: ColumnsType<DataType> = [
-    {
-      title: '标题',
-      dataIndex: 'title',
-      key: 'title',
-      fixed: 'left',
-      render: (text, record) => (
-        <div className={tableStyle.table_cell}>
-          <Tooltip placement="topLeft" title={text}>
-            <Link
-              target="_blank"
-              style={{ cursor: 'pointer' }}
-              to={`/classify/${record.id}/details`}
-            >
-              {text}
-            </Link>
-          </Tooltip>
-        </div>
-      ),
-    },
-    {
-      title: '一级类',
-      dataIndex: 'classify',
-      key: 'classify_id',
-      width: 160,
-      render: (text) => <div className={tableStyle.table_cell}>{text}</div>,
-    },
-    {
-      title: '二级类',
-      dataIndex: 'classify_sub',
-      key: 'classify_sub_id',
-      width: 160,
-      render: (text) => <div className={tableStyle.table_cell}>{text}</div>,
-    },
-    {
-      title: '博文状态',
-      dataIndex: 'type',
-      key: 'type',
-      width: 160,
-      render: (text) => (
-        <div className={tableStyle.table_cell}>
-          <SysIcon
-            type={getDictObj('toExamine_type', text)?.icon}
-            style={{ marginRight: '10px' }}
-          />
-          <span
-            className={
-              text === 1
-                ? style.bowenType1
-                : text === 2
-                ? style.bowenType2
-                : text === 3
-                ? style.bowenType3
-                : ''
-            }
-          >
-            {getDictObj('toExamine_type', text)?.value}
-          </span>
-        </div>
-      ),
-    },
-    {
-      title: '内容简介',
-      dataIndex: 'desc',
-      key: 'desc',
-      width: 300,
-      render: (text) => (
-        <div className={tableStyle.table_cell}>
-          <Tooltip placement="topLeft" title={text}>
-            {text}
-          </Tooltip>
-        </div>
-      ),
-    },
-    {
-      title: '文档类型',
-      dataIndex: 'storage_desc',
-      key: 'storage_type',
-      width: 120,
-      render: (text) => <div className={tableStyle.table_cell}>{text}</div>,
-    },
-    {
-      title: '发布时间',
-      dataIndex: 'time_str',
-      key: 'time_str',
-      width: 220,
-      render: (text) => (
-        <div className={tableStyle.table_cell}>
-          {formatDate(text, 'yyyy-MM-dd HH:ss:mm')}
-        </div>
-      ),
-    },
-    {
-      title: '最后修改时间',
-      dataIndex: 'last_edit_time',
-      key: 'last_edit_time',
-      width: 220,
-      render: (text) => (
-        <div className={tableStyle.table_cell}>
-          {formatDate(text, 'yyyy-MM-dd HH:ss:mm')}
-        </div>
-      ),
-    },
-    {
-      title: '列表图片',
-      dataIndex: 'img',
-      key: 'img',
-      width: 100,
-      render: (text) => (
-        <div className={tableStyle.table_cell}>
-          <Image className={style.img_list} src={text} />
-        </div>
-      ),
-    },
-    {
-      title: '是否精选',
-      dataIndex: 'selected',
-      key: 'selected',
-      width: 100,
-      render: (text, record) => (
-        <div className={tableStyle.table_cell}>
-          <Switch checked={text} onChange={(v) => changeSwitch(v, record.id)} />
-        </div>
-      ),
-    },
-    {
-      title: '作者',
-      dataIndex: 'author',
-      key: 'author_id',
-      width: 120,
-      render: (text) => <div className={tableStyle.table_cell}>{text}</div>,
-    },
-    {
-      title: '操作',
-      dataIndex: 'operation',
-      width: 120,
-      fixed: 'right',
-      render: (text, record) => (
-        <div className={tableStyle.table_cell_flex}>
-          {+type !== 2 && (
-            <Tooltip
-              placement="topRight"
-              arrowPointAtCenter
-              title="修改当前博文审核状态"
-            >
-              <SysIcon
-                type="icon-shenhe"
-                className={style.btn_huifu}
-                onClick={() =>
-                  (modalRef.current as any)?.showModal({
-                    ...record,
-                    type: `${record.type}`,
-                  })
-                }
-              />
-            </Tooltip>
-          )}
-          {+type === 2 ? (
-            <Tooltip
-              placement="topRight"
-              arrowPointAtCenter
-              title="点击后将恢复到列表中"
-            >
-              <UndoOutlined
-                className={style.btn_huifu}
-                onClick={() => delBowenObj(record.isDelete, record.id)}
-              />
-            </Tooltip>
-          ) : (
-            <Popconfirm
-              title="真的要删除吗？删除后将不能在网站查看。"
-              onConfirm={() => delBowenObj(record.isDelete, record.id)}
-              okText="确定"
-              cancelText="取消"
-              placement="topRight"
-              arrowPointAtCenter
-            >
-              <DeleteOutlined className={style.btn_remove} />
-            </Popconfirm>
-          )}
-          {+type === 2 && (
-            <Popconfirm
-              title="将彻底删除该条数据，不可恢复，要继续吗？"
-              onConfirm={() => deleteBowenObj(record.id)}
-              okText="确定"
-              cancelText="取消"
-              placement="topRight"
-              arrowPointAtCenter
-            >
-              <DeleteOutlined className={style.btn_remove} />
-            </Popconfirm>
-          )}
-        </div>
-      ),
-    },
-  ];
-
-  const { type } = props.location.query as any;
-  const [list, setList] = useState<DataType[]>([]);
-  const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(10);
-  const [total, setTotal] = useState<number>(0);
-  const [loading, setLoading] = useState<boolean>(false);
-  // 请求列表数据事件
-  const getList = async (obj?) => {
-    setLoading(true);
-    await classify
-      ._getClassifyList({
-        params: { isDelete: +type === 2 ? 0 : 1, page, pageSize },
-      })
-      .then(({ data }) => {
-        if (data.code === 200) {
-          setList(data.data);
-          setTotal(data.meta.total);
+          history.push('/classify');
         }
       })
       .finally(() => setLoading(false));
   };
-  // 表格的change事件
-  const handleTableChange = (
-    { current, pageSize },
-    selectedRows,
-    info: { type },
-  ) => {
-    setPage(current);
-    setPageSize(pageSize);
+
+  // 彻底删除删除
+  const deleteBowenObj = async (id) => {
+    await itinerary._deleteClassifyDetails({ id }).then(({ data }) => {
+      if (data.code === 200) {
+        message.success(data.msg);
+        history.push('/classify');
+      } else {
+        message.error(data.msg);
+      }
+    });
   };
-  // 跳转页面事件
-  const changePageType = () => {
-    setPage(1);
-    if (+type === 2) {
-      history.replace('/classify/list');
-    } else {
-      history.replace('/classify/list?type=2');
+
+  useEffect(() => {
+    !isEdit && getObj();
+    isEdit && form.resetFields();
+  }, [id, isEdit]);
+
+  const onFinish = (values: any) => {
+    itineraryObj.timeData = moment(new Date(itineraryObj?.timeData)).format(
+      format,
+    );
+    itineraryObj.last_edit_time = moment(new Date()).format(format);
+    setLoading(true);
+    itinerary
+      ._putClassifyDetails(itineraryObj)
+      .then(({ data }) => {
+        if (data.code === 200) {
+          message.success(data.msg);
+        } else {
+          message.error(data.msg);
+        }
+        setIsEdit(false);
+      })
+      .finally(() => setLoading(false));
+  };
+
+  // 表单的字段值更新事件
+  const onValuesChange = (value, option, keyName?) => {
+    if (!value) return;
+    if ('classify_id' === Object.keys(value)[0]) {
+      const dictObj = getDictObj('bowen_class', Object.values(value)[0] as any);
+      setItineraryObj((data: DataType) => ({
+        ...data,
+        classify: dictObj.value,
+      }));
+    }
+    if ('img' === Object.keys(value)[0]) {
+      const imgUrl = value['img']?.file?.response?.Location;
+      setItineraryObj((data: DataType) => ({
+        ...data,
+        img: `https://${imgUrl}`,
+      }));
+      return;
+    }
+    if ('storage_type' === Object.keys(value)[0]) {
+      const dictObj = getDictObj('bowen_type', Object.values(value)[0] as any);
+      setItineraryObj((data: DataType) => ({
+        ...data,
+        ...value,
+        storage_desc: dictObj.value,
+      }));
+      return;
+    }
+    if (typeof value !== 'object' && keyName === 'author_id') {
+      setItineraryObj((data: DataType) => ({
+        ...data,
+        [keyName]: value,
+        author: option?.name,
+      }));
+      return;
+    }
+    setItineraryObj((data: DataType) => ({
+      ...data,
+      ...value,
+    }));
+  };
+  // 自定义上传
+  const customRequest = (options: any) => {
+    const {
+      action,
+      data,
+      file,
+      filename,
+      headers,
+      onProgress,
+      onSuccess,
+      onError,
+    } = options;
+    // 调用腾讯云cos上传方法
+    putCos({
+      file,
+      onProgress,
+      onSuccess,
+      onError,
+    });
+  };
+  // 上传的change函数
+  const onChangeUpload = async ({ file }, isCopy = false) => {
+    if (file.status === 'done' && file.response.statusCode === 200) {
+      const imgUrl = file?.response?.Location;
+      if (isCopy && imgUrl) {
+        setCopyImg(`https://${imgUrl}`);
+      }
+      const obj = {
+        name: file.name,
+        url: `https://img-1302605407.cos.ap-beijing.myqcloud.com/${file.name}`,
+        updateTime: formatDate(file.lastModified, 'yyyy-MM-dd HH:ss:mm'),
+        create_time: formatDate(new Date(), 'yyyy-MM-dd HH:ss:mm'),
+        size: `${calculation(file.size, 1024 * 1024, 3)}MB`,
+      };
+      await resources
+        ._putImg(obj)
+        .then(({ data }) => {
+          if (data.code === 200) {
+          }
+        })
+        .finally(() => {});
     }
   };
 
-  // 初始化列表
-  useEffect(() => {
-    getList();
-  }, [type, page, pageSize]);
-
   return (
-    <div className={style.classify}>
-      <div className={style.headerBox}>
-        <div className={style.headerBox_left}>
-          <span className={style.page_title}>
-            博文{+type === 2 ? '回收站' : '列表页'}
-          </span>{' '}
-          <span className={style.page_total}>{total}</span>
+    <div className={style.classifyDetails}>
+      <Spin tip="Loading..." spinning={loading}>
+        <div className={style.header}>
+          <div className={style.headerPageTitle}>
+            <CopyOutlined style={{ paddingRight: '20px' }} />
+            旅行日记详情页
+          </div>
+          <div className={style.headerBtnBox}>
+            {(isAuth('edit@classify') ||
+              +localGet('user')?.id === +itineraryObj?.author_id) && (
+              <Button
+                type="primary"
+                shape="round"
+                onClick={() => setIsEdit(!isEdit)}
+              >
+                {isEdit ? '取消' : '编辑'}
+              </Button>
+            )}
+            <Popconfirm
+              title="将彻底删除该条数据，不可恢复，要继续吗？"
+              onConfirm={() => deleteBowenObj(itineraryObj.id)}
+              okText="确定"
+              cancelText="取消"
+              placement="topRight"
+            >
+              <Button
+                style={{ marginLeft: '10px' }}
+                type="primary"
+                danger
+                shape="round"
+              >
+                删除
+              </Button>
+            </Popconfirm>
+          </div>
         </div>
-        <div className={style.headerBox_right}>
-          <Button
-            type="primary"
-            shape="round"
-            className={style.headerBox_right_btn}
-            href="/classify/add-bowen"
+        <Divider />
+        <Form
+          className={style.form}
+          name="basic"
+          initialValues={itineraryObj}
+          onFinish={onFinish}
+          autoComplete="off"
+          scrollToFirstError
+          form={form}
+          onValuesChange={onValuesChange}
+        >
+          <Form.Item
+            className={style.form_item}
+            label="博文标题"
+            name="title"
+            rules={[{ required: true }]}
           >
-            新增博文
-          </Button>
-          <Button
-            type="primary"
-            shape="round"
-            onClick={changePageType}
-            className={
-              +type === 2
-                ? style.headerBox_right_btn
-                : style.headerBox_right_btn1
-            }
+            {isEdit ? (
+              <Input />
+            ) : (
+              <div className={style.form_item_con}>{itineraryObj?.title}</div>
+            )}
+          </Form.Item>
+          <Form.Item
+            className={style.form_item}
+            label="博文作者"
+            name="author_id"
+            rules={[{ required: true }]}
           >
-            {+type === 2 ? '列表页' : '回收站'}
-          </Button>
-        </div>
-      </div>
-      <Table
-        loading={loading}
-        columns={columns}
-        dataSource={list}
-        rowKey={'id'}
-        scroll={{
-          scrollToFirstRowOnChange: true,
-          x: calcTableScrollWidth(columns),
-          y: `calc(100vh - 310px)`,
-        }}
-        pagination={{
-          current: page,
-          pageSize: pageSize,
-          total: total,
-          showTitle: false,
-        }}
-        onChange={handleTableChange as any}
-      />
-      <ToExamineModal
-        callback={(ref) => (modalRef.current = ref)}
-        name="type"
-        changeToExamine={changeToExamine}
-      />
+            {isEdit ? (
+              <SelectCom
+                optionItem={{ label: 'name', value: 'uid' }}
+                fun={user._searchUserList}
+                placeholder="请输入关键字搜索"
+                showSearch={true}
+                defaultOptions={[
+                  {
+                    label: itineraryObj?.author,
+                    value: itineraryObj?.author_id,
+                  },
+                ]}
+                defaultValue={[itineraryObj?.author_id]}
+                onChange={onValuesChange}
+                keyName="author_id"
+              />
+            ) : (
+              <div className={style.form_item_con}>{itineraryObj?.author}</div>
+            )}
+          </Form.Item>
+          <Form.Item
+            className={style.form_item}
+            label="创建时间"
+            name="time_str"
+            rules={[{ required: true }]}
+          >
+            {isEdit ? (
+              <DatePicker format={format} showTime />
+            ) : (
+              <div className={style.form_item_con}>
+                {moment(itineraryObj?.time_str).format(format)}
+              </div>
+            )}
+          </Form.Item>
+          <Form.Item
+            className={style.form_item}
+            label="最后修改时间"
+            name="last_edit_time"
+            rules={[{ required: true }]}
+          >
+            {isEdit ? (
+              <DatePicker format={format} showTime />
+            ) : (
+              <div className={style.form_item_con}>
+                {moment(itineraryObj?.last_edit_time).format(format)}
+              </div>
+            )}
+          </Form.Item>
+          <Form.Item
+            className={style.form_item}
+            label="一级类"
+            name="classify_id"
+            rules={[{ required: true }]}
+          >
+            {isEdit ? (
+              <Select
+                options={getOnlyDictObj('bowen_class')?.map((item) => ({
+                  label: item.value,
+                  value: item.id,
+                }))}
+                onChange={onClassifyChange}
+                defaultValue={itineraryObj?.classify_id}
+              />
+            ) : (
+              <div className={style.form_item_con}>
+                {itineraryObj?.classify}
+              </div>
+            )}
+          </Form.Item>
+          <Form.Item
+            className={style.form_item}
+            label="二级类"
+            name="classify_sub_id"
+            rules={[{ required: true }]}
+          >
+            {isEdit ? (
+              <Select options={classifySubList} />
+            ) : (
+              <div className={style.form_item_con}>
+                {itineraryObj?.classify_sub}
+              </div>
+            )}
+          </Form.Item>
+          <Form.Item
+            className={style.form_item}
+            label="是否精选博文"
+            name="selected"
+            valuePropName={'checked'}
+          >
+            {isEdit ? (
+              <Switch />
+            ) : (
+              <div className={style.form_item_con}>
+                {itineraryObj?.selected ? 'Yes' : 'No'}
+              </div>
+            )}
+          </Form.Item>
+          <Form.Item
+            className={style.form_item}
+            label="是否放入回收站"
+            name="isDelete"
+            valuePropName={'checked'}
+          >
+            {isEdit ? (
+              <Switch />
+            ) : (
+              <div className={style.form_item_con}>
+                {itineraryObj?.isDelete ? 'Yes' : 'No'}
+              </div>
+            )}
+          </Form.Item>
+          <Form.Item
+            className={style.form_item}
+            label="图片"
+            name="img"
+            rules={[{ required: true }]}
+          >
+            {isEdit ? (
+              <Upload
+                name="file"
+                action="https://wp-1302605407.cos.ap-beijing.myqcloud.com"
+                listType="picture"
+                maxCount={1}
+                customRequest={customRequest}
+                onChange={onChangeUpload}
+                accept=".png,.jpg,.gif,.jpeg"
+              >
+                <Button icon={<UploadOutlined />}>点击上传图片</Button>
+              </Upload>
+            ) : (
+              <div className={style.form_item_con}>
+                <Image
+                  className={style.list_img}
+                  src={itineraryObj?.img}
+                  alt={itineraryObj?.title}
+                />
+              </div>
+            )}
+          </Form.Item>
+          <Form.Item
+            className={style.form_item}
+            label="博文简介"
+            name="desc"
+            rules={[{ required: true }]}
+          >
+            {isEdit ? (
+              <Input.TextArea />
+            ) : (
+              <div className={style.form_item_con}>{itineraryObj?.desc}</div>
+            )}
+          </Form.Item>
+          <Form.Item
+            className={style.form_item}
+            label="文档类型"
+            name="storage_type"
+            rules={[{ required: true }]}
+          >
+            {isEdit ? (
+              <Select
+                options={getOnlyDictObj('bowen_type')?.map((item) => ({
+                  label: item.value,
+                  value: item.id,
+                }))}
+                placeholder="请选择文档类型（提倡markdown）"
+              />
+            ) : (
+              <div className={style.form_item_con}>
+                {itineraryObj?.storage_desc}
+              </div>
+            )}
+          </Form.Item>
+          <div className={style.form_item_2}>
+            <Form.Item
+              className={`${
+                isEdit && itineraryObj?.storage_type === '1'
+                  ? style.form_item
+                  : style.form_item_1
+              } ${style.form_item_noBottom}`}
+              label="博文内容"
+              name="content"
+              rules={[{ required: true }]}
+            >
+              {isEdit ? (
+                <Input.TextArea className={style.textarea} />
+              ) : itineraryObj?.storage_type === '1' ? (
+                <div className={style.form_item_markdown}>
+                  <RanderMarkdown markdown={itineraryObj?.content} />
+                </div>
+              ) : (
+                <div className={style.form_item_con}>
+                  {itineraryObj?.content}
+                </div>
+              )}
+            </Form.Item>
+            {isEdit && itineraryObj?.storage_type === '1' ? (
+              <div className={style.form_item_markdown_1}>
+                <RanderMarkdown markdown={itineraryObj?.content} />
+              </div>
+            ) : (
+              ''
+            )}
+          </div>
+          {isEdit ? (
+            <>
+              <Divider />
+              <div className={style.uploadImg}>
+                <Tooltip title="用于在详情中插入图片" placement="topLeft">
+                  <div className={style.uploadImgTitle}>
+                    上传图片并获取图片地址
+                  </div>
+                </Tooltip>
+                <Upload
+                  name="file"
+                  action="https://wp-1302605407.cos.ap-beijing.myqcloud.com"
+                  listType="picture"
+                  maxCount={1}
+                  customRequest={customRequest}
+                  onChange={(v) => onChangeUpload(v, true)}
+                  accept=".png,.jpg,.gif,.jpeg"
+                >
+                  <Button icon={<UploadOutlined />}>点击上传图片</Button>
+                </Upload>
+                <Paragraph copyable>{copyImg}</Paragraph>
+              </div>
+              <Divider />
+            </>
+          ) : (
+            ''
+          )}
+          {isEdit ? (
+            <div className={style.form_btn}>
+              <Form.Item>
+                <Button type="primary" htmlType="submit">
+                  提交
+                </Button>
+              </Form.Item>
+            </div>
+          ) : (
+            ''
+          )}
+        </Form>
+      </Spin>
     </div>
   );
 };
 
-export default Classify;
+export default ItineraryDetails;

@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-09-05 13:58:49
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-09-08 15:14:07
+ * @LastEditTime: 2022-09-29 11:40:14
  */
 import React, { useState, useEffect } from 'react';
 import { message, Modal, Form, Input, DatePicker } from 'antd';
@@ -52,7 +52,6 @@ const ModalCom = (props: any) => {
 
   // 弹窗确认事件
   const handleOk = () => {
-    setConfirmLoading(true);
     form.submit();
   };
 
@@ -67,6 +66,7 @@ const ModalCom = (props: any) => {
       format,
     );
     timeAxisObj.update_time = moment(new Date()).format(format);
+    setConfirmLoading(true);
     props.setLoading(true);
     const apiName = timeAxisObj.id
       ? timeAxis._putTimeAxisDetails
@@ -118,6 +118,7 @@ const ModalCom = (props: any) => {
       onOk={handleOk}
       confirmLoading={confirmLoading}
       onCancel={handleCancel}
+      destroyOnClose
     >
       <Form
         name="basic"

@@ -311,7 +311,7 @@ const ClassifyDetails: FC = (props: any) => {
           >
             {isEdit ? (
               <SelectCom
-                optionItem={{ label: 'name', value: 'id' }}
+                optionItem={{ label: 'name', value: 'uid' }}
                 fun={user._searchUserList}
                 placeholder="请输入关键字搜索"
                 showSearch={true}

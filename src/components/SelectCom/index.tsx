@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-07-06 11:09:35
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-07-06 18:11:59
+ * @LastEditTime: 2022-09-30 16:41:09
  */
 import React, { useEffect, useState } from 'react';
 import { Select } from 'antd';
@@ -76,7 +76,6 @@ const SelectCom = (props: Props) => {
       showSearch={showSearch}
       placeholder={placeholder}
       options={options}
-      notFoundContent={null}
       defaultActiveFirstOption={false}
       defaultValue={defaultValue}
       onChange={(value, opt) => onChange(value, opt, keyName) as any}

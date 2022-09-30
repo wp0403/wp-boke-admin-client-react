@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-07-14 15:36:43
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-08-11 15:19:50
+ * @LastEditTime: 2022-09-29 11:40:56
  */
 import React, { useState, useEffect } from 'react';
 import { Modal, Form, Select } from 'antd';
@@ -37,7 +37,6 @@ const ToExamineModal = (props: Props) => {
 
   // 弹窗确认事件
   const handleOk = () => {
-    setConfirmLoading(true);
     form.submit();
   };
 
@@ -49,6 +48,7 @@ const ToExamineModal = (props: Props) => {
 
   // 表单提交事件
   const onFinish = (values: any) => {
+    setConfirmLoading(true);
     props.changeToExamine(obj);
   };
 

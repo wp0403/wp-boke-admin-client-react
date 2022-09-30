@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-07-12 16:02:34
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-09-05 14:11:49
+ * @LastEditTime: 2022-09-29 10:48:07
  */
 import React, { useState, useEffect } from 'react';
 import { Switch, message, Modal, Form, Input, DatePicker } from 'antd';
@@ -55,7 +55,6 @@ const ModalCom = (props: any) => {
 
   // 弹窗确认事件
   const handleOk = () => {
-    setConfirmLoading(true);
     form.submit();
   };
 
@@ -67,6 +66,7 @@ const ModalCom = (props: any) => {
   // 表单提交时间
   const onFinish = (values: any) => {
     secretObj.time_str = moment(new Date(secretObj?.time_str)).format(format);
+    setConfirmLoading(true);
     props.setLoading(true);
     const apiName = secretObj.id
       ? secret._putSecretDetails
@@ -118,6 +118,7 @@ const ModalCom = (props: any) => {
       onOk={handleOk}
       confirmLoading={confirmLoading}
       onCancel={handleCancel}
+      destroyOnClose
     >
       <Form
         name="basic"
@@ -134,7 +135,7 @@ const ModalCom = (props: any) => {
           rules={[{ required: true }]}
         >
           <SelectCom
-            optionItem={{ label: 'name', value: 'id' }}
+            optionItem={{ label: 'name', value: 'uid' }}
             fun={user._searchUserList}
             placeholder="请输入关键字搜索"
             showSearch={true}
