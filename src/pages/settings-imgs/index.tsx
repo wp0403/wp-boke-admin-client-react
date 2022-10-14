@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Table, Button, Tooltip, Typography, Image, Upload } from 'antd';
+import { Table, Button, Tooltip, Typography, Image } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import {
   calcTableScrollWidth,
   formatDate,
-  calculation,
   downloadImg,
 } from '@/utils/dataUtils';
-import { getCosObj, putCos } from '@/utils/cosExample';
+import { getCosObj } from '@/utils/cosExample';
 import SysIcon from '@/components/SysIcon';
 import api from '@/api';
+import UploadImg from '@/components/UploadImg';
 import tableStyle from '@/table.less';
 import style from './index.less';
 
@@ -139,46 +139,6 @@ const SettingUser = () => {
       .finally(() => setLoading(false));
   };
 
-  // 自定义上传
-  const customRequest = (options: any) => {
-    const {
-      action,
-      data,
-      file,
-      filename,
-      headers,
-      onProgress,
-      onSuccess,
-      onError,
-    } = options;
-    // 调用腾讯云cos上传方法
-    putCos({
-      file,
-      onProgress,
-      onSuccess,
-      onError,
-    });
-  };
-
-  const onChangeUpload = async ({ file }) => {
-    const obj = {
-      name: file.name,
-      url: `https://img-1302605407.cos.ap-beijing.myqcloud.com/${file.name}`,
-      updateTime: formatDate(file.lastModified, 'yyyy-MM-dd HH:ss:mm'),
-      create_time: formatDate(new Date(), 'yyyy-MM-dd HH:ss:mm'),
-      size: `${calculation(file.size, 1024 * 1024, 3)}MB`,
-    };
-    setUploading(true);
-    await resources
-      ._putImg(obj)
-      .then(({ data }) => {
-        if (data.code === 200) {
-          setPage(1);
-        }
-      })
-      .finally(() => setUploading(false));
-  };
-
   // 表格的change事件
   const handleTableChange = (
     { current, pageSize },
@@ -191,7 +151,7 @@ const SettingUser = () => {
 
   // 初始化列表
   useEffect(() => {
-    !uploading && getLists();
+    getLists();
   }, [page, pageSize, uploading]);
 
   return (
@@ -202,25 +162,25 @@ const SettingUser = () => {
           <span className={style.page_total}>{total}</span>
         </div>
         <div className={style.headerBox_right}>
-          <Upload
-            name="file"
-            action="https://wp-1302605407.cos.ap-beijing.myqcloud.com"
-            listType="picture"
-            customRequest={customRequest}
-            accept=".png,.jpg,.gif,.jpeg"
-            multiple
-            fileList={[]}
-            onChange={onChangeUpload}
+          <UploadImg
+            isCopy={true}
+            callback={() => {
+              setPage(1);
+              setLoading(true);
+            }}
+            isFileList={false}
+            onUpdate={() => setUploading((v) => !v)}
+            multiple={true}
           >
             <Button
               type="primary"
               shape="round"
               className={style.headerBox_right_btn}
-              loading={uploading}
+              loading={loading}
             >
               上传图片
             </Button>
-          </Upload>
+          </UploadImg>
         </div>
       </div>
       <Image.PreviewGroup>

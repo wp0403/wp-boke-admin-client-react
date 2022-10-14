@@ -31,6 +31,7 @@ import api from '@/api';
 import style from './index.less';
 import { isAuth } from '@/utils/authorityUtils';
 import { localGet } from '@/utils/local';
+import SysIcon from '@/components/SysIcon';
 
 const { Paragraph } = Typography;
 const { itinerary, resources, user } = api;
@@ -69,7 +70,7 @@ const ItineraryDetails: FC = (props: any) => {
   const getObj = async () => {
     setLoading(true);
     await itinerary
-      ._getClassifyDetails({ params: { id } })
+      ._getItineraryDetail({ params: { id } })
       .then(({ data }) => {
         if (data.code === 200) {
           const { timeData, last_edit_time } = data.data;
@@ -84,7 +85,7 @@ const ItineraryDetails: FC = (props: any) => {
           form.resetFields();
         } else {
           message.error(data.msg);
-          history.push('/classify');
+          history.push('/itinerary');
         }
       })
       .finally(() => setLoading(false));
@@ -260,7 +261,7 @@ const ItineraryDetails: FC = (props: any) => {
         >
           <Form.Item
             className={style.form_item}
-            label="博文标题"
+            label="标题"
             name="title"
             rules={[{ required: true }]}
           >
@@ -272,7 +273,19 @@ const ItineraryDetails: FC = (props: any) => {
           </Form.Item>
           <Form.Item
             className={style.form_item}
-            label="博文作者"
+            label="地点"
+            name="place"
+            rules={[{ required: true }]}
+          >
+            {isEdit ? (
+              <Input />
+            ) : (
+              <div className={style.form_item_con}>{itineraryObj?.place}</div>
+            )}
+          </Form.Item>
+          <Form.Item
+            className={style.form_item}
+            label="作者"
             name="author_id"
             rules={[{ required: true }]}
           >
@@ -299,14 +312,14 @@ const ItineraryDetails: FC = (props: any) => {
           <Form.Item
             className={style.form_item}
             label="创建时间"
-            name="time_str"
+            name="timeData"
             rules={[{ required: true }]}
           >
             {isEdit ? (
               <DatePicker format={format} showTime />
             ) : (
               <div className={style.form_item_con}>
-                {moment(itineraryObj?.time_str).format(format)}
+                {moment(itineraryObj?.timeData).format(format)}
               </div>
             )}
           </Form.Item>
@@ -321,55 +334,6 @@ const ItineraryDetails: FC = (props: any) => {
             ) : (
               <div className={style.form_item_con}>
                 {moment(itineraryObj?.last_edit_time).format(format)}
-              </div>
-            )}
-          </Form.Item>
-          <Form.Item
-            className={style.form_item}
-            label="一级类"
-            name="classify_id"
-            rules={[{ required: true }]}
-          >
-            {isEdit ? (
-              <Select
-                options={getOnlyDictObj('bowen_class')?.map((item) => ({
-                  label: item.value,
-                  value: item.id,
-                }))}
-                onChange={onClassifyChange}
-                defaultValue={itineraryObj?.classify_id}
-              />
-            ) : (
-              <div className={style.form_item_con}>
-                {itineraryObj?.classify}
-              </div>
-            )}
-          </Form.Item>
-          <Form.Item
-            className={style.form_item}
-            label="二级类"
-            name="classify_sub_id"
-            rules={[{ required: true }]}
-          >
-            {isEdit ? (
-              <Select options={classifySubList} />
-            ) : (
-              <div className={style.form_item_con}>
-                {itineraryObj?.classify_sub}
-              </div>
-            )}
-          </Form.Item>
-          <Form.Item
-            className={style.form_item}
-            label="是否精选博文"
-            name="selected"
-            valuePropName={'checked'}
-          >
-            {isEdit ? (
-              <Switch />
-            ) : (
-              <div className={style.form_item_con}>
-                {itineraryObj?.selected ? 'Yes' : 'No'}
               </div>
             )}
           </Form.Item>
@@ -417,67 +381,94 @@ const ItineraryDetails: FC = (props: any) => {
           </Form.Item>
           <Form.Item
             className={style.form_item}
-            label="博文简介"
-            name="desc"
+            label="图片列表"
+            name="imgs"
             rules={[{ required: true }]}
           >
             {isEdit ? (
               <Input.TextArea />
             ) : (
-              <div className={style.form_item_con}>{itineraryObj?.desc}</div>
+              <div className={style.form_item_con}>
+                {itineraryObj?.imgs?.map((v) => (
+                  <img src={v} alt="" />
+                ))}
+              </div>
             )}
           </Form.Item>
           <Form.Item
             className={style.form_item}
-            label="文档类型"
-            name="storage_type"
+            label="内容"
+            name="content"
+            rules={[{ required: true }]}
+          >
+            {isEdit ? (
+              <Input.TextArea />
+            ) : (
+              <div className={style.form_item_con}>{itineraryObj?.content}</div>
+            )}
+          </Form.Item>
+          <Form.Item
+            className={style.form_item}
+            label="心情"
+            name="moodId"
             rules={[{ required: true }]}
           >
             {isEdit ? (
               <Select
-                options={getOnlyDictObj('bowen_type')?.map((item) => ({
+                options={getOnlyDictObj('mood_list')?.map((item) => ({
                   label: item.value,
                   value: item.id,
                 }))}
-                placeholder="请选择文档类型（提倡markdown）"
+                defaultValue={itineraryObj?.moodId}
               />
             ) : (
               <div className={style.form_item_con}>
-                {itineraryObj?.storage_desc}
+                <SysIcon
+                  type={
+                    getOnlyDictObj('mood_list')?.find(
+                      (item) => item.id === itineraryObj?.moodId,
+                    )?.icon
+                  }
+                />
+                {
+                  getOnlyDictObj('mood_list')?.find(
+                    (item) => item.id === itineraryObj?.moodId,
+                  )?.value
+                }
               </div>
             )}
           </Form.Item>
-          <div className={style.form_item_2}>
-            <Form.Item
-              className={`${
-                isEdit && itineraryObj?.storage_type === '1'
-                  ? style.form_item
-                  : style.form_item_1
-              } ${style.form_item_noBottom}`}
-              label="博文内容"
-              name="content"
-              rules={[{ required: true }]}
-            >
-              {isEdit ? (
-                <Input.TextArea className={style.textarea} />
-              ) : itineraryObj?.storage_type === '1' ? (
-                <div className={style.form_item_markdown}>
-                  <RanderMarkdown markdown={itineraryObj?.content} />
-                </div>
-              ) : (
-                <div className={style.form_item_con}>
-                  {itineraryObj?.content}
-                </div>
-              )}
-            </Form.Item>
-            {isEdit && itineraryObj?.storage_type === '1' ? (
-              <div className={style.form_item_markdown_1}>
-                <RanderMarkdown markdown={itineraryObj?.content} />
-              </div>
+          <Form.Item
+            className={style.form_item}
+            label="天气"
+            name="weatherId"
+            rules={[{ required: true }]}
+          >
+            {isEdit ? (
+              <Select
+                options={getOnlyDictObj('weather_list')?.map((item) => ({
+                  label: item.value,
+                  value: item.id,
+                }))}
+                defaultValue={itineraryObj?.weatherId}
+              />
             ) : (
-              ''
+              <div className={style.form_item_con}>
+                <SysIcon
+                  type={
+                    getOnlyDictObj('weather_list')?.find(
+                      (item) => item.id === itineraryObj?.weatherId,
+                    )?.icon
+                  }
+                />
+                {
+                  getOnlyDictObj('weather_list')?.find(
+                    (item) => item.id === itineraryObj?.weatherId,
+                  )?.value
+                }
+              </div>
             )}
-          </div>
+          </Form.Item>
           {isEdit ? (
             <>
               <Divider />

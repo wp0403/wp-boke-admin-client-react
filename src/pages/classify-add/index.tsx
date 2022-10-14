@@ -9,27 +9,26 @@ import {
   Select,
   Switch,
   DatePicker,
-  Upload,
   message,
   Typography,
   Tooltip,
 } from 'antd';
 import moment from 'moment';
-import { CopyOutlined, UploadOutlined } from '@ant-design/icons';
+import { CopyOutlined } from '@ant-design/icons';
 import SelectCom from '@/components/SelectCom';
 import {
   getOnlyDictObj,
   getDictObj,
   getSubDictObj,
 } from '@/utils/globalDataUtils';
-import { putCos } from '@/utils/cosExample';
 import api from '@/api';
 import RanderMarkdown from '@/components/RanderMarkdown';
-import { calculation, formatDate } from '@/utils/dataUtils';
+import UploadImg from '@/components/UploadImg';
+import DictSelectCom from '@/components/DictSelectCom';
 import style from './index.less';
 
 const { Paragraph } = Typography;
-const { classify, user, resources } = api;
+const { classify, user } = api;
 
 interface ClassifyObj {
   title: string;
@@ -127,11 +126,11 @@ const ClassifyDetails: FC = () => {
         classify_sub: dictObj.value,
       }));
     }
-    if ('img' === Object.keys(value)[0]) {
-      const imgUrl = value['img']?.file?.response?.Location;
+    if ('img' === keyName) {
+      form.setFieldsValue({ img: value });
       setClassifyObj((data: ClassifyObj) => ({
         ...data,
-        img: `https://${imgUrl}`,
+        img: value,
       }));
       return;
     }
@@ -157,49 +156,6 @@ const ClassifyDetails: FC = () => {
       ...value,
     }));
   };
-  // 自定义上传
-  const customRequest = (options: any) => {
-    const {
-      action,
-      data,
-      file,
-      filename,
-      headers,
-      onProgress,
-      onSuccess,
-      onError,
-    } = options;
-    // 调用腾讯云cos上传方法
-    putCos({
-      file,
-      onProgress,
-      onSuccess,
-      onError,
-    });
-  };
-  // 上传的change函数
-  const onChangeUpload = async ({ file }, isCopy = false) => {
-    if (file.status === 'done' && file.response.statusCode === 200) {
-      const imgUrl = file?.response?.Location;
-      if (isCopy && imgUrl) {
-        setCopyImg(`https://${imgUrl}`);
-      }
-      const obj = {
-        name: file.name,
-        url: `https://img-1302605407.cos.ap-beijing.myqcloud.com/${file.name}`,
-        updateTime: formatDate(file.lastModified, 'yyyy-MM-dd HH:ss:mm'),
-        create_time: formatDate(new Date(), 'yyyy-MM-dd HH:ss:mm'),
-        size: `${calculation(file.size, 1024 * 1024, 3)}MB`,
-      };
-      await resources
-        ._putImg(obj)
-        .then(({ data }) => {
-          if (data.code === 200) {
-          }
-        })
-        .finally(() => {});
-    }
-  };
 
   return (
     <div className={style.classifyDetails}>
@@ -208,11 +164,6 @@ const ClassifyDetails: FC = () => {
           <div className={style.headerPageTitle}>
             <CopyOutlined style={{ paddingRight: '20px' }} />
             新增博文页
-          </div>
-          <div className={style.headerBtnBox}>
-            {/* <Button type="primary" shape="round">
-              按钮
-            </Button> */}
           </div>
         </div>
         <Divider />
@@ -253,7 +204,6 @@ const ClassifyDetails: FC = () => {
             className={style.form_item}
             label="创建时间"
             name="time_str"
-            // rules={[{ required: true }]}
           >
             <DatePicker format={format} showTime />
           </Form.Item>
@@ -261,7 +211,6 @@ const ClassifyDetails: FC = () => {
             className={style.form_item}
             label="最后修改时间"
             name="last_edit_time"
-            // rules={[{ required: true }]}
           >
             <DatePicker format={format} showTime />
           </Form.Item>
@@ -271,11 +220,8 @@ const ClassifyDetails: FC = () => {
             name="classify_id"
             rules={[{ required: true }]}
           >
-            <Select
-              options={getOnlyDictObj('bowen_class')?.map((item) => ({
-                label: item.value,
-                value: item.id,
-              }))}
+            <DictSelectCom
+              code="bowen_class"
               placeholder="请选择一级分类"
               onChange={onClassifyChange}
             />
@@ -310,17 +256,10 @@ const ClassifyDetails: FC = () => {
             name="img"
             rules={[{ required: true }]}
           >
-            <Upload
-              name="file"
-              action="https://wp-1302605407.cos.ap-beijing.myqcloud.com"
-              listType="picture"
-              maxCount={1}
-              customRequest={customRequest}
-              onChange={onChangeUpload}
-              accept=".png,.jpg,.gif,.jpeg"
-            >
-              <Button icon={<UploadOutlined />}>点击上传图片</Button>
-            </Upload>
+            <UploadImg
+              isCopy={true}
+              callback={(v) => onValuesChange(v, {}, 'img')}
+            />
           </Form.Item>
           <Form.Item
             className={style.form_item}
@@ -373,17 +312,7 @@ const ClassifyDetails: FC = () => {
             <Tooltip title="用于在详情中插入图片" placement="topLeft">
               <div className={style.uploadImgTitle}>上传图片并获取图片地址</div>
             </Tooltip>
-            <Upload
-              name="file"
-              action="https://wp-1302605407.cos.ap-beijing.myqcloud.com"
-              listType="picture"
-              maxCount={1}
-              customRequest={customRequest}
-              onChange={(v) => onChangeUpload(v, true)}
-              accept=".png,.jpg,.gif,.jpeg"
-            >
-              <Button icon={<UploadOutlined />}>点击上传图片</Button>
-            </Upload>
+            <UploadImg isCopy={true} callback={(v) => setCopyImg(v)} />
             <Paragraph copyable>{copyImg}</Paragraph>
           </div>
           <Divider />

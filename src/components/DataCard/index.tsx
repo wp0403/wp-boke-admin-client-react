@@ -4,12 +4,12 @@
  * @Author: WangPeng
  * @Date: 2022-08-16 15:18:18
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-08-17 14:36:40
+ * @LastEditTime: 2022-10-09 17:32:13
  */
 import React from 'react';
+import { isBoolean } from 'lodash';
 import SysIcon from '@/components/SysIcon';
 import style from './index.less';
-import { isBoolean } from 'lodash';
 
 export interface DataCardProps {
   icon: string; // 图标

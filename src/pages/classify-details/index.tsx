@@ -17,7 +17,7 @@ import {
   Popconfirm,
 } from 'antd';
 import moment from 'moment';
-import { CopyOutlined, UploadOutlined } from '@ant-design/icons';
+import { CopyOutlined } from '@ant-design/icons';
 import SelectCom from '@/components/SelectCom';
 import RanderMarkdown from '@/components/RanderMarkdown';
 import {
@@ -25,15 +25,14 @@ import {
   getDictObj,
   getSubDictObj,
 } from '@/utils/globalDataUtils';
-import { calculation, formatDate } from '@/utils/dataUtils';
-import { putCos } from '@/utils/cosExample';
 import api from '@/api';
 import style from './index.less';
 import { isAuth } from '@/utils/authorityUtils';
 import { localGet } from '@/utils/local';
+import UploadImg from '@/components/UploadImg';
 
 const { Paragraph } = Typography;
-const { classify, user, resources } = api;
+const { classify, user } = api;
 
 interface ClassifyObj {
   id: number;
@@ -169,11 +168,11 @@ const ClassifyDetails: FC = (props: any) => {
         classify_sub: dictObj.value,
       }));
     }
-    if ('img' === Object.keys(value)[0]) {
-      const imgUrl = value['img']?.file?.response?.Location;
+    if ('img' === keyName) {
+      form.setFieldsValue({ img: value });
       setClassifyObj((data: ClassifyObj) => ({
         ...data,
-        img: `https://${imgUrl}`,
+        img: value,
       }));
       return;
     }
@@ -198,49 +197,6 @@ const ClassifyDetails: FC = (props: any) => {
       ...data,
       ...value,
     }));
-  };
-  // 自定义上传
-  const customRequest = (options: any) => {
-    const {
-      action,
-      data,
-      file,
-      filename,
-      headers,
-      onProgress,
-      onSuccess,
-      onError,
-    } = options;
-    // 调用腾讯云cos上传方法
-    putCos({
-      file,
-      onProgress,
-      onSuccess,
-      onError,
-    });
-  };
-  // 上传的change函数
-  const onChangeUpload = async ({ file }, isCopy = false) => {
-    if (file.status === 'done' && file.response.statusCode === 200) {
-      const imgUrl = file?.response?.Location;
-      if (isCopy && imgUrl) {
-        setCopyImg(`https://${imgUrl}`);
-      }
-      const obj = {
-        name: file.name,
-        url: `https://img-1302605407.cos.ap-beijing.myqcloud.com/${file.name}`,
-        updateTime: formatDate(file.lastModified, 'yyyy-MM-dd HH:ss:mm'),
-        create_time: formatDate(new Date(), 'yyyy-MM-dd HH:ss:mm'),
-        size: `${calculation(file.size, 1024 * 1024, 3)}MB`,
-      };
-      await resources
-        ._putImg(obj)
-        .then(({ data }) => {
-          if (data.code === 200) {
-          }
-        })
-        .finally(() => {});
-    }
   };
 
   return (
@@ -422,17 +378,10 @@ const ClassifyDetails: FC = (props: any) => {
             rules={[{ required: true }]}
           >
             {isEdit ? (
-              <Upload
-                name="file"
-                action="https://wp-1302605407.cos.ap-beijing.myqcloud.com"
-                listType="picture"
-                maxCount={1}
-                customRequest={customRequest}
-                onChange={onChangeUpload}
-                accept=".png,.jpg,.gif,.jpeg"
-              >
-                <Button icon={<UploadOutlined />}>点击上传图片</Button>
-              </Upload>
+              <UploadImg
+                isCopy={true}
+                callback={(v) => onValuesChange(v, {}, 'img')}
+              />
             ) : (
               <div className={style.form_item_con}>
                 <Image
@@ -515,17 +464,7 @@ const ClassifyDetails: FC = (props: any) => {
                     上传图片并获取图片地址
                   </div>
                 </Tooltip>
-                <Upload
-                  name="file"
-                  action="https://wp-1302605407.cos.ap-beijing.myqcloud.com"
-                  listType="picture"
-                  maxCount={1}
-                  customRequest={customRequest}
-                  onChange={(v) => onChangeUpload(v, true)}
-                  accept=".png,.jpg,.gif,.jpeg"
-                >
-                  <Button icon={<UploadOutlined />}>点击上传图片</Button>
-                </Upload>
+                <UploadImg isCopy={true} callback={(v) => setCopyImg(v)} />
                 <Paragraph copyable>{copyImg}</Paragraph>
               </div>
               <Divider />

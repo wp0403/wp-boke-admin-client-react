@@ -1,0 +1,112 @@
+.user_detail {
+  padding: 12px;
+  background-color: var(--w-alpha);
+  box-shadow: var(--ct-box-shadow);
+}
+
+.user_box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 30px;
+  color: var(--b-alpha-80);
+
+  .username {
+    padding-top: 12px;
+    font-weight: 500;
+    font-size: 20px;
+    text-align: center;
+  }
+
+  .user_title {
+    padding: 4px 0 16px;
+    width: 70%;
+    line-height: 22px;
+    font-size: 14px;
+    text-align: center;
+    font-weight: 400;
+  }
+
+  .user_identity,
+  .user_occupation,
+  .user_address,
+  .user_phone,
+  .user_email {
+    display: flex;
+    align-items: center;
+    width: 80%;
+    height: 24px;
+    line-height: 24px;
+    font-size: 14px;
+    justify-content: flex-start;
+  }
+
+  .icon {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .text {
+    padding-left: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 400;
+  }
+}
+
+.user_tags,
+.user_team {
+  display: flex;
+  flex-direction: column;
+  padding: 0 16px;
+
+  .user_tags_title,
+  .user_team_title {
+    width: 100%;
+    height: 24px;
+    line-height: 24px;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .user_tags_content {
+    display: flex;
+    flex-wrap: wrap;
+
+    & > span {
+      display: inline-block;
+      padding: 4px 8px;
+      background-color: var(--p-alpha-80);
+      color: var(--w-alpha);
+      margin: 0 4px 4px 0;
+      font-size: 14px;
+      font-weight: 400;
+    }
+  }
+
+  .user_team_content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+    .team_item {
+      display: flex;
+      align-items: center;
+      height: 40px;
+      flex: 1;
+      margin-right: 8px;
+
+      img {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        margin-right: 8px;
+      }
+
+      .team_item_name {
+        white-space: nowrap;
+      }
+    }
+  }
+}

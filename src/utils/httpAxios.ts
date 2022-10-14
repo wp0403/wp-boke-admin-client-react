@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-01-13 11:29:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-08-11 15:42:55
+ * @LastEditTime: 2022-10-11 10:45:25
  */
 
 import axios from 'axios';
@@ -33,7 +33,7 @@ httpAxios.interceptors.request.use(
 httpAxios.interceptors.response.use(
   function (response) {
     // 对响应数据做点什么
-    // 判断是否存在响应头authorization，存在则跟新token
+    // 判断是否存在响应头authorization，存在则更新token
     response.headers['authorization'] &&
       localSet('token', response.headers['authorization']);
     return response;

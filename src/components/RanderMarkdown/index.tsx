@@ -12,20 +12,6 @@ import { coy } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import './style.less';
 
 const RanderMarkdown = (props: any) => {
-  const alertImg = (src: any) => {
-    const imgBox = document.createElement('div');
-    imgBox.className = 'layoutImgBox';
-    imgBox.innerHTML = `<div class="layoutImgBox_content">
-      <img src=${src} />
-    </div>`;
-
-    imgBox.onclick = () => {
-      imgBox.remove();
-    };
-
-    document.body.appendChild(imgBox);
-  };
-
   return (
     <Fragment>
       <Image.PreviewGroup>

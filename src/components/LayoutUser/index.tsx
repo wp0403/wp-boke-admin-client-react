@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 11:11:37
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-09-08 14:06:16
+ * @LastEditTime: 2022-10-14 11:31:31
  */
 import React, { useState, useEffect } from 'react';
 import { history, Link } from 'umi';
@@ -32,7 +32,12 @@ const LayoutUser = () => {
           key: '1',
           disabled: true,
           label: (
-            <div className={style.userBox1}>
+            <div
+              className={style.userBox1}
+              onClick={() =>
+                history.replace(`/settings/user-details/${user?.id}`)
+              }
+            >
               <Avatar size={'large'} src={user?.img} alt="用户头像" />
               <div className={style.userObj}>
                 <div className={style.name}>{user.name}</div>
@@ -44,11 +49,7 @@ const LayoutUser = () => {
         {
           key: '2',
           label: (
-            <Link
-              target="_blank"
-              rel="noopener noreferrer"
-              to={`/settings/user-details/${user?.id}`}
-            >
+            <Link rel="noopener noreferrer" to={`/personal-center/${user?.id}`}>
               <SysIcon className={style.menuIcon} type="icon-a-gerenyonghu" />
               个人中心
             </Link>
@@ -57,7 +58,10 @@ const LayoutUser = () => {
         {
           key: '3',
           label: (
-            <Link target="_blank" rel="noopener noreferrer" to="/">
+            <Link
+              rel="noopener noreferrer"
+              to={`/settings/user-details/${user?.id}`}
+            >
               <SysIcon className={style.menuIcon} type="icon-a-shezhichilun" />
               设置
             </Link>

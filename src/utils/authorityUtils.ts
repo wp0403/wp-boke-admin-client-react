@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-01-13 11:29:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-09-08 14:25:59
+ * @LastEditTime: 2022-10-12 18:20:18
  */
 
 import { cloneDeep } from 'lodash';
@@ -25,13 +25,7 @@ let globalAuthorityModules: AuthorityModuleType[] | null = [];
 
 // 获取全局权限缓存
 export const getGlobalAuthorityModule = (): AuthorityModuleType[] | null => {
-  const str = localGet('auth');
-  if (str) {
-    globalAuthorityModules = JSON.parse(str);
-  } else {
-    globalAuthorityModules = null;
-  }
-  return globalAuthorityModules;
+  return localGet('auth') || null;
 };
 
 // 权限校验

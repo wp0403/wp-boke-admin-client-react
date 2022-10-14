@@ -8,7 +8,7 @@
  */
 import React from 'react';
 import { Select, Collapse } from 'antd';
-import DataStateCard from '@/components/DataStateCard';
+import DataEmptyCard from '@/components/DataEmptyCard';
 import { modifyData } from '@/utils/dataUtils';
 import style from './index.less';
 
@@ -81,7 +81,7 @@ const ProLayoutSearch = () => {
     if (!list || !list.length) {
       return (
         <div className={style.layoutSearch_options}>
-          <DataStateCard style={{width: '100px'}} type={1} />
+          <DataEmptyCard style={{ width: '100px' }} type={1} />
         </div>
       );
     }

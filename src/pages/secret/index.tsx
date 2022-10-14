@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 13:51:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-09-08 12:37:57
+ * @LastEditTime: 2022-10-11 11:04:13
  */
 import React, { useState, useEffect, useRef } from 'react';
 import { history } from 'umi';
@@ -240,7 +240,7 @@ const Classify = (props: any) => {
             <Tooltip
               placement="topRight"
               arrowPointAtCenter
-              title="修改当前博文审核状态"
+              title="修改审核状态"
             >
               <SysIcon
                 type="icon-shenhe"

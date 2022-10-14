@@ -1,10 +1,10 @@
 /*
- * @Descripttion:
+ * @Descripttion: 用于请求接口的下拉搜索
  * @version:
  * @Author: WangPeng
  * @Date: 2022-07-06 11:09:35
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-09-30 16:41:09
+ * @LastEditTime: 2022-10-13 14:04:21
  */
 import React, { useEffect, useState } from 'react';
 import { Select } from 'antd';

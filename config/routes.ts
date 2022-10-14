@@ -4,7 +4,7 @@
  * @Author: 王鹏
  * @Date: 2022-01-22 13:20:17
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-09-08 17:36:11
+ * @LastEditTime: 2022-10-12 18:15:16
  */
 export default [
   {
@@ -93,6 +93,7 @@ export default [
         path: '/projectLibrary',
         name: '项目库',
         icon: 'icon-a-gengduocaidangongneng',
+        authority: 'false',
         routes: [
           {
             path: '/projectLibrary',
@@ -167,6 +168,11 @@ export default [
             component: './settings-imgs',
           },
         ],
+      },
+      {
+        path: '/personal-center/:id',
+        exact: true,
+        component: './personal-center',
       },
       {
         path: '/403',

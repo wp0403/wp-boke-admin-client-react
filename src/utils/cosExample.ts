@@ -56,7 +56,7 @@ export const putCos = ({
       Key: file.name /* 必须 */,
       StorageClass: StorageClass as any,
       Body: file, // 上传文件对象
-      ContentType: '',
+      ContentType: file.type,
       onProgress,
       onTaskReady: onSuccess,
       // onTaskStart: (TaskInfo) => {
