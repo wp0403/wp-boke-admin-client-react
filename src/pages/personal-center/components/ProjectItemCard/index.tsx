@@ -4,12 +4,11 @@
  * @Author: WangPeng
  * @Date: 2022-10-14 10:35:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-10-14 15:22:45
+ * @LastEditTime: 2022-10-14 18:09:26
  */
 import React from 'react';
-import { Avatar, Tooltip } from 'antd';
+import { Avatar } from 'antd';
 import { Link } from 'umi';
-import SysIcon from '@/components/SysIcon';
 import style from './index.less';
 
 type Props = {

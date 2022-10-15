@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-10-14 09:58:48
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-10-14 15:36:03
+ * @LastEditTime: 2022-10-15 00:03:37
  */
 import React, { useEffect, useState } from 'react';
 import { useThrottleEffect, useGetState } from 'ahooks';
@@ -63,6 +63,7 @@ const UserTab = () => {
   }, []);
 
   const onChange = (key: string) => {
+    setLoading(true);
     setActiveKey(key);
     setPage(1);
     setTotal(tabNums[key]);
@@ -72,22 +73,22 @@ const UserTab = () => {
   const changeCard = (v) => {
     switch (activeKey) {
       case 'article':
-        return <ArticleItemCard item={v} />;
+        return <ArticleItemCard key={v?.id} item={v} />;
 
       case 'diary':
-        return <DiaryItemCard item={v} />;
+        return <DiaryItemCard key={v?.id} item={v} />;
 
       case 'project':
-        return <ProjectItemCard item={v} />;
+        return <ProjectItemCard key={v?.id} item={v} />;
 
-      // case 'comment':
-      //   return <CommentItemCard item={v} />;
+      case 'comment':
+        return <CommentItemCard key={v?.id} item={v} />;
 
-      // case 'browse':
-      //   return <BrowseItemCard item={v} />;
+      case 'browse':
+        return <BrowseItemCard key={v?.id} item={v} />;
 
       default:
-        return <DataEmptyCard type={2} />;
+        return <></>;
     }
   };
 
@@ -100,15 +101,17 @@ const UserTab = () => {
             <div className={style.tab_list}>
               {list?.map((v) => changeCard(v))}
             </div>
-            <div className={style.tab_pager}>
-              <Pagination
-                current={getPage()}
-                pageSize={10}
-                total={getTotal()}
-                showSizeChanger={false}
-                hideOnSinglePage={true}
-              />
-            </div>
+            {activeKey !== 'browse' && (
+              <div className={style.tab_pager}>
+                <Pagination
+                  current={getPage()}
+                  pageSize={10}
+                  total={getTotal()}
+                  showSizeChanger={false}
+                  hideOnSinglePage={true}
+                />
+              </div>
+            )}
           </>
         )}
         {loading && <LoadingCard />}

@@ -4,7 +4,7 @@
  * @Author: 王鹏
  * @Date: 2022-01-22 13:20:17
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-10-12 18:15:16
+ * @LastEditTime: 2022-10-15 00:51:45
  */
 export default [
   {
@@ -173,6 +173,11 @@ export default [
         path: '/personal-center/:id',
         exact: true,
         component: './personal-center',
+      },
+      {
+        path: '/personal-settings',
+        exact: true,
+        component: './personal-settings',
       },
       {
         path: '/403',

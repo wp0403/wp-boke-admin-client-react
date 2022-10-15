@@ -148,3 +148,10 @@ export const userIdentity = [
   { id: '2', value: '管理员', icon: 'icon-guanliyuan2' },
   { id: '3', value: '超级管理员', icon: 'icon-guanliyuan1' },
 ];
+
+// 数据类型字典
+export const dataType = [
+  { id: '1', value: '博文' },
+  { id: '2', value: '旅行日记' },
+  { id: '3', value: '项目' },
+];

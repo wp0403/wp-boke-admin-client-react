@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 11:11:37
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-10-14 11:31:31
+ * @LastEditTime: 2022-10-15 00:51:36
  */
 import React, { useState, useEffect } from 'react';
 import { history, Link } from 'umi';
@@ -58,10 +58,7 @@ const LayoutUser = () => {
         {
           key: '3',
           label: (
-            <Link
-              rel="noopener noreferrer"
-              to={`/settings/user-details/${user?.id}`}
-            >
+            <Link rel="noopener noreferrer" to={`/personal-settings`}>
               <SysIcon className={style.menuIcon} type="icon-a-shezhichilun" />
               设置
             </Link>

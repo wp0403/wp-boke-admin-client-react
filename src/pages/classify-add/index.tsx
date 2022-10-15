@@ -25,6 +25,8 @@ import api from '@/api';
 import RanderMarkdown from '@/components/RanderMarkdown';
 import UploadImg from '@/components/UploadImg';
 import DictSelectCom from '@/components/DictSelectCom';
+import ReadFileUpload from '@/components/ReadFileUpload';
+import SysIcon from '@/components/SysIcon';
 import style from './index.less';
 
 const { Paragraph } = Typography;
@@ -150,6 +152,9 @@ const ClassifyDetails: FC = () => {
         storage_desc: dictObj.value,
       }));
       return;
+    }
+    if ('content' === keyName) {
+      form.setFieldsValue(value);
     }
     setClassifyObj((data: ClassifyObj) => ({
       ...data,
@@ -283,6 +288,19 @@ const ClassifyDetails: FC = () => {
               placeholder="请选择文档类型（提倡markdown）"
             />
           </Form.Item>
+          {classifyObj?.storage_type === '1' && (
+            <div className={style.read_file_upload}>
+              <ReadFileUpload
+                onChange={(v) => onValuesChange({ content: v }, {}, 'content')}
+              />
+              <Tooltip title="该操作将清空现有博文内容，请谨慎操作。">
+                <SysIcon
+                  className={style.read_file_upload_icon}
+                  type="icon-jinggao2"
+                />
+              </Tooltip>
+            </div>
+          )}
           <div className={style.form_item_2}>
             <Form.Item
               className={`${
@@ -299,12 +317,10 @@ const ClassifyDetails: FC = () => {
                 className={style.textarea}
               />
             </Form.Item>
-            {classifyObj?.storage_type === '1' ? (
+            {classifyObj?.storage_type === '1' && (
               <div className={style.form_item_markdown_1}>
                 <RanderMarkdown markdown={classifyObj?.content} />
               </div>
-            ) : (
-              ''
             )}
           </div>
           <Divider />

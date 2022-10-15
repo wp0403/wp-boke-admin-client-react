@@ -26,10 +26,12 @@ import {
   getSubDictObj,
 } from '@/utils/globalDataUtils';
 import api from '@/api';
-import style from './index.less';
 import { isAuth } from '@/utils/authorityUtils';
 import { localGet } from '@/utils/local';
 import UploadImg from '@/components/UploadImg';
+import ReadFileUpload from '@/components/ReadFileUpload';
+import SysIcon from '@/components/SysIcon';
+import style from './index.less';
 
 const { Paragraph } = Typography;
 const { classify, user } = api;
@@ -192,6 +194,9 @@ const ClassifyDetails: FC = (props: any) => {
         author: option?.name,
       }));
       return;
+    }
+    if ('content' === keyName) {
+      form.setFieldsValue(value);
     }
     setClassifyObj((data: ClassifyObj) => ({
       ...data,
@@ -424,6 +429,19 @@ const ClassifyDetails: FC = (props: any) => {
               </div>
             )}
           </Form.Item>
+          {isEdit && classifyObj?.storage_type === '1' && (
+            <div className={style.read_file_upload}>
+              <ReadFileUpload
+                onChange={(v) => onValuesChange({ content: v }, {}, 'content')}
+              />
+              <Tooltip title="该操作将清空现有博文内容，请谨慎操作。">
+                <SysIcon
+                  className={style.read_file_upload_icon}
+                  type="icon-jinggao2"
+                />
+              </Tooltip>
+            </div>
+          )}
           <div className={style.form_item_2}>
             <Form.Item
               className={`${

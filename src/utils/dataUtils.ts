@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-01-13 11:42:16
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-09-05 18:10:30
+ * @LastEditTime: 2022-10-15 18:19:32
  */
 import { message } from 'antd';
 import { cloneDeep } from 'lodash';
@@ -270,4 +270,19 @@ export const jsonToExcel = (data, head, name = '导出的文件名') => {
   // 对下载的文件命名
   link.download = `${name + '.csv'}`;
   link.click();
+};
+
+// 读取上传文件的内容
+export const handleUpload: any = (file, callback?) => {
+  // 新建一个FileReader
+  const reader = new FileReader();
+  // 读取文件
+  reader.readAsText(file, 'UTF-8');
+  // 读取完文件之后会回来这里
+  reader.onload = function (e) {
+    // 读取文件内容
+    const fileString = e?.target?.result;
+    // 接下来可对文件内容进行处理
+    callback && callback(fileString);
+  };
 };
