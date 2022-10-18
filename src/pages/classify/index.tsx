@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 13:51:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-09-04 19:04:14
+ * @LastEditTime: 2022-10-18 11:12:13
  */
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, history } from 'umi';
@@ -18,8 +18,7 @@ import {
   Popconfirm,
 } from 'antd';
 import { DeleteOutlined, UndoOutlined } from '@ant-design/icons';
-import type { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
-import type { FilterValue, SorterResult } from 'antd/lib/table/interface';
+import type { ColumnsType } from 'antd/lib/table';
 import { calcTableScrollWidth, formatDate } from '@/utils/dataUtils';
 import { getDictObj } from '@/utils/globalDataUtils';
 import api from '@/api';

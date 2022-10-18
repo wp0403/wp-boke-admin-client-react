@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 11:11:37
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-10-15 00:51:36
+ * @LastEditTime: 2022-10-17 16:47:04
  */
 import React, { useState, useEffect } from 'react';
 import { history, Link } from 'umi';
@@ -38,7 +38,19 @@ const LayoutUser = () => {
                 history.replace(`/settings/user-details/${user?.id}`)
               }
             >
-              <Avatar size={'large'} src={user?.img} alt="用户头像" />
+              <Avatar
+                size={'large'}
+                src={
+                  user?.img || (
+                    <SysIcon
+                      className={style.avatar_icon}
+                      style={{ fontSize: 40 }}
+                      type="icon-yonghutouxiang"
+                    />
+                  )
+                }
+                alt="用户头像"
+              />
               <div className={style.userObj}>
                 <div className={style.name}>{user.name}</div>
                 <div className={style.email}>{user.email}</div>
@@ -86,7 +98,18 @@ const LayoutUser = () => {
         placement="bottomRight"
       >
         <div className={style.userBox}>
-          <Avatar size={'small'} src={user?.img} alt="用户头像" />
+          <Avatar
+            size={'small'}
+            src={
+              user?.img || (
+                <SysIcon
+                  className={style.avatar_icon}
+                  type="icon-yonghutouxiang"
+                />
+              )
+            }
+            alt="用户头像"
+          />
           <div className={style.username}>{user.name}</div>
         </div>
       </Dropdown>

@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-10-14 09:55:41
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-10-14 15:31:50
+ * @LastEditTime: 2022-10-17 15:00:35
  */
 import React, { useState, useEffect } from 'react';
 import { Row, Col, Avatar, Divider } from 'antd';
@@ -22,7 +22,18 @@ const UserDetail = () => {
   return (
     <div className={style.user_detail}>
       <div className={style.user_box}>
-        <Avatar size={88} src={user?.img} alt="用户头像" />
+        <Avatar
+          size={88}
+          src={
+            user?.img || (
+              <SysIcon
+                className={style.avatar_icon}
+                type="icon-yonghutouxiang"
+              />
+            )
+          }
+          alt="用户头像"
+        />
         <div className={style.username}>{user?.name}</div>
         <div className={style.user_title}>{user?.title}</div>
         <div className={style.user_identity}>
@@ -63,19 +74,67 @@ const UserDetail = () => {
         <div className={style.user_team_title}>团队</div>
         <div className={style.user_team_content}>
           <div className={style.team_item}>
-            <img src={user?.img} />
+            <Avatar
+              className={style.team_icon}
+              size={'small'}
+              src={
+                user?.img || (
+                  <SysIcon
+                    className={style.avatar_icon}
+                    style={{ fontSize: 24 }}
+                    type="icon-yonghutouxiang"
+                  />
+                )
+              }
+            />
             <span className={style.team_item_name}>团队一</span>
           </div>
           <div className={style.team_item}>
-            <img src={user?.img} />
+            <Avatar
+              className={style.team_icon}
+              size={'small'}
+              src={
+                user?.img || (
+                  <SysIcon
+                    className={style.avatar_icon}
+                    style={{ fontSize: 24 }}
+                    type="icon-yonghutouxiang"
+                  />
+                )
+              }
+            />
             <span className={style.team_item_name}>团队二</span>
           </div>
           <div className={style.team_item}>
-            <img src={user?.img} />
+            <Avatar
+              className={style.team_icon}
+              size={'small'}
+              src={
+                user?.img || (
+                  <SysIcon
+                    className={style.avatar_icon}
+                    style={{ fontSize: 24 }}
+                    type="icon-yonghutouxiang"
+                  />
+                )
+              }
+            />
             <span className={style.team_item_name}>团队三</span>
           </div>
           <div className={style.team_item}>
-            <img src={user?.img} />
+            <Avatar
+              className={style.team_icon}
+              size={'small'}
+              src={
+                user?.img || (
+                  <SysIcon
+                    className={style.avatar_icon}
+                    style={{ fontSize: 24 }}
+                    type="icon-yonghutouxiang"
+                  />
+                )
+              }
+            />
             <span className={style.team_item_name}>团队四</span>
           </div>
         </div>

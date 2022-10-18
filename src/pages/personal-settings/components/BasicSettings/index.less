@@ -1,0 +1,54 @@
+.basic {
+  padding-right: 48px;
+  padding-left: 24px;
+  display: flex;
+  flex-wrap: wrap;
+
+  :global {
+    .ant-form-item-label {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--b-alpha-80);
+    }
+  }
+}
+.title {
+  width: 100%;
+  font-size: 20px;
+  color: var(--b-alpha-80);
+  font-weight: 500;
+  padding-bottom: 24px;
+}
+.form_item {
+  width: 50%;
+  padding-right: 20px;
+}
+
+.avatar_box {
+  .avatar {
+    margin-bottom: 24px;
+  }
+  :global {
+    .ant-form-item-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      label {
+        display: inline-block;
+        width: 160px;
+        text-align: start;
+      }
+    }
+    .ant-form-item-control-input-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+}
+
+.avatar_icon {
+  font-size: 160px;
+  color: var(--ct-body-color);
+}

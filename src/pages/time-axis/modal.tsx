@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-09-05 13:58:49
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-09-29 11:40:14
+ * @LastEditTime: 2022-10-17 13:17:12
  */
 import React, { useState, useEffect } from 'react';
 import { message, Modal, Form, Input, DatePicker } from 'antd';
@@ -62,16 +62,17 @@ const ModalCom = (props: any) => {
 
   // 表单提交时间
   const onFinish = (values: any) => {
-    timeAxisObj.create_time = moment(new Date(timeAxisObj?.create_time)).format(
+    const newValues = { ...timeAxisObj };
+    newValues.create_time = moment(new Date(newValues?.create_time)).format(
       format,
     );
-    timeAxisObj.update_time = moment(new Date()).format(format);
+    newValues.update_time = moment(new Date()).format(format);
     setConfirmLoading(true);
     props.setLoading(true);
-    const apiName = timeAxisObj.id
+    const apiName = newValues.id
       ? timeAxis._putTimeAxisDetails
       : timeAxis._createTimeAxisDetails;
-    apiName(timeAxisObj)
+    apiName(newValues)
       .then(({ data }) => {
         if (data.code === 200) {
           message.success(data.msg);

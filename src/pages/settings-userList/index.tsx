@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Table, Button, message, Tooltip } from 'antd';
 import { Link } from 'umi';
-import type { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
+import type { ColumnsType } from 'antd/lib/table';
 import {
   calcTableScrollWidth,
   formatDate,
@@ -12,12 +12,14 @@ import ToExamineModal from '@/components/ToExamineModal';
 import { getDictObj } from '@/utils/globalDataUtils';
 import api from '@/api';
 import tableStyle from '@/table.less';
+import UserStateModal from './userStateModal';
 import style from './index.less';
 
 const { user } = api;
 
 interface DataType {
   id: number;
+  role_id: number;
   name: string;
   username: string;
   email: string;
@@ -29,6 +31,7 @@ interface DataType {
 const SettingUser = () => {
   // 弹窗抛出的事件
   const modalRef = useRef();
+  const userStateModalRef = useRef();
   const columns: ColumnsType<DataType> = [
     {
       title: '用户名',
@@ -54,6 +57,24 @@ const SettingUser = () => {
       key: 'name',
       width: 200,
       render: (text) => <div className={tableStyle.table_cell}>{text}</div>,
+    },
+    {
+      title: '角色',
+      dataIndex: 'role_id',
+      key: 'role_id',
+      width: 160,
+      render: (text) => (
+        <div className={tableStyle.table_cell}>
+          <SysIcon
+            className={style.bowenType3}
+            type={getDictObj('user_identity', text)?.icon}
+            style={{ marginRight: '10px' }}
+          />
+          <span className={style.bowenType3}>
+            {getDictObj('user_identity', text)?.value}
+          </span>
+        </div>
+      ),
     },
     {
       title: '邮箱',
@@ -114,24 +135,6 @@ const SettingUser = () => {
       ),
     },
     {
-      title: '角色',
-      dataIndex: 'role_id',
-      key: 'role_id',
-      width: 160,
-      render: (text) => (
-        <div className={tableStyle.table_cell}>
-          <SysIcon
-            className={style.bowenType3}
-            type={getDictObj('user_identity', text)?.icon}
-            style={{ marginRight: '10px' }}
-          />
-          <span className={style.bowenType3}>
-            {getDictObj('user_identity', text)?.value}
-          </span>
-        </div>
-      ),
-    },
-    {
       title: '创建时间',
       dataIndex: 'create_time',
       key: 'create_time',
@@ -166,12 +169,24 @@ const SettingUser = () => {
             arrowPointAtCenter
           >
             <SysIcon
-              type="icon-jurassic_edit-user"
+              type="icon-shenhe"
               className={style.btn_huifu}
               onClick={() =>
                 (modalRef.current as any)?.showModal({
                   ...record,
                   state: `${record.state}`,
+                })
+              }
+            />
+          </Tooltip>
+          <Tooltip placement="topRight" arrowPointAtCenter title="修改用户身份">
+            <SysIcon
+              type="icon-jurassic_edit-user"
+              className={style.btn_huifu}
+              onClick={() =>
+                (userStateModalRef.current as any)?.showModal({
+                  ...record,
+                  role_id: `${record.role_id}`,
                 })
               }
             />
@@ -196,6 +211,23 @@ const SettingUser = () => {
           ),
         );
         (modalRef.current as any)?.handleCancel();
+        message.success(data.msg);
+      } else {
+        message.error(data.msg);
+      }
+    });
+  };
+
+  // 修改用户身份
+  const changeUserState = async (obj) => {
+    await user._putUserState(obj).then(({ data }) => {
+      if (data.code === 200) {
+        setList((v) =>
+          v.map((item) =>
+            item.id === obj.id ? { ...item, role_id: +obj.role_id } : item,
+          ),
+        );
+        (userStateModalRef.current as any)?.handleCancel();
         message.success(data.msg);
       } else {
         message.error(data.msg);
@@ -277,6 +309,12 @@ const SettingUser = () => {
         title="修改用户状态"
         label="用户状态"
         changeToExamine={changeToExamine}
+      />
+      <UserStateModal
+        callback={(ref) => (userStateModalRef.current = ref)}
+        name="role_id"
+        dictType="user_identity"
+        changeUserState={changeUserState}
       />
     </div>
   );

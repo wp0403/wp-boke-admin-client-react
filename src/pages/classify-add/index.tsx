@@ -65,17 +65,18 @@ const ClassifyDetails: FC = () => {
 
   // 提交表单
   const onFinish = (values: any) => {
-    classifyObj.time_str = moment(
-      classifyObj?.time_str ? new Date(classifyObj?.time_str) : new Date(),
+    const newValues = { ...classifyObj };
+    newValues.time_str = moment(
+      newValues?.time_str ? new Date(newValues?.time_str) : new Date(),
     ).format(format);
-    classifyObj.last_edit_time = moment(
-      classifyObj?.last_edit_time
-        ? new Date(classifyObj?.last_edit_time)
+    newValues.last_edit_time = moment(
+      newValues?.last_edit_time
+        ? new Date(newValues?.last_edit_time)
         : new Date(),
     ).format(format);
     setLoading(true);
     classify
-      ._createClassifyDetails(classifyObj)
+      ._createClassifyDetails(newValues)
       .then(({ data }) => {
         if (data.code === 200) {
           message.success(data.msg);

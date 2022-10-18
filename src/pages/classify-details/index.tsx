@@ -121,13 +121,12 @@ const ClassifyDetails: FC = (props: any) => {
   }, [id, isEdit]);
 
   const onFinish = (values: any) => {
-    classifyObj.time_str = moment(new Date(classifyObj?.time_str)).format(
-      format,
-    );
-    classifyObj.last_edit_time = moment(new Date()).format(format);
+    const newValues = { ...classifyObj };
+    newValues.time_str = moment(new Date(newValues?.time_str)).format(format);
+    newValues.last_edit_time = moment(new Date()).format(format);
     setLoading(true);
     classify
-      ._putClassifyDetails(classifyObj)
+      ._putClassifyDetails(newValues)
       .then(({ data }) => {
         if (data.code === 200) {
           message.success(data.msg);

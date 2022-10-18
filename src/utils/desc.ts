@@ -144,9 +144,10 @@ export const moodList = [
 
 // 用户身份字典
 export const userIdentity = [
-  { id: '1', value: '普通来访者', icon: 'icon-guanliyuan' },
+  { id: '1', value: '超级管理员', icon: 'icon-guanliyuan1' },
   { id: '2', value: '管理员', icon: 'icon-guanliyuan2' },
-  { id: '3', value: '超级管理员', icon: 'icon-guanliyuan1' },
+  { id: '3', value: '普通成员', icon: 'icon-guanliyuan' },
+  { id: '4', value: '游客', icon: 'icon-jurassic_user' },
 ];
 
 // 数据类型字典

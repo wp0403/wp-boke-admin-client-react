@@ -4,27 +4,18 @@
  * @Author: WangPeng
  * @Date: 2022-08-29 10:06:54
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-09-08 14:31:11
+ * @LastEditTime: 2022-10-17 16:01:05
  */
 import React, { useState, useEffect } from 'react';
-import {
-  message,
-  Spin,
-  Form,
-  Button,
-  Divider,
-  Input,
-  Upload,
-  Image,
-} from 'antd';
+import { message, Spin, Form, Button, Divider, Input, Avatar } from 'antd';
+import { isMatch } from 'lodash';
 import moment from 'moment';
-import { UploadOutlined } from '@ant-design/icons';
 import api from '@/api';
 import SysIcon from '@/components/SysIcon';
+import UploadImg from '@/components/UploadImg';
 import { isAuth } from '@/utils/authorityUtils';
 import { localSet, localGet } from '@/utils/local';
-import { calculation, formatDate, IncludeHttp } from '@/utils/dataUtils';
-import { putCos } from '@/utils/cosExample';
+import { IncludeHttp } from '@/utils/dataUtils';
 import style from './index.less';
 
 const { user, resources } = api;
@@ -50,6 +41,7 @@ interface User {
   secret_guide: string;
   about_page: string;
   img: string;
+  uid: string;
 }
 
 const UserDetails = (props: any) => {
@@ -57,44 +49,54 @@ const UserDetails = (props: any) => {
 
   // 用户信息
   const [userObj, setUserObj] = useState<User>({} as User);
-  const [loading, setLodaing] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [isEdit, setIsEdit] = useState<boolean>(false);
-  const [imgUrl, setImgUrl] = useState<string>('');
 
   const [form] = Form.useForm();
   const format = 'YYYY-MM-DD HH:mm:ss';
   // 获取用户详情
   const getUserDetails = async () => {
-    setLodaing(true);
+    setLoading(true);
     await user
       ._getUserDetails({ params: { id } })
       .then(({ data }) => {
         if (data.code === 200) {
           setUserObj(data.data);
-          if (localGet('user')?.id === data.data.id)
+          if (
+            localGet('user')?.id === data.data.id &&
+            !isMatch(data.data, localGet('user'))
+          ) {
             localSet('user', data.data);
-        } else {
-          message.error(data.msg);
+            location.reload();
+          }
         }
       })
-      .finally(() => setLodaing(false));
+      .finally(() => setLoading(false));
   };
 
   // 表单的字段值更新事件
   const onValuesChange = (value, option, keyName?) => {
-    if ('img' === Object.keys(value)[0]) {
-      const imgUrl = value['img']?.file?.response?.Location;
-      setImgUrl(`https://${imgUrl}`);
+    if ('img' === keyName) {
+      form.setFieldsValue({ img: value });
+      setUserObj((data: User) => ({
+        ...data,
+        img: value,
+      }));
+      return;
     }
-    setUserObj(option);
+    setUserObj((data: User) => ({
+      ...data,
+      ...option,
+    }));
   };
   // 表单提交事件
   const onFinish = async (values: any) => {
-    const newValues = { ...values, img: imgUrl };
-    setLodaing(true);
+    const newValues = { ...userObj };
+    setLoading(true);
+    newValues.create_time = moment(newValues.create_time).format(format);
     newValues.last_edit_time = moment(new Date()).format(format);
     await user
-      ._putUserDetails({ ...newValues, id })
+      ._putUserDetails(newValues)
       .then(({ data }) => {
         if (data.code === 200) {
           getUserDetails();
@@ -104,49 +106,7 @@ const UserDetails = (props: any) => {
           message.error(data.msg);
         }
       })
-      .finally(() => setLodaing(false));
-  };
-
-  // 自定义上传
-  const customRequest = (options: any) => {
-    const {
-      action,
-      data,
-      file,
-      filename,
-      headers,
-      onProgress,
-      onSuccess,
-      onError,
-    } = options;
-    // 调用腾讯云cos上传方法
-    putCos({
-      file,
-      onProgress,
-      onSuccess,
-      onError,
-    });
-  };
-
-  // 上传的change函数
-  const onChangeUpload = async ({ file }) => {
-    if (file.status === 'done' && file.response.statusCode === 200) {
-      const imgUrl = file?.response?.Location;
-      const obj = {
-        name: file.name,
-        url: `https://img-1302605407.cos.ap-beijing.myqcloud.com/${file.name}`,
-        updateTime: formatDate(file.lastModified, 'yyyy-MM-dd HH:ss:mm'),
-        create_time: formatDate(new Date(), 'yyyy-MM-dd HH:ss:mm'),
-        size: `${calculation(file.size, 1024 * 1024, 3)}MB`,
-      };
-      await resources
-        ._putImg(obj)
-        .then(({ data }) => {
-          if (data.code === 200) {
-          }
-        })
-        .finally(() => {});
-    }
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
@@ -323,25 +283,23 @@ const UserDetails = (props: any) => {
             name="img"
           >
             {isEdit ? (
-              <Upload
-                name="file"
-                action="https://wp-1302605407.cos.ap-beijing.myqcloud.com"
-                listType="picture"
-                maxCount={1}
-                customRequest={customRequest}
-                onChange={onChangeUpload}
-                accept=".png,.jpg,.gif,.jpeg"
-              >
-                <Button icon={<UploadOutlined />}>点击上传图片</Button>
-              </Upload>
+              <UploadImg
+                isCopy={true}
+                callback={(v) => onValuesChange(v, {}, 'img')}
+              />
             ) : (
-              <div className={style.form_item_con}>
-                <Image
-                  className={style.list_img}
-                  src={userObj?.img}
-                  alt={userObj?.title}
-                />
-              </div>
+              <Avatar
+                className={style.avatar}
+                size={180}
+                src={
+                  userObj?.img || (
+                    <SysIcon
+                      className={style.avatar_icon}
+                      type="icon-yonghutouxiang"
+                    />
+                  )
+                }
+              />
             )}
           </Form.Item>
           <Divider />

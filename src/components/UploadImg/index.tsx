@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-10-13 10:19:20
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-10-13 11:30:17
+ * @LastEditTime: 2022-10-17 13:27:22
  */
 import React from 'react';
 import { Upload, Button } from 'antd';
@@ -23,6 +23,8 @@ type Props = {
   onUpdate?: () => any; // 刷新的回调函数
   children?: any;
   multiple?: boolean;
+  icon?: any;
+  text?: string;
 };
 
 const UploadImg = (props: Props) => {
@@ -33,6 +35,8 @@ const UploadImg = (props: Props) => {
     onUpdate,
     isFileList = true,
     multiple,
+    icon,
+    text,
   } = props;
   // 自定义上传
   const customRequest = (options: any) => {
@@ -93,7 +97,9 @@ const UploadImg = (props: Props) => {
       {props.children ? (
         props.children
       ) : (
-        <Button icon={<UploadOutlined />}>点击上传图片</Button>
+        <Button icon={icon || <UploadOutlined />}>
+          {text || '点击上传图片'}
+        </Button>
       )}
     </Upload>
   );

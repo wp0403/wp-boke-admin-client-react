@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-07-12 16:02:34
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-09-29 10:48:07
+ * @LastEditTime: 2022-10-17 13:16:16
  */
 import React, { useState, useEffect } from 'react';
 import { Switch, message, Modal, Form, Input, DatePicker } from 'antd';
@@ -19,7 +19,7 @@ interface DataType {
   type: string;
   time_str: any;
   author: string;
-  authorId: string;
+  author_id: string;
   title: string;
   content: string;
   isDelete: boolean;
@@ -65,17 +65,18 @@ const ModalCom = (props: any) => {
 
   // 表单提交时间
   const onFinish = (values: any) => {
-    secretObj.time_str = moment(new Date(secretObj?.time_str)).format(format);
+    const newValues = { ...secretObj };
+    newValues.time_str = moment(new Date(newValues?.time_str)).format(format);
     setConfirmLoading(true);
     props.setLoading(true);
-    const apiName = secretObj.id
+    const apiName = newValues.id
       ? secret._putSecretDetails
       : secret._createSecretDetails;
-    apiName(secretObj)
+    apiName(newValues)
       .then(({ data }) => {
         if (data.code === 200) {
           message.success(data.msg);
-          props.editObj(secretObj);
+          props.editObj(newValues);
           setVisible(false);
           setConfirmLoading(false);
         } else {
@@ -88,7 +89,7 @@ const ModalCom = (props: any) => {
   // 表单的字段值更新事件
   const onValuesChange = (value, option, keyName?) => {
     if (!value) return;
-    if (typeof value !== 'object' && keyName === 'authorId') {
+    if (typeof value !== 'object' && keyName === 'author_id') {
       setSecretObj((data: DataType) => ({
         ...data,
         [keyName]: value,
@@ -131,7 +132,7 @@ const ModalCom = (props: any) => {
       >
         <Form.Item
           label="博文作者"
-          name="authorId"
+          name="author_id"
           rules={[{ required: true }]}
         >
           <SelectCom
@@ -140,11 +141,11 @@ const ModalCom = (props: any) => {
             placeholder="请输入关键字搜索"
             showSearch={true}
             defaultOptions={[
-              { label: secretObj?.author, value: secretObj?.authorId },
+              { label: secretObj?.author, value: secretObj?.author_id },
             ]}
-            defaultValue={secretObj?.authorId ? [secretObj?.authorId] : null}
+            defaultValue={secretObj?.author_id ? [secretObj?.author_id] : null}
             onChange={onValuesChange}
-            keyName="authorId"
+            keyName="author_id"
           />
         </Form.Item>
         <Form.Item

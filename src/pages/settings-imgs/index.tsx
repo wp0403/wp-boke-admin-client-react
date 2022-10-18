@@ -78,6 +78,13 @@ const SettingUser = () => {
       ),
     },
     {
+      title: '上传人',
+      dataIndex: 'author',
+      key: 'author',
+      width: 130,
+      render: (text) => <div className={tableStyle.table_cell}>{text}</div>,
+    },
+    {
       title: '最后修改时间',
       dataIndex: 'updateTime',
       key: 'updateTime',
@@ -99,6 +106,7 @@ const SettingUser = () => {
       title: '操作',
       dataIndex: 'operation',
       width: 120,
+      fixed: 'right',
       render: (text, record: any) => (
         <div className={tableStyle.table_cell_flex}>
           <Tooltip placement="topRight" title="下载图片" arrowPointAtCenter>
