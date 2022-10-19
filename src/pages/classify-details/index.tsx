@@ -213,7 +213,7 @@ const ClassifyDetails: FC = (props: any) => {
           </div>
           <div className={style.headerBtnBox}>
             {(isAuth('edit@classify') ||
-              +localGet('user')?.id === +classifyObj?.author_id) && (
+              localGet('user')?.uid === classifyObj?.author_id) && (
               <Button
                 type="primary"
                 shape="round"
@@ -222,22 +222,24 @@ const ClassifyDetails: FC = (props: any) => {
                 {isEdit ? '取消' : '编辑'}
               </Button>
             )}
-            <Popconfirm
-              title="将彻底删除该条数据，不可恢复，要继续吗？"
-              onConfirm={() => deleteBowenObj(classifyObj.id)}
-              okText="确定"
-              cancelText="取消"
-              placement="topRight"
-            >
-              <Button
-                style={{ marginLeft: '10px' }}
-                type="primary"
-                danger
-                shape="round"
+            {isAuth('delete@classify') && (
+              <Popconfirm
+                title="将彻底删除该条数据，不可恢复，要继续吗？"
+                onConfirm={() => deleteBowenObj(classifyObj.id)}
+                okText="确定"
+                cancelText="取消"
+                placement="topRight"
               >
-                删除
-              </Button>
-            </Popconfirm>
+                <Button
+                  style={{ marginLeft: '10px' }}
+                  type="primary"
+                  danger
+                  shape="round"
+                >
+                  删除
+                </Button>
+              </Popconfirm>
+            )}
           </div>
         </div>
         <Divider />
@@ -290,10 +292,13 @@ const ClassifyDetails: FC = (props: any) => {
             className={style.form_item}
             label="创建时间"
             name="time_str"
-            rules={[{ required: true }]}
           >
             {isEdit ? (
-              <DatePicker format={format} showTime />
+              <DatePicker
+                disabled={!isAuth('update@time')}
+                format={format}
+                showTime
+              />
             ) : (
               <div className={style.form_item_con}>
                 {moment(classifyObj?.time_str).format(format)}
@@ -304,10 +309,13 @@ const ClassifyDetails: FC = (props: any) => {
             className={style.form_item}
             label="最后修改时间"
             name="last_edit_time"
-            rules={[{ required: true }]}
           >
             {isEdit ? (
-              <DatePicker format={format} showTime />
+              <DatePicker
+                disabled={!isAuth('update@time')}
+                format={format}
+                showTime
+              />
             ) : (
               <div className={style.form_item_con}>
                 {moment(classifyObj?.last_edit_time).format(format)}
@@ -489,7 +497,9 @@ const ClassifyDetails: FC = (props: any) => {
           ) : (
             ''
           )}
-          {isEdit ? (
+          {isEdit &&
+          (isAuth('edit@classify') ||
+            localGet('user')?.uid === classifyObj?.author_id) ? (
             <div className={style.form_btn}>
               <Form.Item>
                 <Button type="primary" htmlType="submit">

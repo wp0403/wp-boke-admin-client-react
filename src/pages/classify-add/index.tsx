@@ -1,4 +1,4 @@
-import React, { useState, FC } from 'react';
+import React, { useState, FC, useEffect } from 'react';
 import { history } from 'umi';
 import {
   Button,
@@ -27,6 +27,7 @@ import UploadImg from '@/components/UploadImg';
 import DictSelectCom from '@/components/DictSelectCom';
 import ReadFileUpload from '@/components/ReadFileUpload';
 import SysIcon from '@/components/SysIcon';
+import { isAuth } from '@/utils/authorityUtils';
 import style from './index.less';
 
 const { Paragraph } = Typography;
@@ -211,14 +212,22 @@ const ClassifyDetails: FC = () => {
             label="创建时间"
             name="time_str"
           >
-            <DatePicker format={format} showTime />
+            <DatePicker
+              disabled={!isAuth('update@time')}
+              format={format}
+              showTime
+            />
           </Form.Item>
           <Form.Item
             className={style.form_item}
             label="最后修改时间"
             name="last_edit_time"
           >
-            <DatePicker format={format} showTime />
+            <DatePicker
+              disabled={!isAuth('update@time')}
+              format={format}
+              showTime
+            />
           </Form.Item>
           <Form.Item
             className={style.form_item}
@@ -342,9 +351,11 @@ const ClassifyDetails: FC = () => {
               >
                 重置
               </Button>
-              <Button type="primary" htmlType="submit">
-                提交
-              </Button>
+              {isAuth('create@classify') && (
+                <Button type="primary" htmlType="submit">
+                  提交
+                </Button>
+              )}
             </Form.Item>
           </div>
         </Form>

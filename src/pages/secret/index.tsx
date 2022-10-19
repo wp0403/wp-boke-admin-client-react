@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 13:51:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-10-11 11:04:13
+ * @LastEditTime: 2022-10-19 23:26:28
  */
 import React, { useState, useEffect, useRef } from 'react';
 import { history } from 'umi';
@@ -16,6 +16,8 @@ import api from '@/api';
 import SysIcon from '@/components/SysIcon';
 import { getDictObj } from '@/utils/globalDataUtils';
 import ToExamineModal from '@/components/ToExamineModal';
+import { isAuth } from '@/utils/authorityUtils';
+import { localGet } from '@/utils/local';
 import tableStyle from '@/table.less';
 import SecretModal from './modal';
 import style from './index.less';
@@ -27,7 +29,7 @@ interface DataType {
   type: string;
   time_str: string;
   author: string;
-  authorId: string;
+  author_id: string;
   title: string;
   content: string;
   isDelete: boolean;
@@ -90,25 +92,27 @@ const Classify = (props: any) => {
     }
   };
 
-  // 删除/恢复 博文事件
-  const delSecretObj = async (val, id) => {
-    await secret._delSecretList({ id, isDelete: !val }).then(({ data }) => {
-      if (data.code === 200) {
-        setList((v) =>
-          v
-            .map((item) =>
-              item.id === id ? { ...item, isDelete: !val } : item,
-            )
-            .filter((item) => (+type === 2 ? item.isDelete : !item.isDelete)),
-        );
-        +type === 2
-          ? setTotal((v) => (val ? (v -= 1) : (v += 1)))
-          : setTotal((v) => (val ? (v += 1) : (v -= 1)));
-        message.success(data.msg);
-      } else {
-        message.error(data.msg);
-      }
-    });
+  // 删除/恢复
+  const delSecretObj = async (val, id, authorId) => {
+    await secret
+      ._delSecretList({ id, isDelete: !val, authorId })
+      .then(({ data }) => {
+        if (data.code === 200) {
+          setList((v) =>
+            v
+              .map((item) =>
+                item.id === id ? { ...item, isDelete: !val } : item,
+              )
+              .filter((item) => (+type === 2 ? item.isDelete : !item.isDelete)),
+          );
+          +type === 2
+            ? setTotal((v) => (val ? (v -= 1) : (v += 1)))
+            : setTotal((v) => (val ? (v += 1) : (v -= 1)));
+          message.success(data.msg);
+        } else {
+          message.error(data.msg);
+        }
+      });
   };
   // 彻底删除树洞
   const deleteSecretObj = async (id) => {
@@ -226,7 +230,11 @@ const Classify = (props: any) => {
       width: 100,
       render: (text, record) => (
         <div className={tableStyle.table_cell}>
-          <Switch checked={text} onChange={(v) => changeSwitch(v, record.id)} />
+          <Switch
+            disabled={!isAuth('toExamine@secret')}
+            checked={text}
+            onChange={(v) => changeSwitch(v, record.id)}
+          />
         </div>
       ),
     },
@@ -236,7 +244,7 @@ const Classify = (props: any) => {
       fixed: 'right',
       render: (text, record) => (
         <div className={tableStyle.table_cell}>
-          {+type !== 2 && (
+          {isAuth('toExamine@secret') && +type !== 2 && (
             <Tooltip
               placement="topRight"
               arrowPointAtCenter
@@ -254,13 +262,20 @@ const Classify = (props: any) => {
               />
             </Tooltip>
           )}
-          <Tooltip placement="topRight" arrowPointAtCenter title="编辑树洞信息">
-            <EditOutlined
-              className={style.btn1}
-              onClick={() => (modalRef.current as any)?.showModal(record)}
-            />
-          </Tooltip>
-          {+type === 2 ? (
+          {(isAuth('edit@secret') ||
+            record.author_id === localGet('user').uid) && (
+            <Tooltip
+              placement="topRight"
+              arrowPointAtCenter
+              title="编辑树洞信息"
+            >
+              <EditOutlined
+                className={style.btn1}
+                onClick={() => (modalRef.current as any)?.showModal(record)}
+              />
+            </Tooltip>
+          )}
+          {isAuth('toExamine@secret') && +type === 2 ? (
             <Tooltip
               placement="topRight"
               arrowPointAtCenter
@@ -268,22 +283,29 @@ const Classify = (props: any) => {
             >
               <UndoOutlined
                 className={style.btn1}
-                onClick={() => delSecretObj(record.isDelete, record.id)}
+                onClick={() =>
+                  delSecretObj(record.isDelete, record.id, record.author_id)
+                }
               />
             </Tooltip>
           ) : (
-            <Popconfirm
-              title="真的要删除吗？删除后将不能在网站查看。"
-              onConfirm={() => delSecretObj(record.isDelete, record.id)}
-              okText="确定"
-              cancelText="取消"
-              placement="topRight"
-              arrowPointAtCenter
-            >
-              <DeleteOutlined className={style.btn} />
-            </Popconfirm>
+            (isAuth('toExamine@secret') ||
+              record.author_id === localGet('user').uid) && (
+              <Popconfirm
+                title="真的要删除吗？删除后将不能在网站查看。"
+                onConfirm={() =>
+                  delSecretObj(record.isDelete, record.id, record.author_id)
+                }
+                okText="确定"
+                cancelText="取消"
+                placement="topRight"
+                arrowPointAtCenter
+              >
+                <DeleteOutlined className={style.btn} />
+              </Popconfirm>
+            )
           )}
-          {+type === 2 && (
+          {isAuth('delete@secret') && +type === 2 && (
             <Popconfirm
               title="将彻底删除该条数据，不可恢复，要继续吗？"
               onConfirm={() => deleteSecretObj(record.id)}
@@ -310,26 +332,30 @@ const Classify = (props: any) => {
           <span className={style.page_total}>{total}</span>
         </div>
         <div className={style.headerBox_right}>
-          <Button
-            type="primary"
-            shape="round"
-            className={style.headerBox_right_btn}
-            onClick={() => (modalRef.current as any)?.showModal()}
-          >
-            新增树洞
-          </Button>
-          <Button
-            type="primary"
-            shape="round"
-            onClick={changePageType}
-            className={
-              +type === 2
-                ? style.headerBox_right_btn
-                : style.headerBox_right_btn1
-            }
-          >
-            {+type === 2 ? '列表页' : '回收站'}
-          </Button>
+          {isAuth('create@secret') && (
+            <Button
+              type="primary"
+              shape="round"
+              className={style.headerBox_right_btn}
+              onClick={() => (modalRef.current as any)?.showModal()}
+            >
+              新增树洞
+            </Button>
+          )}
+          {isAuth('read@recycleBin') && (
+            <Button
+              type="primary"
+              shape="round"
+              onClick={changePageType}
+              className={
+                +type === 2
+                  ? style.headerBox_right_btn
+                  : style.headerBox_right_btn1
+              }
+            >
+              {+type === 2 ? '列表页' : '回收站'}
+            </Button>
+          )}
         </div>
       </div>
       <Table

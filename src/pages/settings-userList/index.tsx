@@ -26,6 +26,7 @@ interface DataType {
   phone: string;
   website: string;
   state: number;
+  uid: string;
 }
 
 const SettingUser = () => {

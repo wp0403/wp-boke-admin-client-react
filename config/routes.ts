@@ -4,7 +4,7 @@
  * @Author: 王鹏
  * @Date: 2022-01-22 13:20:17
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-10-15 00:51:45
+ * @LastEditTime: 2022-10-19 22:34:26
  */
 export default [
   {
@@ -63,6 +63,7 @@ export default [
           {
             path: '/classify/add-bowen',
             exact: true,
+            authority: 'create@classify',
             component: './classify-add',
           },
         ],
@@ -86,6 +87,12 @@ export default [
             path: '/itinerary/:id/details',
             exact: true,
             component: './itinerary-details',
+          },
+          {
+            path: '/itinerary/add-itinerary',
+            exact: true,
+            authority: 'create@play',
+            component: './itinerary-add',
           },
         ],
       },
@@ -145,6 +152,7 @@ export default [
         path: '/settings',
         name: '设置',
         icon: 'icon-a-shezhichilun',
+        authority: 'router@settings',
         routes: [
           {
             path: '/settings',
@@ -154,17 +162,20 @@ export default [
             path: '/settings/user-list',
             name: '用户列表',
             exact: true,
+            authority: 'router@user',
             component: './settings-userList',
           },
           {
             path: '/settings/user-details/:id',
             exact: true,
+            // authority: 'router@user',
             component: './user-details',
           },
           {
             path: '/settings/imgs-list',
             name: '图片列表',
             exact: true,
+            authority: 'router@img',
             component: './settings-imgs',
           },
         ],

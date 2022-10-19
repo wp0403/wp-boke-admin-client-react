@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-10-15 00:54:21
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-10-17 16:46:41
+ * @LastEditTime: 2022-10-19 23:28:16
  */
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Avatar, Row, Col, Spin, message, Button } from 'antd';
@@ -19,13 +19,7 @@ const { user } = api;
 
 const BasicSettings = () => {
   const [form] = Form.useForm();
-  const [userObj, setUserObj] = useState<any>({
-    name: '于风里读诗',
-    email: 'webwp0403@163.com',
-    desc: '这是一段个人简介',
-    phone: '18234978305',
-    img: '',
-  });
+  const [userObj, setUserObj] = useState<any>(localGet('user'));
   const [loading, setLoading] = useState<boolean>(false);
 
   // 获取用户详情
@@ -85,6 +79,7 @@ const BasicSettings = () => {
         desc: newValues?.desc,
         phone: newValues?.phone,
         img: newValues?.img,
+        uid: newValues?.uid,
       })
       .then(({ data }) => {
         if (data.code === 200) {

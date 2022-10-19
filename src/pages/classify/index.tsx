@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 13:51:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-10-18 11:12:13
+ * @LastEditTime: 2022-10-19 23:11:17
  */
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, history } from 'umi';
@@ -24,6 +24,8 @@ import { getDictObj } from '@/utils/globalDataUtils';
 import api from '@/api';
 import SysIcon from '@/components/SysIcon';
 import ToExamineModal from '@/components/ToExamineModal';
+import { isAuth } from '@/utils/authorityUtils';
+import { localGet } from '@/utils/local';
 import tableStyle from '@/table.less';
 import style from './index.less';
 
@@ -71,23 +73,25 @@ const Classify = (props: any) => {
   };
   // 删除/恢复 博文事件
   const delBowenObj = async (val, id) => {
-    await classify._delBowenList({ id, isDelete: !val }).then(({ data }) => {
-      if (data.code === 200) {
-        setList((v) =>
-          v
-            .map((item) =>
-              item.id === id ? { ...item, isDelete: !val } : item,
-            )
-            .filter((item) => (+type === 2 ? item.isDelete : !item.isDelete)),
-        );
-        message.success(data.msg);
-        +type === 2
-          ? setTotal((v) => (val ? (v -= 1) : (v += 1)))
-          : setTotal((v) => (val ? (v += 1) : (v -= 1)));
-      } else {
-        message.error(data.msg);
-      }
-    });
+    await classify
+      ._delBowenList({ id, isDelete: !val, authorId: localGet('user').uid })
+      .then(({ data }) => {
+        if (data.code === 200) {
+          setList((v) =>
+            v
+              .map((item) =>
+                item.id === id ? { ...item, isDelete: !val } : item,
+              )
+              .filter((item) => (+type === 2 ? item.isDelete : !item.isDelete)),
+          );
+          message.success(data.msg);
+          +type === 2
+            ? setTotal((v) => (val ? (v -= 1) : (v += 1)))
+            : setTotal((v) => (val ? (v += 1) : (v -= 1)));
+        } else {
+          message.error(data.msg);
+        }
+      });
   };
   // 彻底删除博文
   const deleteBowenObj = async (id) => {
@@ -239,7 +243,11 @@ const Classify = (props: any) => {
       width: 100,
       render: (text, record) => (
         <div className={tableStyle.table_cell}>
-          <Switch checked={text} onChange={(v) => changeSwitch(v, record.id)} />
+          <Switch
+            disabled={!isAuth('toExamine@classify')}
+            checked={text}
+            onChange={(v) => changeSwitch(v, record.id)}
+          />
         </div>
       ),
     },
@@ -257,7 +265,7 @@ const Classify = (props: any) => {
       fixed: 'right',
       render: (text, record) => (
         <div className={tableStyle.table_cell_flex}>
-          {+type !== 2 && (
+          {isAuth('toExamine@classify') && +type !== 2 && (
             <Tooltip
               placement="topRight"
               arrowPointAtCenter
@@ -275,7 +283,7 @@ const Classify = (props: any) => {
               />
             </Tooltip>
           )}
-          {+type === 2 ? (
+          {isAuth('edit@classify') && +type === 2 ? (
             <Tooltip
               placement="topRight"
               arrowPointAtCenter
@@ -287,18 +295,21 @@ const Classify = (props: any) => {
               />
             </Tooltip>
           ) : (
-            <Popconfirm
-              title="真的要删除吗？删除后将不能在网站查看。"
-              onConfirm={() => delBowenObj(record.isDelete, record.id)}
-              okText="确定"
-              cancelText="取消"
-              placement="topRight"
-              arrowPointAtCenter
-            >
-              <DeleteOutlined className={style.btn_remove} />
-            </Popconfirm>
+            (isAuth('edit@classify') ||
+              record.author_id === localGet('user').uid) && (
+              <Popconfirm
+                title="真的要删除吗？删除后将不能在网站查看。"
+                onConfirm={() => delBowenObj(record.isDelete, record.id)}
+                okText="确定"
+                cancelText="取消"
+                placement="topRight"
+                arrowPointAtCenter
+              >
+                <DeleteOutlined className={style.btn_remove} />
+              </Popconfirm>
+            )
           )}
-          {+type === 2 && (
+          {isAuth('delete@classify') && +type === 2 && (
             <Popconfirm
               title="将彻底删除该条数据，不可恢复，要继续吗？"
               onConfirm={() => deleteBowenObj(record.id)}
@@ -357,6 +368,7 @@ const Classify = (props: any) => {
 
   // 初始化列表
   useEffect(() => {
+    !isAuth('read@recycleBin') && history.replace('/classify/list');
     getList();
   }, [type, page, pageSize]);
 
@@ -370,26 +382,30 @@ const Classify = (props: any) => {
           <span className={style.page_total}>{total}</span>
         </div>
         <div className={style.headerBox_right}>
-          <Button
-            type="primary"
-            shape="round"
-            className={style.headerBox_right_btn}
-            href="/classify/add-bowen"
-          >
-            新增博文
-          </Button>
-          <Button
-            type="primary"
-            shape="round"
-            onClick={changePageType}
-            className={
-              +type === 2
-                ? style.headerBox_right_btn
-                : style.headerBox_right_btn1
-            }
-          >
-            {+type === 2 ? '列表页' : '回收站'}
-          </Button>
+          {isAuth('create@classify') && (
+            <Button
+              type="primary"
+              shape="round"
+              className={style.headerBox_right_btn}
+              href="/classify/add-bowen"
+            >
+              新增博文
+            </Button>
+          )}
+          {isAuth('read@recycleBin') && (
+            <Button
+              type="primary"
+              shape="round"
+              onClick={changePageType}
+              className={
+                +type === 2
+                  ? style.headerBox_right_btn
+                  : style.headerBox_right_btn1
+              }
+            >
+              {+type === 2 ? '列表页' : '回收站'}
+            </Button>
+          )}
         </div>
       </div>
       <Table

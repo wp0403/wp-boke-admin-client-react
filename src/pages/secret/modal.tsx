@@ -4,12 +4,13 @@
  * @Author: WangPeng
  * @Date: 2022-07-12 16:02:34
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-10-17 13:16:16
+ * @LastEditTime: 2022-10-19 22:54:13
  */
 import React, { useState, useEffect } from 'react';
 import { Switch, message, Modal, Form, Input, DatePicker } from 'antd';
 import moment from 'moment';
 import SelectCom from '@/components/SelectCom';
+import { isAuth } from '@/utils/authorityUtils';
 import api from '@/api';
 
 const { secret, user } = api;
@@ -148,23 +149,18 @@ const ModalCom = (props: any) => {
             keyName="author_id"
           />
         </Form.Item>
-        <Form.Item
-          label="创建时间"
-          name="time_str"
-          rules={[{ required: true }]}
-        >
-          <DatePicker format={format} showTime />
+        <Form.Item label="创建时间" name="time_str">
+          <DatePicker
+            disabled={!isAuth('update@time')}
+            format={format}
+            showTime
+          />
         </Form.Item>
         <Form.Item label="类型" name="type" rules={[{ required: true }]}>
           <Input placeholder="请输入类型" />
         </Form.Item>
-        <Form.Item
-          label="是否置顶"
-          name="isTop"
-          rules={[{ required: true }]}
-          valuePropName={'checked'}
-        >
-          <Switch />
+        <Form.Item label="是否置顶" name="isTop" valuePropName={'checked'}>
+          <Switch disabled={!isAuth('edit@secret')} />
         </Form.Item>
         <Form.Item label="内容" name="content" rules={[{ required: true }]}>
           <Input.TextArea placeholder="请输入内容" />

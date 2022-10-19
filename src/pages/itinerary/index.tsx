@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-06-08 13:51:46
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-10-11 11:04:38
+ * @LastEditTime: 2022-10-19 23:20:25
  */
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, history } from 'umi';
@@ -24,6 +24,8 @@ import { getDictObj } from '@/utils/globalDataUtils';
 import api from '@/api';
 import ToExamineModal from '@/components/ToExamineModal';
 import SysIcon from '@/components/SysIcon';
+import { isAuth } from '@/utils/authorityUtils';
+import { localGet } from '@/utils/local';
 import tableStyle from '@/table.less';
 import style from './index.less';
 
@@ -42,6 +44,8 @@ interface DataType {
   imgs: string[];
   isDelete: boolean;
   type: number;
+  author: string;
+  author_id: string;
 }
 
 const Classify = (props: any) => {
@@ -98,20 +102,16 @@ const Classify = (props: any) => {
       ),
     },
     {
+      title: '作者',
+      dataIndex: 'author',
+      key: 'author_id',
+      width: 120,
+      render: (text) => <div className={tableStyle.table_cell}>{text}</div>,
+    },
+    {
       title: '发布时间',
       dataIndex: 'timeData',
       key: 'timeData',
-      width: 190,
-      render: (text) => (
-        <div className={tableStyle.table_cell}>
-          {formatDate(text, 'yyyy-MM-dd HH:ss:mm')}
-        </div>
-      ),
-    },
-    {
-      title: '最后修改时间',
-      dataIndex: 'last_edit_time',
-      key: 'last_edit_time',
       width: 190,
       render: (text) => (
         <div className={tableStyle.table_cell}>
@@ -226,12 +226,23 @@ const Classify = (props: any) => {
       ),
     },
     {
+      title: '最后修改时间',
+      dataIndex: 'last_edit_time',
+      key: 'last_edit_time',
+      width: 190,
+      render: (text) => (
+        <div className={tableStyle.table_cell}>
+          {formatDate(text, 'yyyy-MM-dd HH:ss:mm')}
+        </div>
+      ),
+    },
+    {
       dataIndex: 'operation',
       width: 120,
       fixed: 'right',
       render: (text, record) => (
         <div className={tableStyle.table_cell_flex}>
-          {+type !== 2 && (
+          {isAuth('toExamine@play') && +type !== 2 && (
             <Tooltip
               placement="topRight"
               arrowPointAtCenter
@@ -249,7 +260,7 @@ const Classify = (props: any) => {
               />
             </Tooltip>
           )}
-          {+type === 2 ? (
+          {isAuth('toExamine@play') && +type === 2 ? (
             <Tooltip
               placement="topRight"
               arrowPointAtCenter
@@ -261,18 +272,21 @@ const Classify = (props: any) => {
               />
             </Tooltip>
           ) : (
-            <Popconfirm
-              title="真的要删除吗？删除后将不能在网站查看。"
-              onConfirm={() => delBowenObj(record.isDelete, record.id)}
-              okText="确定"
-              cancelText="取消"
-              placement="topRight"
-              arrowPointAtCenter
-            >
-              <DeleteOutlined className={style.btn_remove} />
-            </Popconfirm>
+            (isAuth('toExamine@play') ||
+              record.author_id === localGet('user').user) && (
+              <Popconfirm
+                title="真的要删除吗？删除后将不能在网站查看。"
+                onConfirm={() => delBowenObj(record.isDelete, record.id)}
+                okText="确定"
+                cancelText="取消"
+                placement="topRight"
+                arrowPointAtCenter
+              >
+                <DeleteOutlined className={style.btn_remove} />
+              </Popconfirm>
+            )
           )}
-          {+type === 2 && (
+          {isAuth('delete@play') && +type === 2 && (
             <Popconfirm
               title="将彻底删除该条数据，不可恢复，要继续吗？"
               onConfirm={() => deleteBowenObj(record.id)}
@@ -340,6 +354,7 @@ const Classify = (props: any) => {
   };
 
   useEffect(() => {
+    !isAuth('read@recycleBin') && history.replace('/itinerary/list');
     getList();
   }, [page, pageSize]);
 
@@ -353,26 +368,30 @@ const Classify = (props: any) => {
           <span className={style.page_total}>{total}</span>
         </div>
         <div className={style.headerBox_right}>
-          <Button
-            type="primary"
-            shape="round"
-            className={style.headerBox_right_btn}
-            href="/itinerary/add-itinerary"
-          >
-            新增旅行日记
-          </Button>
-          <Button
-            type="primary"
-            shape="round"
-            onClick={changePageType}
-            className={
-              +type === 2
-                ? style.headerBox_right_btn
-                : style.headerBox_right_btn1
-            }
-          >
-            {+type === 2 ? '列表页' : '回收站'}
-          </Button>
+          {isAuth('create@play') && (
+            <Button
+              type="primary"
+              shape="round"
+              className={style.headerBox_right_btn}
+              href="/itinerary/add-itinerary"
+            >
+              新增旅行日记
+            </Button>
+          )}
+          {isAuth('read@recycleBin') && (
+            <Button
+              type="primary"
+              shape="round"
+              onClick={changePageType}
+              className={
+                +type === 2
+                  ? style.headerBox_right_btn
+                  : style.headerBox_right_btn1
+              }
+            >
+              {+type === 2 ? '列表页' : '回收站'}
+            </Button>
+          )}
         </div>
       </div>
       <Table

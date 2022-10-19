@@ -4,11 +4,12 @@
  * @Author: WangPeng
  * @Date: 2022-09-05 13:58:49
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-10-17 13:17:12
+ * @LastEditTime: 2022-10-19 23:24:56
  */
 import React, { useState, useEffect } from 'react';
 import { message, Modal, Form, Input, DatePicker } from 'antd';
 import moment from 'moment';
+import { isAuth } from '@/utils/authorityUtils';
 import api from '@/api';
 
 const { timeAxis } = api;
@@ -136,19 +137,19 @@ const ModalCom = (props: any) => {
         <Form.Item label="内容" name="content" rules={[{ required: true }]}>
           <Input.TextArea placeholder="请输入内容" />
         </Form.Item>
-        <Form.Item
-          label="创建时间"
-          name="create_time"
-          rules={[{ required: true }]}
-        >
-          <DatePicker format={format} showTime />
+        <Form.Item label="创建时间" name="create_time">
+          <DatePicker
+            disabled={!isAuth('update@time')}
+            format={format}
+            showTime
+          />
         </Form.Item>
-        <Form.Item
-          label="修改时间"
-          name="update_time"
-          rules={[{ required: true }]}
-        >
-          <DatePicker format={format} showTime />
+        <Form.Item label="修改时间" name="update_time">
+          <DatePicker
+            disabled={!isAuth('update@time')}
+            format={format}
+            showTime
+          />
         </Form.Item>
       </Form>
     </Modal>

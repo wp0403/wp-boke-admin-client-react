@@ -4,7 +4,7 @@
  * @Author: WangPeng
  * @Date: 2022-08-29 10:06:54
  * @LastEditors: WangPeng
- * @LastEditTime: 2022-10-17 16:01:05
+ * @LastEditTime: 2022-10-19 23:01:20
  */
 import React, { useState, useEffect } from 'react';
 import { message, Spin, Form, Button, Divider, Input, Avatar } from 'antd';
@@ -132,14 +132,6 @@ const UserDetails = (props: any) => {
                 {isEdit ? '取消' : '编辑'}
               </Button>
             )}
-            <Button
-              style={{ marginLeft: '10px' }}
-              type="primary"
-              danger
-              shape="round"
-            >
-              删除
-            </Button>
           </div>
         </div>
         <Divider />
