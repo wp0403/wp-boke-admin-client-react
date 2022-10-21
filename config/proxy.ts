@@ -25,7 +25,7 @@ export default {
   },
   test: {
     '/adminApi/': {
-      target: 'http://101.43.203.116/adminApi/',
+      target: 'https://admin.wp-boke.work/adminApi',
       changeOrigin: true,
       pathRewrite: { '^/adminApi': '' },
     },
